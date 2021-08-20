@@ -21,7 +21,7 @@ public class MainViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemGreen
+        view.backgroundColor = .systemBlue
         view.addSubview(label)
         NSLayoutConstraint.activate([
             label.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
