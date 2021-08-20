@@ -11,9 +11,9 @@
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
-		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		98089E42CB4F2EBC9DDC70CC /* Pods_Appointments_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BE7F8DAC57FE70B1FE793B9 /* Pods_Appointments_Example.framework */; };
+		A4EEB7AA26CF708200B0F6CC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A4EEB7A826CF708200B0F6CC /* LaunchScreen.storyboard */; };
 		E7D2E0497827F005E5F8AE8D /* Pods_Appointments_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7E72363FF05B2494AEAF7AF /* Pods_Appointments_Tests.framework */; };
 /* End PBXBuildFile section */
 
@@ -29,23 +29,23 @@
 
 /* Begin PBXFileReference section */
 		2DEC7BC78D03EE8C6F0D3D3E /* Pods-Appointments_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Appointments_Tests.debug.xcconfig"; path = "Target Support Files/Pods-Appointments_Tests/Pods-Appointments_Tests.debug.xcconfig"; sourceTree = "<group>"; };
-		330A26378B5AEE47DEF99041 /* Appointments.podspec */ = {isa = PBXFileReference; includeInIndex = 1; name = Appointments.podspec; path = ../Appointments.podspec; sourceTree = "<group>"; };
+		330A26378B5AEE47DEF99041 /* Appointments.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Appointments.podspec; path = ../Appointments.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		607FACD01AFB9204008FA782 /* Appointments_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Appointments_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		607FACD71AFB9204008FA782 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		607FACDA1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		607FACDC1AFB9204008FA782 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		607FACDF1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		607FACE51AFB9204008FA782 /* Appointments_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Appointments_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		7BE7F8DAC57FE70B1FE793B9 /* Pods_Appointments_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Appointments_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9649CC8B35268BBE7976FCAA /* Pods-Appointments_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Appointments_Tests.release.xcconfig"; path = "Target Support Files/Pods-Appointments_Tests/Pods-Appointments_Tests.release.xcconfig"; sourceTree = "<group>"; };
-		9A6D4080AED12D912B99FDC8 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		9A6D4080AED12D912B99FDC8 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		9FF6068C1A1EA534D47B62AD /* Pods-Appointments_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Appointments_Example.release.xcconfig"; path = "Target Support Files/Pods-Appointments_Example/Pods-Appointments_Example.release.xcconfig"; sourceTree = "<group>"; };
+		A4EEB7A926CF708200B0F6CC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A7E72363FF05B2494AEAF7AF /* Pods_Appointments_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Appointments_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		E9BDCD2539B0616F8A2FBF9A /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		E9BDCD2539B0616F8A2FBF9A /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		F017152A94D2E4586EAA5AF7 /* Pods-Appointments_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Appointments_Example.debug.xcconfig"; path = "Target Support Files/Pods-Appointments_Example/Pods-Appointments_Example.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -86,16 +86,15 @@
 				2DEC7BC78D03EE8C6F0D3D3E /* Pods-Appointments_Tests.debug.xcconfig */,
 				9649CC8B35268BBE7976FCAA /* Pods-Appointments_Tests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
-				607FACF51AFB993E008FA782 /* Podspec Metadata */,
-				607FACD21AFB9204008FA782 /* Example for Appointments */,
-				607FACE81AFB9204008FA782 /* Tests */,
+				607FACF51AFB993E008FA782 /* PodspecMetadata */,
+				607FACD21AFB9204008FA782 /* Appointments */,
+				607FACE81AFB9204008FA782 /* AppointmentsTests */,
 				607FACD11AFB9204008FA782 /* Products */,
 				287E14ADDB9FD682A0457962 /* Pods */,
 				064FE13C11E34E30EB263B2C /* Frameworks */,
@@ -111,35 +110,26 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		607FACD21AFB9204008FA782 /* Example for Appointments */ = {
+		607FACD21AFB9204008FA782 /* Appointments */ = {
 			isa = PBXGroup;
 			children = (
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
+				A4EEB7A826CF708200B0F6CC /* LaunchScreen.storyboard */,
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
-				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
-				607FACD31AFB9204008FA782 /* Supporting Files */,
+				607FACD41AFB9204008FA782 /* Info.plist */,
 			);
-			name = "Example for Appointments";
 			path = Appointments;
 			sourceTree = "<group>";
 		};
-		607FACD31AFB9204008FA782 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				607FACD41AFB9204008FA782 /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		607FACE81AFB9204008FA782 /* Tests */ = {
+		607FACE81AFB9204008FA782 /* AppointmentsTests */ = {
 			isa = PBXGroup;
 			children = (
 				607FACEB1AFB9204008FA782 /* Tests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 			);
-			path = Tests;
+			path = AppointmentsTests;
 			sourceTree = "<group>";
 		};
 		607FACE91AFB9204008FA782 /* Supporting Files */ = {
@@ -150,14 +140,14 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		607FACF51AFB993E008FA782 /* Podspec Metadata */ = {
+		607FACF51AFB993E008FA782 /* PodspecMetadata */ = {
 			isa = PBXGroup;
 			children = (
 				330A26378B5AEE47DEF99041 /* Appointments.podspec */,
 				E9BDCD2539B0616F8A2FBF9A /* README.md */,
 				9A6D4080AED12D912B99FDC8 /* LICENSE */,
 			);
-			name = "Podspec Metadata";
+			name = PodspecMetadata;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -209,7 +199,7 @@
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
 				LastUpgradeCheck = 0830;
-				ORGANIZATIONNAME = CocoaPods;
+				ORGANIZATIONNAME = Caremerge;
 				TargetAttributes = {
 					607FACCF1AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
@@ -217,7 +207,7 @@
 					};
 					607FACE41AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
-						LastSwiftMigration = 0900;
+						LastSwiftMigration = 1250;
 						TestTargetID = 607FACCF1AFB9204008FA782;
 					};
 				};
@@ -227,6 +217,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -246,8 +237,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4EEB7AA26CF708200B0F6CC /* LaunchScreen.storyboard in Resources */,
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
-				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -314,10 +305,16 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Appointments_Example/Pods-Appointments_Example-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Appointments/Appointments.framework",
+				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
+				"${BUILT_PRODUCTS_DIR}/RxRelay/RxRelay.framework",
+				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Appointments.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxRelay.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -363,12 +360,12 @@
 			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
-		607FACDE1AFB9204008FA782 /* LaunchScreen.xib */ = {
+		A4EEB7A826CF708200B0F6CC /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				607FACDF1AFB9204008FA782 /* Base */,
+				A4EEB7A926CF708200B0F6CC /* Base */,
 			);
-			name = LaunchScreen.xib;
+			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -419,7 +416,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -465,7 +462,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -481,10 +478,11 @@
 				INFOPLIST_FILE = Appointments/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.caremerge.appointments-ios-demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -496,10 +494,11 @@
 				INFOPLIST_FILE = Appointments/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.caremerge.appointments-ios-demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -515,12 +514,12 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = Tests/Info.plist;
+				INFOPLIST_FILE = AppointmentsTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Appointments_Example.app/Appointments_Example";
 			};
 			name = Debug;
@@ -533,12 +532,12 @@
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = Tests/Info.plist;
+				INFOPLIST_FILE = AppointmentsTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Appointments_Example.app/Appointments_Example";
 			};
 			name = Release;
