@@ -7,30 +7,26 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'Appointments'
-  s.version          = '0.0.2-rc.1'
-  s.summary          = 'Appointment pod for iOS Apps'
-
-  s.description      = <<-DESC
-Integrating it into any app will allow user of the App to see and mark appointments.
-                       DESC
-
-  s.homepage         = 'https://caremerge.com'
-  s.license          = { :type => 'Caremerge', :file => 'LICENSE' }
-  s.author           = { 'Muhammad Hussaan Saeed' => 'hussaan.saeed@careaxiom.com' }
-  s.source           = { :git => 'git@github.com:caremerge/appointments-ios.git', :tag => s.version.to_s }
-
-  s.ios.deployment_target = '12.1'
-  s.swift_version = '5'
-
-  s.source_files = 'Appointments/Classes/**/*'
-  
-   s.resource_bundles = {
-     'Appointments/Assets/CoreDataModel' => ['Appointments/Assets/CoreDataModel/*']
-   }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-   s.frameworks = 'UIKit'
-   s.dependency 'RxSwift'
-   s.dependency 'RxCocoa'
+    s.name             = 'Appointments'
+    s.version          = '0.0.2-rc.1'
+    s.summary          = 'Appointment pod for iOS Apps'
+    
+    s.description      = <<-DESC
+    Integrating it into any app will allow user of the App to see and mark appointments.
+    DESC
+    
+    s.homepage         = 'https://caremerge.com'
+    s.license          = { :type => 'Caremerge', :file => 'LICENSE' }
+    s.author           = { 'Muhammad Hussaan Saeed' => 'hussaan.saeed@careaxiom.com' }
+    s.source           = { :git => 'git@github.com:caremerge/appointments-ios.git', :tag => s.version.to_s }
+    
+    s.ios.deployment_target = '12.1'
+    s.swift_version = '5'
+    
+    s.source_files = 'Appointments/Classes/**/*'
+    s.resource = ['Appointments/Assets/CoreDataModel/*']
+    
+    s.frameworks = 'UIKit'
+    s.dependency 'RxSwift'
+    s.dependency 'RxCocoa'
 end
