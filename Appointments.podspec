@@ -25,9 +25,9 @@ Integrating it into any app will allow user of the App to see and mark appointme
 
   s.source_files = 'Appointments/Classes/**/*'
   
-  # s.resource_bundles = {
-  #   'Appointments' => ['Appointments/Assets/*.png']
-  # }
+   s.resource_bundles = {
+     'Appointments/Assets/CoreDataModel' => ['Appointments/Assets/CoreDataModel/*']
+   }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
    s.frameworks = 'UIKit'
