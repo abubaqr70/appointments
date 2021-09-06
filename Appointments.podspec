@@ -24,7 +24,7 @@ Pod::Spec.new do |s|
     s.swift_version = '5'
     
     s.source_files = 'Appointments/Source/**/*.{h,m,swift}'
-    s.resource = 'Appointments/Resources/CoreDataModel/*.{xcdatamodeld}'
+    s.resource = 'Appointments/**/*.{xcdatamodeld,xcassets,otf}'
     
     s.frameworks = 'UIKit'
     s.dependency 'RxSwift'

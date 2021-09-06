@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Appointments
 
 class ViewController: UIViewController {
 
@@ -22,7 +21,7 @@ class ViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        self.navigationController?.pushViewController(MainViewController(), animated: true)
+        
     }
 
 }
