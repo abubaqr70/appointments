@@ -8,14 +8,14 @@ class UIPageNavigator: UIView {
     
     fileprivate lazy var nextButton: UIButton = {
         let button = UIButton(frame: CGRect.zero)
-        button.setImage(UIImage(named: "icon_appointments_date_right", in: Bundle(for: UIPageNavigator.self), compatibleWith: .none), for: .normal)
+        button.setImage(UIImage(named: "icon_date_right", in: Bundle(for: UIPageNavigator.self), compatibleWith: .none), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
     fileprivate lazy var previousButton: UIButton = {
         let button = UIButton(frame: CGRect.zero)
-        button.setImage(UIImage(named: "icon_appointments_date_left", in: Bundle(for: UIPageNavigator.self), compatibleWith: .none), for: .normal)
+        button.setImage(UIImage(named: "icon_date_left", in: Bundle(for: UIPageNavigator.self), compatibleWith: .none), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()

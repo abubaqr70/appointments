@@ -18,7 +18,7 @@ public class AppointmentsViewController: UIViewController {
     }()
     
     fileprivate lazy var add_button : UIBarButtonItem = {
-        let addImage    = UIImage(named: "icon_appointments_add", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none)
+        let addImage    = UIImage(named: "icon_add", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none)
         let addButton   = UIBarButtonItem(image: addImage,  style: .plain, target: self, action: #selector(didTapAddButton(_:)))
         addButton.imageInsets = UIEdgeInsets(top: 0.0, left: 10, bottom: 0, right: 10)
         return addButton
@@ -27,14 +27,14 @@ public class AppointmentsViewController: UIViewController {
     fileprivate lazy var title_button : UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 200, height: 40))
         button.setTitle("APPOINTMENTS", for: .normal)
-        button.setTitleColor(UIColor(named: "color_appointments_blue", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none), for: .normal)
+        button.setTitleColor(UIColor(named: "color_app_blue", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none), for: .normal)
         button.titleLabel?.font = UIFont.appFont(withStyle: .title3, size: 12)
         button.semanticContentAttribute = UIApplication.shared
             .userInterfaceLayoutDirection == .rightToLeft ? .forceLeftToRight : .forceRightToLeft
         button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 0)
         button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 5)
-        button.setImage(UIImage(named: "icon_appointments_arrowdown", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none), for: .normal)
-        button.setImage(UIImage(named: "icon_appointments_arrowup", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none), for: .selected)
+        button.setImage(UIImage(named: "icon_arrowdown", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none), for: .normal)
+        button.setImage(UIImage(named: "icon_arrowup", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none), for: .selected)
         return button
     }()
     
@@ -61,7 +61,7 @@ public class AppointmentsViewController: UIViewController {
         label.textColor = .white
         label.textAlignment = .center
         label.font = UIFont.appFont(withStyle: .title3, size: 12)
-        label.backgroundColor = UIColor(named: "color_appointments_dark_gray", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none)
+        label.backgroundColor = UIColor(named: "color_app_dark_gray", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -78,7 +78,7 @@ public class AppointmentsViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 20))
         tableView.separatorStyle = .none
-        tableView.backgroundColor = UIColor(named: "color_appointments_light_gray", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none)
+        tableView.backgroundColor = UIColor(named: "color_app_light_gray", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none)
         return tableView
     }()
     
@@ -174,7 +174,7 @@ extension AppointmentsViewController{
     ///MARK:- Navigation Setup
     func setupNavigationBar(){
         self.navigationController?.navigationBar.barTintColor = .white
-        self.navigationController?.navigationBar.tintColor = UIColor(named: "color_appointments_blue", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none)
+        self.navigationController?.navigationBar.tintColor = UIColor(named: "color_app_blue", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none)
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
     }
     
