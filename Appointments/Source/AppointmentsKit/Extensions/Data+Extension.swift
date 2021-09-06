@@ -1,8 +1,3 @@
-//
-//  Data+Extension.swift
-//  Appointments
-//
-//  Created by Hussaan S on 03/09/2021.
-//
+// Copyright © 2021 Caremerge. All rights reserved.
 
 import Foundation

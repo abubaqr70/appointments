@@ -1,10 +1,4 @@
-//
-//  UITableViewCell+Extension.swift
-//  Staff App
-//
-//  Created by Hussaan Saeed on 24/10/2019.
-//  Copyright © 2019 Junaid Rehmat. All rights reserved.
-//
+// Copyright © 2021 Caremerge. All rights reserved.
 
 import Foundation
 

@@ -1,9 +1,4 @@
-//
-//  AppointmentsViewController.swift
-//  Appointments
-//
-//  Created by Muhammad Abubaqr on 26/08/2021.
-//
+// Copyright © 2021 Caremerge. All rights reserved.
 
 import UIKit
 import RxSwift
@@ -17,80 +12,77 @@ public class AppointmentsViewController: UIViewController {
         }
     }
     
-    lazy var filter: UIBarButtonItem = {
+    fileprivate lazy var filter_button: UIBarButtonItem = {
         let filterBtn = UIBarButtonItem(title: "Filter", style: .plain, target: self, action:  #selector(didTapFilterButton(_:)))
         return filterBtn
     }()
     
-    lazy var add : UIBarButtonItem = {
-        let addImage    = UIImage(named: "add", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none)
+    fileprivate lazy var add_button : UIBarButtonItem = {
+        let addImage    = UIImage(named: "icon_appointments_add", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none)
         let addButton   = UIBarButtonItem(image: addImage,  style: .plain, target: self, action: #selector(didTapAddButton(_:)))
         addButton.imageInsets = UIEdgeInsets(top: 0.0, left: 10, bottom: 0, right: 10)
         return addButton
     }()
     
-    lazy var titleBtn : UIButton = {
+    fileprivate lazy var title_button : UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 200, height: 40))
         button.setTitle("APPOINTMENTS", for: .normal)
-        button.setTitleColor(UIColor(named: "appBlue", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none), for: .normal)
-        button.titleLabel?.font = UIFont.appFont(withStyle: .f300, size: 12)
+        button.setTitleColor(UIColor(named: "color_appointments_blue", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none), for: .normal)
+        button.titleLabel?.font = UIFont.appFont(withStyle: .title3, size: 12)
         button.semanticContentAttribute = UIApplication.shared
             .userInterfaceLayoutDirection == .rightToLeft ? .forceLeftToRight : .forceRightToLeft
         button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 0)
         button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 5)
-        button.setImage(UIImage(named: "assignee", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none), for: .normal)
-        button.setImage(UIImage(named: "assignee_selected", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none), for: .selected)
+        button.setImage(UIImage(named: "icon_appointments_arrowdown", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none), for: .normal)
+        button.setImage(UIImage(named: "icon_appointments_arrowup", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none), for: .selected)
         return button
     }()
     
-    lazy var isAppointmentsFilter : Bool = {
-        return true
-    }()
     
-    lazy var items: [String] = {
+    fileprivate lazy var items: [String] = {
         let items = ["By Schedule", "By Room#"]
         return items
     }()
     
-    lazy var segmentControl : UISegmentedControl = {
+    fileprivate lazy var segment_control : UISegmentedControl = {
         let segmentControl = UISegmentedControl(items: items)
         segmentControl.translatesAutoresizingMaskIntoConstraints = false
         segmentControl.frame = CGRect.zero
         segmentControl.selectedSegmentIndex = 0
         let normalTextAttributes: [NSAttributedString.Key : AnyObject] = [
-            NSAttributedString.Key.font :  UIFont.appFont(withStyle: .f300, size: 12)]
+            NSAttributedString.Key.font :  UIFont.appFont(withStyle: .title3, size: 12)]
         segmentControl.setTitleTextAttributes(normalTextAttributes, for: .normal)
         return segmentControl
     }()
     
-    lazy var lastUpdatedLabel: UILabel = {
+    fileprivate lazy var last_updated_label: UILabel = {
         let label = UILabel(frame: .zero)
         label.text = "Last Updated: June 26th at 8:50 PM"
         label.textColor = .white
         label.textAlignment = .center
-        label.font = UIFont.appFont(withStyle: .f300, size: 12)
-        label.backgroundColor = UIColor(named: "appDarkGray", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none)
+        label.font = UIFont.appFont(withStyle: .title3, size: 12)
+        label.backgroundColor = UIColor(named: "color_appointments_dark_gray", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    lazy var pageNavigator: UIPageNavigator = {
+    fileprivate lazy var page_navigator: UIPageNavigator = {
         let navigator = UIPageNavigator(frame: CGRect.zero)
         navigator.translatesAutoresizingMaskIntoConstraints = false
         navigator.backgroundColor = .white
         return navigator
     }()
     
-    lazy var tableView : UITableView = {
+    fileprivate lazy var tableView : UITableView = {
         let tableView = UITableView(frame: CGRect.zero)
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.tableFooterView = UIView(frame: .zero)
+        tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 20))
         tableView.separatorStyle = .none
-        tableView.backgroundColor = UIColor(named: "appLightGray", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none)
+        tableView.backgroundColor = UIColor(named: "color_appointments_light_gray", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none)
         return tableView
     }()
     
-    private let dateTitle = BehaviorSubject<String?>(value: "Wednesday 01, 2016")
+    private let date_navigator_title = BehaviorSubject<String?>(value: "Wednesday 01, 2016")
     private let sectionsSubject = BehaviorSubject<[NSAttributedString]>(value: [NSMutableAttributedString(string: "12:00 AM - 1:00 AM", attributes: nil),
                                                                                 NSMutableAttributedString(string: "12:00 AM - 1:00 AM", attributes: nil),
                                                                                 NSMutableAttributedString(string: "12:00 AM - 1:00 AM", attributes: nil),
@@ -127,12 +119,12 @@ extension AppointmentsViewController{
     
     private func setupViews() {
         setupNavigationBar()
-        self.navigationItem.leftBarButtonItem = add
-        self.navigationItem.rightBarButtonItem = filter
-        self.navigationItem.titleView = titleBtn
-        self.view.addSubview(segmentControl)
-        self.view.addSubview(lastUpdatedLabel)
-        self.view.addSubview(pageNavigator)
+        self.navigationItem.leftBarButtonItem = add_button
+        self.navigationItem.rightBarButtonItem = filter_button
+        self.navigationItem.titleView = title_button
+        self.view.addSubview(segment_control)
+        self.view.addSubview(last_updated_label)
+        self.view.addSubview(page_navigator)
         self.view.addSubview(tableView)
         view.backgroundColor = .white
     }
@@ -142,28 +134,28 @@ extension AppointmentsViewController{
         let safeArea = view.safeAreaLayoutGuide
         
         NSLayoutConstraint.activate([
-            segmentControl.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 20),
-            segmentControl.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
-            segmentControl.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
-            segmentControl.heightAnchor.constraint(equalToConstant: 30)
+            segment_control.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 20),
+            segment_control.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
+            segment_control.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
+            segment_control.heightAnchor.constraint(equalToConstant: 30)
         ])
         
         NSLayoutConstraint.activate([
-            lastUpdatedLabel.topAnchor.constraint(equalTo: segmentControl.bottomAnchor, constant: 10),
-            lastUpdatedLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-            lastUpdatedLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
-            lastUpdatedLabel.heightAnchor.constraint(equalToConstant: 20)
+            last_updated_label.topAnchor.constraint(equalTo: segment_control.bottomAnchor, constant: 10),
+            last_updated_label.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+            last_updated_label.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
+            last_updated_label.heightAnchor.constraint(equalToConstant: 20)
         ])
         
         NSLayoutConstraint.activate([
-            pageNavigator.topAnchor.constraint(equalTo: lastUpdatedLabel.bottomAnchor, constant: 10),
-            pageNavigator.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
-            pageNavigator.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
-            pageNavigator.heightAnchor.constraint(equalToConstant: 50)
+            page_navigator.topAnchor.constraint(equalTo: last_updated_label.bottomAnchor, constant: 10),
+            page_navigator.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
+            page_navigator.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
+            page_navigator.heightAnchor.constraint(equalToConstant: 50)
         ])
         
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: pageNavigator.bottomAnchor, constant: 10),
+            tableView.topAnchor.constraint(equalTo: page_navigator.bottomAnchor, constant: 10),
             tableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor)
@@ -182,7 +174,7 @@ extension AppointmentsViewController{
     ///MARK:- Navigation Setup
     func setupNavigationBar(){
         self.navigationController?.navigationBar.barTintColor = .white
-        self.navigationController?.navigationBar.tintColor = UIColor(named: "appBlue", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none)
+        self.navigationController?.navigationBar.tintColor = UIColor(named: "color_appointments_blue", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none)
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
     }
     
@@ -198,9 +190,9 @@ extension AppointmentsViewController{
 extension AppointmentsViewController{
     
     private func bind() {
-        dateTitle
+        date_navigator_title
             .asObservable()
-            .bind(to: pageNavigator.rx.titleBtn)
+            .bind(to: page_navigator.rx.titleBtn)
             .disposed(by: disposeBag)
         
         sectionsSubject
@@ -209,12 +201,12 @@ extension AppointmentsViewController{
                 self.sections = sections
             }).disposed(by: disposeBag)
         
-        titleBtn.rx.tap
+        title_button.rx.tap
             .bind {
-                if !self.titleBtn.isSelected{
-                    self.titleBtn.isSelected = true
+                if !self.title_button.isSelected{
+                    self.title_button.isSelected = true
                 }else{
-                    self.titleBtn.isSelected = false
+                    self.title_button.isSelected = false
                 }
                 print("button tapped")
             }
@@ -245,7 +237,7 @@ extension AppointmentsViewController: UITableViewDelegate,UITableViewDataSource 
     }
     
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        let appointemmetsDetail = AppointmentsDetailViewController()
-//        self.navigationController?.pushViewController(appointemmetsDetail, animated: true)
+        //        let appointemmetsDetail = AppointmentsDetailViewController()
+        //        self.navigationController?.pushViewController(appointemmetsDetail, animated: true)
     }
 }

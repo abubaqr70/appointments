@@ -1,10 +1,4 @@
-//
-//  ViewController.swift
-//  Appointments
-//
-//  Created by Hussaan S on 08/20/2021.
-//  Copyright © 2021 Caremerge. All rights reserved.
-//
+// Copyright © 2021 Caremerge. All rights reserved.
 
 import UIKit
 import Appointments

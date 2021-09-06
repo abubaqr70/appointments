@@ -1,9 +1,4 @@
-//
-//  HeaderTableViewCell.swift
-//  Appointments
-//
-//  Created by Muhammad Abubaqr on 26/08/2021.
-//
+// Copyright © 2021 Caremerge. All rights reserved.
 
 import UIKit
 import RxCocoa
@@ -11,19 +6,19 @@ import RxSwift
 
 class HeaderTableViewCell: RxUITableViewCell {
     
-    lazy var headingLabel: UILabel = {
+    fileprivate lazy var heading_label: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .white
-        label.font = UIFont.appFont(withStyle: .f300, size: 12)
+        label.font = UIFont.appFont(withStyle: .title3, size: 12)
         label.numberOfLines = 4
         return label
     }()
     
-    lazy var view : UIView = {
+    fileprivate lazy var cell_view : UIView = {
         let view = UIView(frame: CGRect.zero)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor(named: "appBlue", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none)
+        view.backgroundColor = UIColor(named: "color_appointments_blue", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none)
         view.layer.cornerRadius = 3
         return view
     }()
@@ -49,27 +44,27 @@ class HeaderTableViewCell: RxUITableViewCell {
     
     private func setupViews() {
         selectionStyle = .none
-        contentView.addSubview(view)
-        view.addSubview(headingLabel)
-        contentView.backgroundColor = UIColor(named: "appLightGray", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none)
+        contentView.addSubview(cell_view)
+        cell_view.addSubview(heading_label)
+        contentView.backgroundColor = UIColor(named: "color_appointments_light_gray", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none)
     }
     
     private func setupConstraints() {
         
         NSLayoutConstraint.activate([
-            headingLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 5),
-            headingLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            headingLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            headingLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -5)
+            heading_label.topAnchor.constraint(equalTo: cell_view.topAnchor, constant: 5),
+            heading_label.leadingAnchor.constraint(equalTo: cell_view.leadingAnchor, constant: 20),
+            heading_label.trailingAnchor.constraint(equalTo: cell_view.trailingAnchor, constant: -20),
+            heading_label.bottomAnchor.constraint(equalTo: cell_view.bottomAnchor, constant: -5)
         ])
         
         NSLayoutConstraint.activate([
-            view.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
-            view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-            view.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -20)
+            cell_view.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
+            cell_view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            cell_view.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -20)
         ])
 
-        let bottomConstraint = contentView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 6)
+        let bottomConstraint = contentView.bottomAnchor.constraint(equalTo: cell_view.bottomAnchor, constant: 6)
         bottomConstraint.priority = UILayoutPriority(999)
         bottomConstraint.isActive = true
     }
@@ -79,7 +74,7 @@ extension Reactive where Base: HeaderTableViewCell {
     
     var heading: Binder<NSAttributedString> {
         return Binder(self.base) { cell, heading in
-            cell.headingLabel.attributedText = heading
+            cell.heading_label.attributedText = heading
         }
     }
 }

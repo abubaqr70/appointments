@@ -1,47 +1,45 @@
-//
-//  UIFont+Extension.swift
-//  Appointments
-//
-//  Created by Hussaan S on 06/09/2021.
-//
+// Copyright © 2021 Caremerge. All rights reserved.
 
 import Foundation
 
 enum AppFontStyle {
-    case f100
-    case f100Italic
-    case f300
-    case f300Italic
-    case f500
-    case f500Italic
-    case f700
-    case f700Italic
-    case f1000
-    case f1000Italic
+    
+    case largeTitle
+    case title1
+    case title2
+    case title3
+    case headline
+    case body
+    case callout
+    case subhead
+    case footnote
+    case caption1
+    case caption2
+    
 }
 
 extension AppFontStyle {
     var name: String {
         switch self {
-        case .f100:
+        case .headline:
             return "MuseoSansRounded-100"
-        case .f100Italic:
+        case .footnote:
             return "MuseoSansRounded-100Italic"
-        case .f300:
+        case .title1:
             return "MuseoSansRounded-300"
-        case .f300Italic:
+        case .title2:
             return "MuseoSansRounded-300Italic"
-        case .f500:
+        case .body,.callout:
             return "MuseoSansRounded-500"
-        case .f500Italic:
+        case .title3:
             return "MuseoSansRounded-500Italic"
-        case .f700:
+        case .subhead:
             return "MuseoSansRounded-700"
-        case .f700Italic:
+        case .caption1:
             return "MuseoSansRounded-700Italic"
-        case .f1000:
+        case .largeTitle:
             return "MuseoSansRounded-1000"
-        case .f1000Italic:
+        case .caption2:
             return "MuseoSansRounded-1000Italic"
         }
     }

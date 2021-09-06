@@ -1,4 +1,4 @@
-//  Created by Hussaan Saeed on 23/10/2019.
+// Copyright © 2021 Caremerge. All rights reserved.
 
 import Foundation
 import RxSwift
@@ -8,14 +8,14 @@ class UIPageNavigator: UIView {
     
     fileprivate lazy var nextButton: UIButton = {
         let button = UIButton(frame: CGRect.zero)
-        button.setImage(UIImage(named: "date-right", in: Bundle(for: UIPageNavigator.self), compatibleWith: .none), for: .normal)
+        button.setImage(UIImage(named: "icon_appointments_date_right", in: Bundle(for: UIPageNavigator.self), compatibleWith: .none), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
     fileprivate lazy var previousButton: UIButton = {
         let button = UIButton(frame: CGRect.zero)
-        button.setImage(UIImage(named: "date-left", in: Bundle(for: UIPageNavigator.self), compatibleWith: .none), for: .normal)
+        button.setImage(UIImage(named: "icon_appointments_date_left", in: Bundle(for: UIPageNavigator.self), compatibleWith: .none), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -23,14 +23,14 @@ class UIPageNavigator: UIView {
     fileprivate lazy var titleButton: UIButton = {
         let button = UIButton(frame: CGRect.zero)
         button.setTitleColor( UIColor.darkGray, for: .normal)
-        button.titleLabel?.font = UIFont.appFont(withStyle: .f300, size: 14)
+        button.titleLabel?.font = UIFont.appFont(withStyle: .title3, size: 14)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
     fileprivate lazy var titleLable: UILabel = {
         let label = UILabel(frame: CGRect.zero)
-        label.font = UIFont.appFont(withStyle: .f500, size: 18)
+        label.font = UIFont.appFont(withStyle: .body, size: 18)
         label.textAlignment = .center
         label.textColor = UIColor.lightGray
         label.translatesAutoresizingMaskIntoConstraints = false
