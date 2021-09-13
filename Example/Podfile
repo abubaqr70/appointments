@@ -2,7 +2,7 @@ use_frameworks!
 
 platform :ios, '12.1'
 
-#source 'https://github.com/CocoaPods/Specs.git'
+source 'https://github.com/CocoaPods/Specs.git'
 
 target 'Appointments_Example' do
   pod 'Appointments', :path => '../'

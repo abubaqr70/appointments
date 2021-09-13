@@ -10,6 +10,7 @@ enum VoidResult {
 }
 
 struct errorCode{
+    
     /**
      501 mean session expired. Need to login again
      */
