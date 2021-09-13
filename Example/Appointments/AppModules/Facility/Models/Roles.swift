@@ -7,7 +7,7 @@ struct Roles : Codable {
 	let fk_tenant_id : Int?
 	let i_is_archived : Int?
 	let i_is_profile : Int?
-	let fk_category_id : String?
+	let fk_category_id : Int?
 	let i_archived_date : String?
 	let i_is_private : Int?
 	let fk_archived_by : String?
@@ -38,7 +38,7 @@ extension Roles {
         fk_tenant_id = try values.decodeIfPresent(Int.self, forKey: .fk_tenant_id)
         i_is_archived = try values.decodeIfPresent(Int.self, forKey: .i_is_archived)
         i_is_profile = try values.decodeIfPresent(Int.self, forKey: .i_is_profile)
-        fk_category_id = try values.decodeIfPresent(String.self, forKey: .fk_category_id)
+        fk_category_id = try values.decodeIfPresent(Int.self, forKey: .fk_category_id)
         i_archived_date = try values.decodeIfPresent(String.self, forKey: .i_archived_date)
         i_is_private = try values.decodeIfPresent(Int.self, forKey: .i_is_private)
         fk_archived_by = try values.decodeIfPresent(String.self, forKey: .fk_archived_by)

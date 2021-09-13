@@ -34,7 +34,7 @@ class FacilityViewModel : FacilityViewModelType,FacilityViewModelOutputs{
             Functions.hideActivity()
             switch result {
             case .success(let result):
-                let newjson = try? JSONSerialization.data(withJSONObject: result.value as Any, options: .prettyPrinted)
+                let newjson = try? JSONSerialization.data(withJSONObject: result.value as Any,options: .fragmentsAllowed)
                 Functions.saveJSON(json: newjson ?? Data(), key: "facilities")
                 self.bindFacilities()
             case .failure(let error):
@@ -55,9 +55,25 @@ class FacilityViewModel : FacilityViewModelType,FacilityViewModelOutputs{
     }
     
     func intializeModel(with result: Data) -> [Facilities]{
-        let jsonDecoder = JSONDecoder()
-        let responseModel = try? jsonDecoder.decode(FacilitiesModel.self, from: result)
-        return responseModel?.facilities ?? []
+        do {
+            let jsonDecoder = JSONDecoder()
+            let responseModel = try jsonDecoder.decode(FacilitiesModel.self, from: result)
+            return responseModel.facilities ?? []
+        } catch DecodingError.dataCorrupted(let context) {
+            print(context)
+        } catch DecodingError.keyNotFound(let key, let context) {
+            print("Key '\(key)' not found:", context.debugDescription)
+            print("codingPath:", context.codingPath)
+        } catch DecodingError.valueNotFound(let value, let context) {
+            print("Value '\(value)' not found:", context.debugDescription)
+            print("codingPath:", context.codingPath)
+        } catch DecodingError.typeMismatch(let type, let context) {
+            print("Type '\(type)' mismatch:", context.debugDescription)
+            print("codingPath:", context.codingPath)
+        } catch {
+            print("error: ", error)
+        }
+        return []
     }
     
 }
