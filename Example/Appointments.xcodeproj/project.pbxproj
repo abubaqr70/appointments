@@ -17,31 +17,6 @@
 		C6D0160C26EF2F6E00797F67 /* ReachabilityNet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015D226EF2F6D00797F67 /* ReachabilityNet.swift */; };
 		C6D0160D26EF2F6E00797F67 /* StoryBoardExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015D326EF2F6E00797F67 /* StoryBoardExtension.swift */; };
 		C6D0160E26EF2F6E00797F67 /* Designables.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015D526EF2F6E00797F67 /* Designables.swift */; };
-		C6D0160F26EF2F6E00797F67 /* FacilityAuthorizedResident.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015D926EF2F6E00797F67 /* FacilityAuthorizedResident.swift */; };
-		C6D0161026EF2F6E00797F67 /* FacilityStaff.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015DA26EF2F6E00797F67 /* FacilityStaff.swift */; };
-		C6D0161126EF2F6E00797F67 /* FacilityWebapp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015DB26EF2F6E00797F67 /* FacilityWebapp.swift */; };
-		C6D0161226EF2F6E00797F67 /* FacilityShift.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015DC26EF2F6E00797F67 /* FacilityShift.swift */; };
-		C6D0161326EF2F6E00797F67 /* FacilityNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015DD26EF2F6E00797F67 /* FacilityNote.swift */; };
-		C6D0161426EF2F6E00797F67 /* FacilityClinicalReferral.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015DE26EF2F6E00797F67 /* FacilityClinicalReferral.swift */; };
-		C6D0161526EF2F6E00797F67 /* FacilityStaffDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015DF26EF2F6E00797F67 /* FacilityStaffDetail.swift */; };
-		C6D0161626EF2F6E00797F67 /* FacilityModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015E026EF2F6E00797F67 /* FacilityModel.swift */; };
-		C6D0161726EF2F6E00797F67 /* FacilityStaffRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015E126EF2F6E00797F67 /* FacilityStaffRole.swift */; };
-		C6D0161826EF2F6E00797F67 /* FacilitySocial.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015E226EF2F6E00797F67 /* FacilitySocial.swift */; };
-		C6D0161926EF2F6E00797F67 /* FacilityPermission.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015E326EF2F6E00797F67 /* FacilityPermission.swift */; };
-		C6D0161A26EF2F6E00797F67 /* FacilityAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015E426EF2F6E00797F67 /* FacilityAuthorization.swift */; };
-		C6D0161B26EF2F6E00797F67 /* FacilityEmarConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015E526EF2F6E00797F67 /* FacilityEmarConfig.swift */; };
-		C6D0161C26EF2F6E00797F67 /* Facility.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015E626EF2F6E00797F67 /* Facility.swift */; };
-		C6D0161D26EF2F6E00797F67 /* FacilitySubWebapp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015E726EF2F6E00797F67 /* FacilitySubWebapp.swift */; };
-		C6D0161E26EF2F6E00797F67 /* FacilityDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015E826EF2F6E00797F67 /* FacilityDetail.swift */; };
-		C6D0161F26EF2F6E00797F67 /* FacilityLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015E926EF2F6E00797F67 /* FacilityLevel.swift */; };
-		C6D0162026EF2F6E00797F67 /* FacilityRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015EA26EF2F6E00797F67 /* FacilityRole.swift */; };
-		C6D0162126EF2F6E00797F67 /* FacilityUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015EB26EF2F6E00797F67 /* FacilityUser.swift */; };
-		C6D0162226EF2F6E00797F67 /* FacilityAssessment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015EC26EF2F6E00797F67 /* FacilityAssessment.swift */; };
-		C6D0162326EF2F6E00797F67 /* FacilityTenant.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015ED26EF2F6E00797F67 /* FacilityTenant.swift */; };
-		C6D0162426EF2F6E00797F67 /* FacilityRsp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015EE26EF2F6E00797F67 /* FacilityRsp.swift */; };
-		C6D0162526EF2F6E00797F67 /* FacilityTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015EF26EF2F6E00797F67 /* FacilityTag.swift */; };
-		C6D0162626EF2F6E00797F67 /* FacilityFamily.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015F026EF2F6E00797F67 /* FacilityFamily.swift */; };
-		C6D0162726EF2F6E00797F67 /* FacilityActivities2.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015F126EF2F6E00797F67 /* FacilityActivities2.swift */; };
 		C6D0162826EF2F6E00797F67 /* FacilityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015F326EF2F6E00797F67 /* FacilityViewController.swift */; };
 		C6D0162926EF2F6E00797F67 /* FacilityViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015F526EF2F6E00797F67 /* FacilityViewModel.swift */; };
 		C6D0162A26EF2F6E00797F67 /* FacilityListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015F726EF2F6E00797F67 /* FacilityListCell.swift */; };
@@ -52,6 +27,28 @@
 		C6D0163226EF30C600797F67 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C6D0160326EF2F6E00797F67 /* Main.storyboard */; };
 		C6D0163326EF315D00797F67 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C6D015C826EF2F6D00797F67 /* Assets.xcassets */; };
 		C6D0163426EF31A800797F67 /* FacilityListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = C6D015F826EF2F6E00797F67 /* FacilityListCell.xib */; };
+		C6D0164C26EF400700797F67 /* Family.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D0163626EF400500797F67 /* Family.swift */; };
+		C6D0164D26EF400700797F67 /* Staff.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D0163726EF400500797F67 /* Staff.swift */; };
+		C6D0164E26EF400700797F67 /* Details.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D0163826EF400500797F67 /* Details.swift */; };
+		C6D0164F26EF400700797F67 /* Activities2.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D0163926EF400500797F67 /* Activities2.swift */; };
+		C6D0165026EF400700797F67 /* Emar_configs.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D0163A26EF400500797F67 /* Emar_configs.swift */; };
+		C6D0165126EF400700797F67 /* Authorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D0163B26EF400500797F67 /* Authorization.swift */; };
+		C6D0165226EF400700797F67 /* SubWebapps.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D0163C26EF400600797F67 /* SubWebapps.swift */; };
+		C6D0165326EF400700797F67 /* Rsp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D0163D26EF400600797F67 /* Rsp.swift */; };
+		C6D0165426EF400700797F67 /* Levels.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D0163E26EF400600797F67 /* Levels.swift */; };
+		C6D0165526EF400700797F67 /* Assessments.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D0163F26EF400600797F67 /* Assessments.swift */; };
+		C6D0165626EF400700797F67 /* Facilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D0164026EF400600797F67 /* Facilities.swift */; };
+		C6D0165726EF400700797F67 /* ClinicalReferral.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D0164126EF400600797F67 /* ClinicalReferral.swift */; };
+		C6D0165826EF400700797F67 /* Tags.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D0164226EF400600797F67 /* Tags.swift */; };
+		C6D0165926EF400700797F67 /* Permissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D0164326EF400600797F67 /* Permissions.swift */; };
+		C6D0165A26EF400700797F67 /* Roles.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D0164426EF400700797F67 /* Roles.swift */; };
+		C6D0165B26EF400700797F67 /* Shifts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D0164526EF400700797F67 /* Shifts.swift */; };
+		C6D0165C26EF400700797F67 /* Social.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D0164626EF400700797F67 /* Social.swift */; };
+		C6D0165D26EF400700797F67 /* Notes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D0164726EF400700797F67 /* Notes.swift */; };
+		C6D0165E26EF400700797F67 /* Tenant.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D0164826EF400700797F67 /* Tenant.swift */; };
+		C6D0165F26EF400700797F67 /* FacilitiesUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D0164926EF400700797F67 /* FacilitiesUser.swift */; };
+		C6D0166026EF400700797F67 /* Authorized_residents.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D0164A26EF400700797F67 /* Authorized_residents.swift */; };
+		C6D0166126EF400700797F67 /* FacilitiesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D0164B26EF400700797F67 /* FacilitiesModel.swift */; };
 		E7D2E0497827F005E5F8AE8D /* Pods_Appointments_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7E72363FF05B2494AEAF7AF /* Pods_Appointments_Tests.framework */; };
 /* End PBXBuildFile section */
 
@@ -87,31 +84,6 @@
 		C6D015D226EF2F6D00797F67 /* ReachabilityNet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReachabilityNet.swift; sourceTree = "<group>"; };
 		C6D015D326EF2F6E00797F67 /* StoryBoardExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryBoardExtension.swift; sourceTree = "<group>"; };
 		C6D015D526EF2F6E00797F67 /* Designables.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Designables.swift; sourceTree = "<group>"; };
-		C6D015D926EF2F6E00797F67 /* FacilityAuthorizedResident.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilityAuthorizedResident.swift; sourceTree = "<group>"; };
-		C6D015DA26EF2F6E00797F67 /* FacilityStaff.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilityStaff.swift; sourceTree = "<group>"; };
-		C6D015DB26EF2F6E00797F67 /* FacilityWebapp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilityWebapp.swift; sourceTree = "<group>"; };
-		C6D015DC26EF2F6E00797F67 /* FacilityShift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilityShift.swift; sourceTree = "<group>"; };
-		C6D015DD26EF2F6E00797F67 /* FacilityNote.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilityNote.swift; sourceTree = "<group>"; };
-		C6D015DE26EF2F6E00797F67 /* FacilityClinicalReferral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilityClinicalReferral.swift; sourceTree = "<group>"; };
-		C6D015DF26EF2F6E00797F67 /* FacilityStaffDetail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilityStaffDetail.swift; sourceTree = "<group>"; };
-		C6D015E026EF2F6E00797F67 /* FacilityModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilityModel.swift; sourceTree = "<group>"; };
-		C6D015E126EF2F6E00797F67 /* FacilityStaffRole.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilityStaffRole.swift; sourceTree = "<group>"; };
-		C6D015E226EF2F6E00797F67 /* FacilitySocial.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilitySocial.swift; sourceTree = "<group>"; };
-		C6D015E326EF2F6E00797F67 /* FacilityPermission.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilityPermission.swift; sourceTree = "<group>"; };
-		C6D015E426EF2F6E00797F67 /* FacilityAuthorization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilityAuthorization.swift; sourceTree = "<group>"; };
-		C6D015E526EF2F6E00797F67 /* FacilityEmarConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilityEmarConfig.swift; sourceTree = "<group>"; };
-		C6D015E626EF2F6E00797F67 /* Facility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Facility.swift; sourceTree = "<group>"; };
-		C6D015E726EF2F6E00797F67 /* FacilitySubWebapp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilitySubWebapp.swift; sourceTree = "<group>"; };
-		C6D015E826EF2F6E00797F67 /* FacilityDetail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilityDetail.swift; sourceTree = "<group>"; };
-		C6D015E926EF2F6E00797F67 /* FacilityLevel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilityLevel.swift; sourceTree = "<group>"; };
-		C6D015EA26EF2F6E00797F67 /* FacilityRole.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilityRole.swift; sourceTree = "<group>"; };
-		C6D015EB26EF2F6E00797F67 /* FacilityUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilityUser.swift; sourceTree = "<group>"; };
-		C6D015EC26EF2F6E00797F67 /* FacilityAssessment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilityAssessment.swift; sourceTree = "<group>"; };
-		C6D015ED26EF2F6E00797F67 /* FacilityTenant.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilityTenant.swift; sourceTree = "<group>"; };
-		C6D015EE26EF2F6E00797F67 /* FacilityRsp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilityRsp.swift; sourceTree = "<group>"; };
-		C6D015EF26EF2F6E00797F67 /* FacilityTag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilityTag.swift; sourceTree = "<group>"; };
-		C6D015F026EF2F6E00797F67 /* FacilityFamily.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilityFamily.swift; sourceTree = "<group>"; };
-		C6D015F126EF2F6E00797F67 /* FacilityActivities2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilityActivities2.swift; sourceTree = "<group>"; };
 		C6D015F326EF2F6E00797F67 /* FacilityViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilityViewController.swift; sourceTree = "<group>"; };
 		C6D015F526EF2F6E00797F67 /* FacilityViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilityViewModel.swift; sourceTree = "<group>"; };
 		C6D015F726EF2F6E00797F67 /* FacilityListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilityListCell.swift; sourceTree = "<group>"; };
@@ -121,6 +93,28 @@
 		C6D015FF26EF2F6E00797F67 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		C6D0160226EF2F6E00797F67 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C6D0160426EF2F6E00797F67 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		C6D0163626EF400500797F67 /* Family.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Family.swift; sourceTree = "<group>"; };
+		C6D0163726EF400500797F67 /* Staff.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Staff.swift; sourceTree = "<group>"; };
+		C6D0163826EF400500797F67 /* Details.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Details.swift; sourceTree = "<group>"; };
+		C6D0163926EF400500797F67 /* Activities2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Activities2.swift; sourceTree = "<group>"; };
+		C6D0163A26EF400500797F67 /* Emar_configs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Emar_configs.swift; sourceTree = "<group>"; };
+		C6D0163B26EF400500797F67 /* Authorization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Authorization.swift; sourceTree = "<group>"; };
+		C6D0163C26EF400600797F67 /* SubWebapps.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubWebapps.swift; sourceTree = "<group>"; };
+		C6D0163D26EF400600797F67 /* Rsp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Rsp.swift; sourceTree = "<group>"; };
+		C6D0163E26EF400600797F67 /* Levels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Levels.swift; sourceTree = "<group>"; };
+		C6D0163F26EF400600797F67 /* Assessments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Assessments.swift; sourceTree = "<group>"; };
+		C6D0164026EF400600797F67 /* Facilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Facilities.swift; sourceTree = "<group>"; };
+		C6D0164126EF400600797F67 /* ClinicalReferral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClinicalReferral.swift; sourceTree = "<group>"; };
+		C6D0164226EF400600797F67 /* Tags.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tags.swift; sourceTree = "<group>"; };
+		C6D0164326EF400600797F67 /* Permissions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Permissions.swift; sourceTree = "<group>"; };
+		C6D0164426EF400700797F67 /* Roles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Roles.swift; sourceTree = "<group>"; };
+		C6D0164526EF400700797F67 /* Shifts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Shifts.swift; sourceTree = "<group>"; };
+		C6D0164626EF400700797F67 /* Social.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Social.swift; sourceTree = "<group>"; };
+		C6D0164726EF400700797F67 /* Notes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notes.swift; sourceTree = "<group>"; };
+		C6D0164826EF400700797F67 /* Tenant.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tenant.swift; sourceTree = "<group>"; };
+		C6D0164926EF400700797F67 /* FacilitiesUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilitiesUser.swift; sourceTree = "<group>"; };
+		C6D0164A26EF400700797F67 /* Authorized_residents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Authorized_residents.swift; sourceTree = "<group>"; };
+		C6D0164B26EF400700797F67 /* FacilitiesModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilitiesModel.swift; sourceTree = "<group>"; };
 		E9BDCD2539B0616F8A2FBF9A /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		F017152A94D2E4586EAA5AF7 /* Pods-Appointments_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Appointments_Example.debug.xcconfig"; path = "Target Support Files/Pods-Appointments_Example/Pods-Appointments_Example.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -295,31 +289,28 @@
 		C6D015D826EF2F6E00797F67 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				C6D015D926EF2F6E00797F67 /* FacilityAuthorizedResident.swift */,
-				C6D015DA26EF2F6E00797F67 /* FacilityStaff.swift */,
-				C6D015DB26EF2F6E00797F67 /* FacilityWebapp.swift */,
-				C6D015DC26EF2F6E00797F67 /* FacilityShift.swift */,
-				C6D015DD26EF2F6E00797F67 /* FacilityNote.swift */,
-				C6D015DE26EF2F6E00797F67 /* FacilityClinicalReferral.swift */,
-				C6D015DF26EF2F6E00797F67 /* FacilityStaffDetail.swift */,
-				C6D015E026EF2F6E00797F67 /* FacilityModel.swift */,
-				C6D015E126EF2F6E00797F67 /* FacilityStaffRole.swift */,
-				C6D015E226EF2F6E00797F67 /* FacilitySocial.swift */,
-				C6D015E326EF2F6E00797F67 /* FacilityPermission.swift */,
-				C6D015E426EF2F6E00797F67 /* FacilityAuthorization.swift */,
-				C6D015E526EF2F6E00797F67 /* FacilityEmarConfig.swift */,
-				C6D015E626EF2F6E00797F67 /* Facility.swift */,
-				C6D015E726EF2F6E00797F67 /* FacilitySubWebapp.swift */,
-				C6D015E826EF2F6E00797F67 /* FacilityDetail.swift */,
-				C6D015E926EF2F6E00797F67 /* FacilityLevel.swift */,
-				C6D015EA26EF2F6E00797F67 /* FacilityRole.swift */,
-				C6D015EB26EF2F6E00797F67 /* FacilityUser.swift */,
-				C6D015EC26EF2F6E00797F67 /* FacilityAssessment.swift */,
-				C6D015ED26EF2F6E00797F67 /* FacilityTenant.swift */,
-				C6D015EE26EF2F6E00797F67 /* FacilityRsp.swift */,
-				C6D015EF26EF2F6E00797F67 /* FacilityTag.swift */,
-				C6D015F026EF2F6E00797F67 /* FacilityFamily.swift */,
-				C6D015F126EF2F6E00797F67 /* FacilityActivities2.swift */,
+				C6D0163926EF400500797F67 /* Activities2.swift */,
+				C6D0163F26EF400600797F67 /* Assessments.swift */,
+				C6D0163B26EF400500797F67 /* Authorization.swift */,
+				C6D0164A26EF400700797F67 /* Authorized_residents.swift */,
+				C6D0164126EF400600797F67 /* ClinicalReferral.swift */,
+				C6D0163826EF400500797F67 /* Details.swift */,
+				C6D0163A26EF400500797F67 /* Emar_configs.swift */,
+				C6D0164026EF400600797F67 /* Facilities.swift */,
+				C6D0163626EF400500797F67 /* Family.swift */,
+				C6D0164B26EF400700797F67 /* FacilitiesModel.swift */,
+				C6D0163E26EF400600797F67 /* Levels.swift */,
+				C6D0164726EF400700797F67 /* Notes.swift */,
+				C6D0164326EF400600797F67 /* Permissions.swift */,
+				C6D0164426EF400700797F67 /* Roles.swift */,
+				C6D0163D26EF400600797F67 /* Rsp.swift */,
+				C6D0164526EF400700797F67 /* Shifts.swift */,
+				C6D0164626EF400700797F67 /* Social.swift */,
+				C6D0163726EF400500797F67 /* Staff.swift */,
+				C6D0163C26EF400600797F67 /* SubWebapps.swift */,
+				C6D0164226EF400600797F67 /* Tags.swift */,
+				C6D0164826EF400700797F67 /* Tenant.swift */,
+				C6D0164926EF400700797F67 /* FacilitiesUser.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -549,33 +540,23 @@
 				"${PODS_ROOT}/Target Support Files/Pods-Appointments_Example/Pods-Appointments_Example-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/Appointments/Appointments.framework",
-				"${BUILT_PRODUCTS_DIR}/IQKeyboardManagerSwift/IQKeyboardManagerSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/JVFloatLabeledTextField/JVFloatLabeledTextField.framework",
 				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
 				"${BUILT_PRODUCTS_DIR}/RxRelay/RxRelay.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwiftExt/RxSwiftExt.framework",
-				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
 				"${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftMessages/SwiftMessages.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
-				"${BUILT_PRODUCTS_DIR}/Toast-Swift/Toast_Swift.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Appointments.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/IQKeyboardManagerSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JVFloatLabeledTextField.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxRelay.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwiftExt.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SVProgressHUD.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftMessages.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Toast_Swift.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -589,45 +570,42 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C6D0162126EF2F6E00797F67 /* FacilityUser.swift in Sources */,
-				C6D0160F26EF2F6E00797F67 /* FacilityAuthorizedResident.swift in Sources */,
-				C6D0162726EF2F6E00797F67 /* FacilityActivities2.swift in Sources */,
-				C6D0162426EF2F6E00797F67 /* FacilityRsp.swift in Sources */,
+				C6D0165226EF400700797F67 /* SubWebapps.swift in Sources */,
+				C6D0164F26EF400700797F67 /* Activities2.swift in Sources */,
+				C6D0165A26EF400700797F67 /* Roles.swift in Sources */,
 				C6D0160C26EF2F6E00797F67 /* ReachabilityNet.swift in Sources */,
-				C6D0161C26EF2F6E00797F67 /* Facility.swift in Sources */,
+				C6D0165726EF400700797F67 /* ClinicalReferral.swift in Sources */,
+				C6D0165626EF400700797F67 /* Facilities.swift in Sources */,
 				C6D0160D26EF2F6E00797F67 /* StoryBoardExtension.swift in Sources */,
-				C6D0162626EF2F6E00797F67 /* FacilityFamily.swift in Sources */,
-				C6D0162026EF2F6E00797F67 /* FacilityRole.swift in Sources */,
+				C6D0165026EF400700797F67 /* Emar_configs.swift in Sources */,
 				C6D0162826EF2F6E00797F67 /* FacilityViewController.swift in Sources */,
 				C6D0162A26EF2F6E00797F67 /* FacilityListCell.swift in Sources */,
-				C6D0161B26EF2F6E00797F67 /* FacilityEmarConfig.swift in Sources */,
+				C6D0165B26EF400700797F67 /* Shifts.swift in Sources */,
 				C6D0160626EF2F6E00797F67 /* AppDelegate.swift in Sources */,
-				C6D0161F26EF2F6E00797F67 /* FacilityLevel.swift in Sources */,
-				C6D0162326EF2F6E00797F67 /* FacilityTenant.swift in Sources */,
-				C6D0161626EF2F6E00797F67 /* FacilityModel.swift in Sources */,
-				C6D0161826EF2F6E00797F67 /* FacilitySocial.swift in Sources */,
+				C6D0165326EF400700797F67 /* Rsp.swift in Sources */,
+				C6D0165526EF400700797F67 /* Assessments.swift in Sources */,
+				C6D0165426EF400700797F67 /* Levels.swift in Sources */,
+				C6D0165F26EF400700797F67 /* FacilitiesUser.swift in Sources */,
+				C6D0165C26EF400700797F67 /* Social.swift in Sources */,
+				C6D0166126EF400700797F67 /* FacilitiesModel.swift in Sources */,
 				C6D0160A26EF2F6E00797F67 /* BaseViewController.swift in Sources */,
+				C6D0165E26EF400700797F67 /* Tenant.swift in Sources */,
 				C6D0162D26EF2F6E00797F67 /* User.swift in Sources */,
-				C6D0161726EF2F6E00797F67 /* FacilityStaffRole.swift in Sources */,
-				C6D0161A26EF2F6E00797F67 /* FacilityAuthorization.swift in Sources */,
-				C6D0161326EF2F6E00797F67 /* FacilityNote.swift in Sources */,
-				C6D0161226EF2F6E00797F67 /* FacilityShift.swift in Sources */,
-				C6D0162526EF2F6E00797F67 /* FacilityTag.swift in Sources */,
+				C6D0164E26EF400700797F67 /* Details.swift in Sources */,
+				C6D0165126EF400700797F67 /* Authorization.swift in Sources */,
+				C6D0165D26EF400700797F67 /* Notes.swift in Sources */,
 				C6D0162E26EF2F6E00797F67 /* LoginViewController.swift in Sources */,
+				C6D0164C26EF400700797F67 /* Family.swift in Sources */,
 				C6D0160926EF2F6E00797F67 /* ApiManager.swift in Sources */,
+				C6D0164D26EF400700797F67 /* Staff.swift in Sources */,
 				C6D0160E26EF2F6E00797F67 /* Designables.swift in Sources */,
 				C6D0162926EF2F6E00797F67 /* FacilityViewModel.swift in Sources */,
-				C6D0161126EF2F6E00797F67 /* FacilityWebapp.swift in Sources */,
-				C6D0161D26EF2F6E00797F67 /* FacilitySubWebapp.swift in Sources */,
-				C6D0161426EF2F6E00797F67 /* FacilityClinicalReferral.swift in Sources */,
+				C6D0165926EF400700797F67 /* Permissions.swift in Sources */,
 				C6D0162C26EF2F6E00797F67 /* LoginViewModel.swift in Sources */,
-				C6D0161526EF2F6E00797F67 /* FacilityStaffDetail.swift in Sources */,
-				C6D0162226EF2F6E00797F67 /* FacilityAssessment.swift in Sources */,
-				C6D0161926EF2F6E00797F67 /* FacilityPermission.swift in Sources */,
-				C6D0161026EF2F6E00797F67 /* FacilityStaff.swift in Sources */,
+				C6D0165826EF400700797F67 /* Tags.swift in Sources */,
+				C6D0166026EF400700797F67 /* Authorized_residents.swift in Sources */,
 				C6D0160B26EF2F6E00797F67 /* Functions.swift in Sources */,
 				C6D0160826EF2F6E00797F67 /* Constant.swift in Sources */,
-				C6D0161E26EF2F6E00797F67 /* FacilityDetail.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -3,7 +3,6 @@
 import UIKit
 import RxSwift
 import Alamofire
-import SwiftyJSON
 
 class LoginViewController: BaseViewController {
     
@@ -20,7 +19,7 @@ class LoginViewController: BaseViewController {
         bindInputs(viewModel: viewModel)
         bindOutputs(viewModel: viewModel)
         bindButonTap(viewModel: viewModel)
-
+        
     }
     
 }
@@ -50,26 +49,9 @@ extension LoginViewController {
             if result{
                 self.changeRootViewController(identifier: "FacilityViewController")
             }else {
-                let alert = UIAlertController(title: "Alert", message: "You enter invalid credentials.", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
-                    switch action.style{
-                    case .default:
-                        print("default")
-                        
-                    case .cancel:
-                        print("cancel")
-                        
-                    case .destructive:
-                        print("destructive")
-                        
-                    }
-                }))
-                self.present(alert, animated: true, completion: nil)
+                Functions.showAlert(message: "You enter invalid credentials.")
             }
         }).disposed(by: disposeBag)
-       
     }
     
-    
-   
 }

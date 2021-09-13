@@ -4,13 +4,9 @@ import Foundation
 import UIKit
 import RxSwift
 import RxCocoa
-import RxSwiftExt
-import SwiftyJSON
-
-
 
 protocol FacilityViewModelOutputs {
-    var facilitiesObservable : Observable<[Facility]>{get}
+    var facilitiesObservable : Observable<[Facilities]>{get}
 }
 
 protocol FacilityViewModelType {
@@ -22,11 +18,11 @@ class FacilityViewModel : FacilityViewModelType,FacilityViewModelOutputs{
     var outputs: FacilityViewModelOutputs { return self }
 
     //Mark:- Outputs
-    var facilitiesObservable: Observable<[Facility]>{ return facilities.asObservable()}
+    var facilitiesObservable: Observable<[Facilities]>{ return facilities.asObservable()}
     
     //Mark:- Private Properties
     private var disposeBag = DisposeBag()
-    private var facilities = BehaviorSubject<[Facility]>(value: [Facility]())
+    private var facilities = BehaviorSubject<[Facilities]>(value: [Facilities]())
 
     init() {
         bindFacilities()
@@ -38,9 +34,8 @@ class FacilityViewModel : FacilityViewModelType,FacilityViewModelOutputs{
             Functions.hideActivity()
             switch result {
             case .success(let result):
-                let json = JSON(result.value as Any)
-                print(json)
-                Functions.saveJSON(json: json, key: "facilities")
+                let newjson = try? JSONSerialization.data(withJSONObject: result.value as Any, options: .prettyPrinted)
+                Functions.saveJSON(json: newjson ?? Data(), key: "facilities")
                 self.bindFacilities()
             case .failure(let error):
                 print(error)
@@ -54,17 +49,15 @@ class FacilityViewModel : FacilityViewModelType,FacilityViewModelOutputs{
             Functions.showActivity()
         }else{
             self.facilities.onNext(
-                intializeModel(with: newJson ?? JSON())
+                intializeModel(with: newJson! as Data)
             )
         }
     }
     
-    func intializeModel(with result: JSON) -> [Facility]{
-        var facilities = [Facility]()
-        for facility in result["facilities"].arrayValue{
-            facilities.append(Facility(fromJson: facility))
-        }
-        return facilities
+    func intializeModel(with result: Data) -> [Facilities]{
+        let jsonDecoder = JSONDecoder()
+        let responseModel = try? jsonDecoder.decode(FacilitiesModel.self, from: result)
+        return responseModel?.facilities ?? []
     }
     
 }

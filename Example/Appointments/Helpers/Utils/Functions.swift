@@ -2,13 +2,7 @@
 
 import Foundation
 import UIKit
-import Toast_Swift
 import SVProgressHUD
-import SwiftyJSON
-import SafariServices
-import SwiftMessages
-
-
 
 enum ToastType {
     case success
@@ -19,32 +13,18 @@ enum ToastType {
 class Functions: NSObject {
     
     
-    class func saveJSON(json: JSON, key:String){
-        if let jsonString = json.rawString() {
-            UserDefaults.standard.setValue(jsonString, forKey: key)
-        }
+    class func saveJSON(json: Data, key:String){
+        UserDefaults.standard.setValue(json, forKey: key)
     }
     
     class func removeJson(key:String){
-            UserDefaults.standard.setValue(nil, forKey: key)
+        UserDefaults.standard.setValue(nil, forKey: key)
     }
     
-    class func getJSON(_ key: String)-> JSON? {
-        var p = ""
-        if let result = UserDefaults.standard.string(forKey: key) {
-            p = result
-        }
-        if p != "" {
-            if let json = p.data(using: String.Encoding.utf8, allowLossyConversion: false) {
-                do {
-                    return try JSON(data: json)
-                } catch {
-                    return nil
-                }
-            } else {
-                return nil
-            }
-        } else {
+    class func getJSON(_ key: String)-> Data? {
+        if let result = UserDefaults.standard.data(forKey: key) {
+            return result
+        }else {
             return nil
         }
     }
@@ -67,47 +47,7 @@ class Functions: NSObject {
         let emailPred = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
         return emailPred.evaluate(with: emailStr)
     }
-
-    static func showToast(message:String,type:ToastType = .warning,duration:Double = 2.0 ,position:ToastPosition = .center){
-        if !Thread.isMainThread { //run only from main thread
-            DispatchQueue.main.async {
-                Functions.showToast(message: message, type: type, duration: duration, position: position)
-            }
-            
-            return
-        }
-        
-        var style = ToastStyle()
-        // this is just one of many style options
-        //style.messageColor = .blue
-        
-        if type == .success{
-            style.backgroundColor = UIColor(named: "GreenColour") ?? .green
-        }else if type == .failure{
-            style.backgroundColor = .systemRed
-        }else if type == .warning{
-            style.backgroundColor = .systemBlue
-            
-        }
-        //ToastManager.shared.style = style
-        
-        
-        guard let window = UIApplication.shared.windows.filter({$0.isKeyWindow}).first else { return }
-        window.hideAllToasts()
-        
-        // window.makeToast(message, duration: duration, position: position)
-        
-        window.makeToast(message, duration: duration, position: position, title: nil, image: nil, style: style) { (didTap) in
-            if didTap {
-                window.hideAllToasts()
-            } else {
-                print("completion without tap")
-            }
-            
-        }
-        
-        
-    }
+    
     static func showActivity(progres:Double = 0.0){
         if progres == 0.0{
             SVProgressHUD.show()
@@ -123,44 +63,30 @@ class Functions: NSObject {
     static func hideActivity(){
         SVProgressHUD.dismiss()
     }
-   
-    static func noInternetConnection(status:Bool){
-        
-        if status == true{
-            SwiftMessages.hideAll()
-            SwiftMessages.pauseBetweenMessages = 0.0
-            
-            let view: MessageView
-            view = try! SwiftMessages.viewFromNib()
-            
-            view.configureContent(title: "", body: "Please check your internet connection", iconImage: nil, iconText: nil, buttonImage: nil, buttonTitle: "", buttonTapHandler: { _ in
-                
-                SwiftMessages.hide()
-                
-            })
-            view.accessibilityPrefix = "error"
-            view.configureDropShadow()
-            view.button?.isHidden = true
-            
-            var config = SwiftMessages.defaultConfig
-            config.presentationStyle = .top
-            config.presentationContext = .window(windowLevel: .statusBar)
-            config.preferredStatusBarStyle = .lightContent
-            config.interactiveHide = false
-            config.duration = .forever
-            view.configureTheme(backgroundColor: UIColor.red, foregroundColor: UIColor.white, iconImage: nil, iconText: nil)
-            
-            config.dimMode = .gray(interactive: true)
-            SwiftMessages.show(config: config, view: view)
-            
-        }else{
-            SwiftMessages.hide()
-            SwiftMessages.hideAll()
-            SwiftMessages.pauseBetweenMessages = 0.0
-        }
-        
-    }
 
+    
+    static func showAlert(message : String){
+        let alert = UIAlertController(title: "POCIOS", message: message, preferredStyle: UIAlertController.Style.alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler: nil))
+        UIApplication.topViewController()?.present(alert, animated: true, completion: nil)
+    }
+    
 }
 
 
+extension UIApplication {
+    class func topViewController(controller: UIViewController? = UIApplication.shared.keyWindow?.rootViewController) -> UIViewController? {
+        if let navigationController = controller as? UINavigationController {
+            return topViewController(controller: navigationController.visibleViewController)
+        }
+        if let tabController = controller as? UITabBarController {
+            if let selected = tabController.selectedViewController {
+                return topViewController(controller: selected)
+            }
+        }
+        if let presented = controller?.presentedViewController {
+            return topViewController(controller: presented)
+        }
+        return controller
+    }
+}

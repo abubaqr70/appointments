@@ -2,7 +2,6 @@
 
 import UIKit
 import RxSwift
-import SwiftyJSON
 
 class FacilityListCell: UITableViewCell {
 
@@ -10,19 +9,19 @@ class FacilityListCell: UITableViewCell {
     @IBOutlet weak var facilityAddress: UILabel!
     
     let disposeBag = DisposeBag()
-    let facility = BehaviorSubject<Facility>(value: Facility(fromJson: JSON()))
+    let facility = PublishSubject<Facilities>()
     
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
         facility.map({
             facility in
-            facility.vName
+            facility.v_name
         }).bind(to: facilityName.rx.text).disposed(by: disposeBag)
         
         facility.map({
             facility in
-            "\(facility.vCity ?? ""), \(facility.vState ?? "")"
+            "\(facility.v_city ?? ""), \(facility.v_state ?? "")"
         }).bind(to: facilityAddress.rx.text).disposed(by: disposeBag)
     }
 

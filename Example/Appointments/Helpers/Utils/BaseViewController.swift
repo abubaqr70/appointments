@@ -2,7 +2,6 @@
 
 import Foundation
 import UIKit
-import SwiftyJSON
 
 class BaseViewController: UIViewController {
     

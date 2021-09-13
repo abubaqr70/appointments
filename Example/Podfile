@@ -10,16 +10,10 @@ target 'Appointments_Example' do
   pod 'RxCocoa'
   pod 'RxSwiftExt'
   pod 'Alamofire'
-  pod 'IQKeyboardManagerSwift', '~> 6.5.5'
   pod 'JVFloatLabeledTextField'
-  pod 'SDWebImage'
-  pod 'SwiftyJSON'
-  pod 'Toast-Swift'
   pod 'SVProgressHUD'
-  pod 'SwiftMessages'
   target 'Appointments_Tests' do
     inherit! :search_paths
-
     
   end
 end

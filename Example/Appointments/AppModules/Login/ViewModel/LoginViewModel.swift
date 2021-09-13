@@ -5,7 +5,6 @@ import UIKit
 import RxSwift
 import RxCocoa
 import RxSwiftExt
-import SwiftyJSON
 
 protocol LoginViewModelInputs {
     var usernameTextObserver : AnyObserver<String>{get}
@@ -24,7 +23,7 @@ protocol LoginViewModelType {
 }
 
 class LoginViewModel : LoginViewModelType,LoginViewModelInputs,LoginViewModelOutputs{
-
+    
     private var context : UIViewController?
     
     var inputs: LoginViewModelInputs { return self }
@@ -37,7 +36,7 @@ class LoginViewModel : LoginViewModelType,LoginViewModelInputs,LoginViewModelOut
     //Mark:- Outputs
     var isLoginValidObservable: Observable<Bool>{ return isLoginValid.asObservable()}
     var loginSuccessObservable: Observable<Bool>{ return loginSuccess.asObservable()}
-   
+    
     //Mark:- Private Properties
     private var disposeBag = DisposeBag()
     private var username = BehaviorSubject<String>(value: "")
@@ -87,11 +86,9 @@ class LoginViewModel : LoginViewModelType,LoginViewModelInputs,LoginViewModelOut
                     print("response headers",result.response?.allHeaderFields["x-care-merge-api-token"] as Any)
                     UserDefaults.standard.set(result.response?.allHeaderFields["x-care-merge-api-token"], forKey: "api_key")
                 }
-                let json = JSON(result.value as Any)
-                print(json)
-                Functions.saveJSON(json: json, key: "user_detail")
+                let newjson = try? JSONSerialization.data(withJSONObject: result.value as Any, options: .prettyPrinted)
+                Functions.saveJSON(json: newjson ?? Data(), key: "user_detail")
                 self.loginSuccess.onNext(true)
-//                    print(result)
             case .failure(let error):
                 self.loginSuccess.onNext(false)
                 print(error)

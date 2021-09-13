@@ -1,41 +1,56 @@
 // Copyright © 2021 Caremerge. All rights reserved.
 
 import Foundation
-import SwiftyJSON
 
-struct User{
-    var iDisclaimer : Int!
-    var iStatus : Bool!
-    var id : Int!
-    var passwordExpired : Bool!
-    var profileImageRoute : String!
-    var vApiKey : String!
-    var vEmail : String!
-    var vFirstName : String!
-    var vLastName : String!
-    var vPicture : String!
-    var vRoleTitle : String!
-    var vUsername : String!
+struct User : Codable{
     
-    /**
-     * Instantiate the instance using the passed json values to set the properties values
-     */
-    init(fromJson json: JSON!){
-        if json.isEmpty{
-            return
-        }
-        iDisclaimer = json["i_disclaimer"].intValue
-        iStatus = json["i_status"].boolValue
-        id = json["id"].intValue
-        passwordExpired = json["passwordExpired"].boolValue
-        profileImageRoute = json["profileImageRoute"].stringValue
-        vApiKey = json["v_api_key"].stringValue
-        vEmail = json["v_email"].stringValue
-        vFirstName = json["v_first_name"].stringValue
-        vLastName = json["v_last_name"].stringValue
-        vPicture = json["v_picture"].stringValue
-        vRoleTitle = json["v_role_title"].stringValue
-        vUsername = json["v_username"].stringValue
+    let iDisclaimer : Int?
+    let iStatus : Bool?
+    let id : Int?
+    let passwordExpired : Bool?
+    let profileImageRoute : String?
+    let vApiKey : String?
+    let vEmail : String?
+    let vFirstName : String?
+    let vLastName : String?
+    let vPicture : String?
+    let vRoleTitle : String?
+    let vUsername : String?
+    
+    enum  CodingKeys : String, CodingKey  {
+        
+        case iDisclaimer = "i_disclaimer"
+        case iStatus = "i_status"
+        case id = "id"
+        case passwordExpired = "passwordExpired"
+        case profileImageRoute = "profileImageRoute"
+        case vApiKey = "v_api_key"
+        case vEmail = "v_email"
+        case vFirstName = "v_first_name"
+        case vLastName = "v_last_name"
+        case vPicture = "v_picture"
+        case vRoleTitle = "v_role_title"
+        case vUsername = "v_username"
+        
     }
     
+}
+
+extension User {
+    
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        iDisclaimer = try values.decodeIfPresent(Int.self, forKey: .iDisclaimer)
+        iStatus = try values.decodeIfPresent(Bool.self, forKey: .iStatus)
+        id = try values.decodeIfPresent(Int.self, forKey: .id)
+        passwordExpired = try values.decodeIfPresent(Bool.self, forKey: .passwordExpired)
+        profileImageRoute = try values.decodeIfPresent(String.self, forKey: .profileImageRoute)
+        vApiKey = try values.decodeIfPresent(String.self, forKey: .vApiKey)
+        vEmail = try values.decodeIfPresent(String.self, forKey: .vEmail)
+        vFirstName = try values.decodeIfPresent(String.self, forKey: .vFirstName)
+        vLastName = try values.decodeIfPresent(String.self, forKey: .vLastName)
+        vPicture = try values.decodeIfPresent(String.self, forKey: .vPicture)
+        vRoleTitle = try values.decodeIfPresent(String.self, forKey: .vRoleTitle)
+        vUsername = try values.decodeIfPresent(String.self, forKey: .vUsername)
+    }
 }

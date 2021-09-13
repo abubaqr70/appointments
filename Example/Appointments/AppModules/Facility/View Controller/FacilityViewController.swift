@@ -3,7 +3,6 @@
 import UIKit
 import RxSwift
 import RxCocoa
-import SwiftyJSON
 
 class FacilityViewController: BaseViewController {
     
@@ -25,7 +24,7 @@ class FacilityViewController: BaseViewController {
         addSearchBarObserver()
         Observable.combineLatest(viewModel.outputs.facilitiesObservable, searchText) { facilities, query in
             return facilities.filter({ facility in
-                query.isEmpty || facility.vName.lowercased().contains(query.lowercased())
+                query.isEmpty || facility.v_name?.lowercased().contains(query.lowercased()) ?? false
             })
         }.bind(to: facilityTblView.rx.items(cellIdentifier: "FacilityListCell", cellType: FacilityListCell.self)){
             index, tableViewItem, cell in

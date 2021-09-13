@@ -3,30 +3,27 @@
 import Foundation
 import UIKit
 import Alamofire
-import SwiftyJSON
 
 enum VoidResult {
     case success(result:AFDataResponse<Any>)
     case failure(NSError)
 }
 
-
-
 struct errorCode{
     /**
      501 mean session expired. Need to login again
      */
     static var loginAgain = 501
-    
     /**
      200 mean sucess response
      */
     static var success = 200
-    
+    /**
+     401 mean invalid credentials
+     */
     static var permissionDenied = 401
     
 }
-
 
 class ApiManager: NSObject {
     
@@ -60,13 +57,16 @@ class ApiManager: NSObject {
                     } else {
                         fatalError("No error, no failure")
                     }
-                }else{
+                }else if response.response?.statusCode == errorCode.permissionDenied {
                     Functions.hideActivity()
-                    Functions.showToast(message: "Server is not responding.", type: .failure, duration: 3.0, position: .center)
+                    Functions.showAlert(message: "Invalid credentials. Please try again.")
+                }else {
+                    Functions.hideActivity()
+                    Functions.showAlert(message: "Server is not responding.")
                 }
             }
         }else{
-            Functions.noInternetConnection(status: true)
+            Functions.showAlert(message: "No Internet Connection.")
         }
     }
     
@@ -86,13 +86,16 @@ class ApiManager: NSObject {
                     } else {
                         fatalError("No error, no failure")
                     }
+                }else if response.response?.statusCode == errorCode.permissionDenied {
+                    Functions.hideActivity()
+                    Functions.showAlert(message: "Invalid credentials. Please try again.")
                 }else{
                     Functions.hideActivity()
-                    Functions.showToast(message: "Server is not responding.", type: .failure, duration: 3.0, position: .center)
+                    Functions.showAlert(message: "Server is not responding.")
                 }
             }
         }else{
-            Functions.noInternetConnection(status: true)
+            Functions.showAlert(message: "No Internet Connection.")
         }
         
     }
@@ -103,7 +106,6 @@ class ApiManager: NSObject {
         
         return components?.url?.absoluteString
     }
-    
     
 }
 

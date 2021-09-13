@@ -4,7 +4,6 @@ import Foundation
 import AVFoundation
 import SystemConfiguration
 
-
 public class ReachabilityNet {
     
     class func isConnectedToNetwork() -> Bool {
