@@ -232,7 +232,7 @@ extension AppointmentsViewController: UITableViewDelegate,UITableViewDataSource 
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: AppoitmentsListCell.reuseIdentifier, for: indexPath) as? AppointmentTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: AppointmentTableViewCell.reuseIdentifier, for: indexPath) as? AppointmentTableViewCell
         return cell!
     }
     
