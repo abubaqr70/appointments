@@ -165,7 +165,7 @@ extension AppointmentsViewController{
     
     private func registersCells() {
         tableView.register(HeaderTableViewCell.self, forCellReuseIdentifier: HeaderTableViewCell.reuseIdentifier)
-        tableView.register(AppoitmentsListCell.self, forCellReuseIdentifier: AppoitmentsListCell.reuseIdentifier)
+        tableView.register(AppointmentTableViewCell.self, forCellReuseIdentifier: AppointmentTableViewCell.reuseIdentifier)
     }
     
 }
@@ -232,7 +232,7 @@ extension AppointmentsViewController: UITableViewDelegate,UITableViewDataSource 
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: AppoitmentsListCell.reuseIdentifier, for: indexPath) as? AppoitmentsListCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: AppoitmentsListCell.reuseIdentifier, for: indexPath) as? AppointmentTableViewCell
         return cell!
     }
     
