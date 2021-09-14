@@ -4,7 +4,7 @@ import UIKit
 import RxCocoa
 import RxSwift
 
-class AppoitmentsListCell: RxUITableViewCell {
+class AppointmentTableViewCell: RxUITableViewCell {
     
     fileprivate lazy var name_label: UILabel = {
         let label = UILabel()
@@ -20,7 +20,7 @@ class AppoitmentsListCell: RxUITableViewCell {
         let label = UILabel()
         label.text = "Room #101"
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = UIColor(named: "color_app_dark_gray", in: Bundle(for: AppoitmentsListCell.self), compatibleWith: .none)
+        label.textColor = UIColor(named: "color_app_dark_gray", in: Bundle(for: AppointmentTableViewCell.self), compatibleWith: .none)
         label.font = UIFont.appFont(withStyle: .title3, size: 14)
         label.numberOfLines = 4
         return label
@@ -39,7 +39,7 @@ class AppoitmentsListCell: RxUITableViewCell {
     fileprivate lazy var staff_label: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = UIColor(named: "color_app_dark_gray", in: Bundle(for: AppoitmentsListCell.self), compatibleWith: .none)
+        label.textColor = UIColor(named: "color_app_dark_gray", in: Bundle(for: AppointmentTableViewCell.self), compatibleWith: .none)
         label.text = "Staff"
         label.font = UIFont.appFont(withStyle: .title3, size: 14)
         label.numberOfLines = 4
@@ -48,7 +48,7 @@ class AppoitmentsListCell: RxUITableViewCell {
     
     fileprivate lazy var profile_image : UIImageView = {
         let view = UIImageView(frame: CGRect.zero)
-        view.image = UIImage(named: "image_profile_placeholder", in: Bundle(for: AppoitmentsListCell.self), compatibleWith: .none)
+        view.image = UIImage(named: "image_profile_placeholder", in: Bundle(for: AppointmentTableViewCell.self), compatibleWith: .none)
         view.backgroundColor = UIColor.white
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 20
@@ -60,15 +60,15 @@ class AppoitmentsListCell: RxUITableViewCell {
         let checkbox_button = UIButton(frame: CGRect.zero)
         checkbox_button.backgroundColor = UIColor.white
         checkbox_button.translatesAutoresizingMaskIntoConstraints = false
-        checkbox_button.setImage(UIImage(named: "icon_checkbox_unselected", in: Bundle(for: AppoitmentsListCell.self), compatibleWith: .none), for: .normal)
-        checkbox_button.setImage(UIImage(named: "icon_checkbox_selected", in: Bundle(for: AppoitmentsListCell.self), compatibleWith: .none), for: .selected)
+        checkbox_button.setImage(UIImage(named: "icon_checkbox_unselected", in: Bundle(for: AppointmentTableViewCell.self), compatibleWith: .none), for: .normal)
+        checkbox_button.setImage(UIImage(named: "icon_checkbox_selected", in: Bundle(for: AppointmentTableViewCell.self), compatibleWith: .none), for: .selected)
         checkbox_button.imageEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         return checkbox_button
     }()
     
     fileprivate lazy var arrow_image : UIImageView = {
         let view = UIImageView(frame: CGRect.zero)
-        view.image = UIImage(named: "icon_date_right", in: Bundle(for: AppoitmentsListCell.self), compatibleWith: .none)
+        view.image = UIImage(named: "icon_date_right", in: Bundle(for: AppointmentTableViewCell.self), compatibleWith: .none)
         view.backgroundColor = UIColor.white
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -76,7 +76,7 @@ class AppoitmentsListCell: RxUITableViewCell {
     
     fileprivate lazy var line_view : UIView = {
         let view = UIView(frame: CGRect.zero)
-        view.backgroundColor = UIColor(named: "color_app_light_gray", in: Bundle(for: AppoitmentsListCell.self), compatibleWith: .none)
+        view.backgroundColor = UIColor(named: "color_app_light_gray", in: Bundle(for: AppointmentTableViewCell.self), compatibleWith: .none)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -145,7 +145,7 @@ class AppoitmentsListCell: RxUITableViewCell {
         button_appointments_view.addSubview(checkbox_button)
         button_appointments_view.addSubview(appointment_description_label)
         button_appointments_view.addSubview(staff_label)
-        contentView.backgroundColor = UIColor(named: "color_app_light_gray", in: Bundle(for: AppoitmentsListCell.self), compatibleWith: .none)
+        contentView.backgroundColor = UIColor(named: "color_app_light_gray", in: Bundle(for: AppointmentTableViewCell.self), compatibleWith: .none)
     }
     
     private func setupConstraints() {

@@ -297,8 +297,8 @@
 			isa = PBXGroup;
 			children = (
 				C6D015D826EF2F6E00797F67 /* Models */,
-				C6D015F226EF2F6E00797F67 /* View Controller */,
-				C6D015F426EF2F6E00797F67 /* View Model */,
+				C6D015F226EF2F6E00797F67 /* ViewController */,
+				C6D015F426EF2F6E00797F67 /* ViewModel */,
 				C6D015F626EF2F6E00797F67 /* Views */,
 			);
 			path = Facility;
@@ -333,20 +333,20 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
-		C6D015F226EF2F6E00797F67 /* View Controller */ = {
+		C6D015F226EF2F6E00797F67 /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
 				C6D015F326EF2F6E00797F67 /* FacilityViewController.swift */,
 			);
-			path = "View Controller";
+			path = ViewController;
 			sourceTree = "<group>";
 		};
-		C6D015F426EF2F6E00797F67 /* View Model */ = {
+		C6D015F426EF2F6E00797F67 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
 				C6D015F526EF2F6E00797F67 /* FacilityViewModel.swift */,
 			);
-			path = "View Model";
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		C6D015F626EF2F6E00797F67 /* Views */ = {
