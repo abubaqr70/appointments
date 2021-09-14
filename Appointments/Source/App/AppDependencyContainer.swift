@@ -3,20 +3,28 @@
 import Foundation
 
 
-public protocol SessionDataStore {
-    func readUserSession() -> String
-}
-
 class AppDependencyContainer {
     
     private let baseURL: String
-    private let sessionDataStore: SessionDataStore
+    private let authentication: AuthenticationConvertible
+    private let userDataStore: UserDataStore
+    private let facilityDataStore: FacilityDataStore
+    private let addActionProvider: AddActionProvider?
+    private let filterActionProvider: FilterActionProvider?
     
     init(baseURL: String,
-         sessionDataStore: SessionDataStore) {
+         authentication: AuthenticationConvertible,
+         userDataStore: UserDataStore,
+         facilityDataStore: FacilityDataStore,
+         addActionProvider: AddActionProvider?,
+         filterActionProvider: FilterActionProvider?) {
         
         self.baseURL = baseURL
-        self.sessionDataStore = sessionDataStore
+        self.authentication = authentication
+        self.userDataStore = userDataStore
+        self.facilityDataStore = facilityDataStore
+        self.addActionProvider = addActionProvider
+        self.filterActionProvider = filterActionProvider
     }
     
 }
