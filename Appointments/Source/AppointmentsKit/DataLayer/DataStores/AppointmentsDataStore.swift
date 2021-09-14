@@ -12,9 +12,9 @@ protocol AppointmentsDataStore {
 
 extension Appointment {
     
-    init(with cdAppointment: CDAppointment) {
-        self.title = cdAppointment.title ?? ""
-    }
+//    init(with cdAppointment: CDAppointment) {
+//        self.title = cdAppointment.title ?? ""
+//    }
 }
 
 extension AppointmentsCoreDataStore: AppointmentsDataStore {
@@ -23,7 +23,7 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         
         do {
             let appointments = try self.fetchCDAppointments()
-            return appointments.map (Appointment.init(with:))
+//            return appointments.map (Appointment.init(with:))
         } catch { }
         
         return []
@@ -31,7 +31,7 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
     
     func saveAppointment(_ appointment: Appointment) {
         let entity = self.createCDAppointment()
-        entity.title = appointment.title
+//        entity.title = appointment.title
         self.saveCDAppointment(entity)
     }
 
