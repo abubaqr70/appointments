@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		98089E42CB4F2EBC9DDC70CC /* Pods_Appointments_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BE7F8DAC57FE70B1FE793B9 /* Pods_Appointments_Example.framework */; };
+		C695265F26F0677900C9C7C5 /* FacilityProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C695265C26F0677900C9C7C5 /* FacilityProvider.swift */; };
+		C695266026F0677900C9C7C5 /* UserProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C695265D26F0677900C9C7C5 /* UserProvider.swift */; };
+		C695266126F0677900C9C7C5 /* AuthenticationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C695265E26F0677900C9C7C5 /* AuthenticationProvider.swift */; };
 		C6D0160626EF2F6E00797F67 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015C926EF2F6D00797F67 /* AppDelegate.swift */; };
 		C6D0160826EF2F6E00797F67 /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015CC26EF2F6D00797F67 /* Constant.swift */; };
 		C6D0160926EF2F6E00797F67 /* ApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D015CD26EF2F6D00797F67 /* ApiManager.swift */; };
@@ -74,6 +77,9 @@
 		9A6D4080AED12D912B99FDC8 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		9FF6068C1A1EA534D47B62AD /* Pods-Appointments_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Appointments_Example.release.xcconfig"; path = "Target Support Files/Pods-Appointments_Example/Pods-Appointments_Example.release.xcconfig"; sourceTree = "<group>"; };
 		A7E72363FF05B2494AEAF7AF /* Pods_Appointments_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Appointments_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C695265C26F0677900C9C7C5 /* FacilityProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacilityProvider.swift; sourceTree = "<group>"; };
+		C695265D26F0677900C9C7C5 /* UserProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserProvider.swift; sourceTree = "<group>"; };
+		C695265E26F0677900C9C7C5 /* AuthenticationProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationProvider.swift; sourceTree = "<group>"; };
 		C6D015C826EF2F6D00797F67 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C6D015C926EF2F6D00797F67 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C6D015CA26EF2F6D00797F67 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -184,6 +190,7 @@
 			isa = PBXGroup;
 			children = (
 				C6D015D626EF2F6E00797F67 /* AppModules */,
+				C695265B26F0677900C9C7C5 /* Bridging */,
 				C6D015CE26EF2F6D00797F67 /* Helpers */,
 				C6D015CB26EF2F6D00797F67 /* Managers */,
 				C6D0160026EF2F6E00797F67 /* StoryBoards */,
@@ -218,6 +225,17 @@
 			);
 			name = PodspecMetadata;
 			sourceTree = "<group>";
+		};
+		C695265B26F0677900C9C7C5 /* Bridging */ = {
+			isa = PBXGroup;
+			children = (
+				C695265C26F0677900C9C7C5 /* FacilityProvider.swift */,
+				C695265D26F0677900C9C7C5 /* UserProvider.swift */,
+				C695265E26F0677900C9C7C5 /* AuthenticationProvider.swift */,
+			);
+			name = Bridging;
+			path = Appointments/Bridging;
+			sourceTree = SOURCE_ROOT;
 		};
 		C6D015C726EF2F6D00797F67 /* SupportingFiles */ = {
 			isa = PBXGroup;
@@ -573,6 +591,8 @@
 				C6D0165226EF400700797F67 /* SubWebapps.swift in Sources */,
 				C6D0164F26EF400700797F67 /* Activities2.swift in Sources */,
 				C6D0165A26EF400700797F67 /* Roles.swift in Sources */,
+				C695265F26F0677900C9C7C5 /* FacilityProvider.swift in Sources */,
+				C695266126F0677900C9C7C5 /* AuthenticationProvider.swift in Sources */,
 				C6D0160C26EF2F6E00797F67 /* ReachabilityNet.swift in Sources */,
 				C6D0165726EF400700797F67 /* ClinicalReferral.swift in Sources */,
 				C6D0165626EF400700797F67 /* Facilities.swift in Sources */,
@@ -604,6 +624,7 @@
 				C6D0162C26EF2F6E00797F67 /* LoginViewModel.swift in Sources */,
 				C6D0165826EF400700797F67 /* Tags.swift in Sources */,
 				C6D0166026EF400700797F67 /* Authorized_residents.swift in Sources */,
+				C695266026F0677900C9C7C5 /* UserProvider.swift in Sources */,
 				C6D0160B26EF2F6E00797F67 /* Functions.swift in Sources */,
 				C6D0160826EF2F6E00797F67 /* Constant.swift in Sources */,
 			);

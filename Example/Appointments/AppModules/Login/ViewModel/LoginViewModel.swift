@@ -80,11 +80,11 @@ class LoginViewModel : LoginViewModelType,LoginViewModelInputs,LoginViewModelOut
             case .success(let result):
                 if #available(iOS 13.0, *) {
                     print("response headers",result.response?.value(forHTTPHeaderField: "x-care-merge-api-token") as Any)
-                    UserDefaults.standard.set(result.response?.value(forHTTPHeaderField: "x-care-merge-api-token"), forKey: "api_key")
+                    UserDefaults.standard.setValue(result.response?.value(forHTTPHeaderField: "x-care-merge-api-token"), forKey: "api_key")
                 } else {
                     // Fallback on earlier versions
                     print("response headers",result.response?.allHeaderFields["x-care-merge-api-token"] as Any)
-                    UserDefaults.standard.set(result.response?.allHeaderFields["x-care-merge-api-token"], forKey: "api_key")
+                    UserDefaults.standard.setValue(result.response?.allHeaderFields["x-care-merge-api-token"], forKey: "api_key")
                 }
                 let newjson = try? JSONSerialization.data(withJSONObject: result.value as Any, options: .prettyPrinted)
                 Functions.saveJSON(json: newjson ?? Data(), key: "user_detail")
