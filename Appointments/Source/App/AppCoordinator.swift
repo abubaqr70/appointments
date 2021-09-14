@@ -3,7 +3,7 @@
 import Foundation
 import RxSwift
 
-class AppCoordinator: Coordinator<ResultType<Void>> {
+public class AppCoordinator: Coordinator<ResultType<Void>> {
     
     private let result = PublishSubject<ResultType<Void>>()
     private let root: UIViewController
@@ -15,7 +15,7 @@ class AppCoordinator: Coordinator<ResultType<Void>> {
         self.factory = factory
     }
     
-    override func start() -> Observable<ResultType<Void>> {
+    public override func start() -> Observable<ResultType<Void>> {
         
         let viewModel = self.factory.makeAppointmentsViewModel()
         let viewController = self.factory.makeAppointmentsViewController(viewModel: viewModel)

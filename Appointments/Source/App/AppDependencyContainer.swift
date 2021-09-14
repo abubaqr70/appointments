@@ -24,15 +24,19 @@ public class AppDependencyContainer {
         self.facilityDataStore = facilityDataStore
         self.addActionProvider = addActionProvider
         self.filterActionProvider = filterActionProvider
+        
+        print(self.baseURL)
+        print(self.authentication.authenticationHeader)
+        print(self.userDataStore.currentUser)
+        print(self.facilityDataStore.currentFacility)
     }
     
     
-    func makeAppointmentsCoordinator(root: UIViewController) -> AppCoordinator {
+    public func makeAppointmentsCoordinator(root: UIViewController) -> AppCoordinator {
         return AppCoordinator(root: root,
                               factory: self)
         
     }
-    
     
     func makeAppointmentsViewController(viewModel: AppointmentsViewModelType) -> AppointmentsViewController {
         return AppointmentsViewController()

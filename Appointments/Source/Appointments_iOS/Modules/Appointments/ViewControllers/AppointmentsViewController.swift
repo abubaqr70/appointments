@@ -90,6 +90,8 @@ public class AppointmentsViewController: UIViewController {
                                                                                 NSMutableAttributedString(string: "12:00 AM - 1:00 AM", attributes: nil),
                                                                                 NSMutableAttributedString(string: "12:00 AM - 1:00 AM", attributes: nil),
                                                                                 NSMutableAttributedString(string: "12:00 AM - 1:00 AM", attributes: nil)])
+    
+    private lazy var viewModel: AppointmentsViewModelType = AppointmentsViewModel()
     private let disposeBag = DisposeBag()
     
     public init() {
@@ -115,6 +117,8 @@ extension AppointmentsViewController{
         setupConstraints()
         registersCells()
         bind()
+        bindInputs()
+        bindOutputs()
     }
     
     private func setupViews() {
@@ -190,11 +194,7 @@ extension AppointmentsViewController{
 extension AppointmentsViewController{
     
     private func bind() {
-        date_navigator_title
-            .asObservable()
-            .bind(to: page_navigator.rx.titleBtn)
-            .disposed(by: disposeBag)
-        
+                
         sectionsSubject
             .subscribe(onNext: { [weak self] sections in
                 guard let `self` = self else { return }
@@ -211,6 +211,45 @@ extension AppointmentsViewController{
                 print("button tapped")
             }
             .disposed(by: disposeBag)
+    }
+    
+    private func bindOutputs(){
+        
+        let dateFormatr = DateFormatter()
+        dateFormatr.dateFormat = "EEEE, MMM dd, yyyy"
+        
+        viewModel.outputs.dateNavigatorTitle.map({dateFormatr.string(from: $0 ?? Date())})
+            .asObservable()
+            .bind(to: page_navigator.rx.titleTextField)
+            .disposed(by: disposeBag)
+    }
+    
+    private func bindInputs(){
+        
+        page_navigator.rx.next
+            .bind(to: viewModel.inputs.nextDateObserver)
+            .disposed(by: disposeBag)
+        
+        page_navigator.rx.previous
+            .bind(to: viewModel.inputs.previousDateObserver)
+            .disposed(by: disposeBag)
+        
+        title_button.rx.tap
+            .bind(to: viewModel.inputs.appointmentFilterObserver)
+            .disposed(by: disposeBag)
+        
+        filter_button.rx.tap
+            .bind(to: viewModel.inputs.filterObserver)
+            .disposed(by: disposeBag)
+        
+        segment_control.rx.selectedSegmentIndex
+            .bind(to: viewModel.inputs.segmentControlObserver)
+            .disposed(by: disposeBag)
+       
+        page_navigator.dateSubject
+            .bind(to: viewModel.inputs.datePickerObserver)
+            .disposed(by: disposeBag)
+        
     }
     
 }
