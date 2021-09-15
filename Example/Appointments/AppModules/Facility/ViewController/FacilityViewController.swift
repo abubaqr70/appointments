@@ -38,10 +38,16 @@ class FacilityViewController: BaseViewController {
             guard let self = self else {return}
             do{
                 let data = try JSONEncoder().encode(facility)
-                self.didSelect(facility: data)
-              }catch let error as NSError{
+                do {
+                    let responseModel = try? JSONSerialization.jsonObject(with: data, options: [])
+                    guard let dictionary = responseModel as? [String : Any] else {
+                        return
+                    }
+                    self.didSelect(facility: dictionary)
+                }
+            }catch let error as NSError{
                 print(error.localizedDescription)
-              }
+            }
         }).disposed(by: disposeBag)
         
     }
@@ -61,7 +67,7 @@ class FacilityViewController: BaseViewController {
             .disposed(by: disposeBag)
     }
     
-    private func didSelect(facility: Data){
+    private func didSelect(facility: [String:Any]){
         let appDependcy = AppDependencyContainer.init(baseURL: APPURL.Domain, authentication: AuthenticationProvider.init(), userDataStore: UserProvider.init(), facilityDataStore: FacilityProvider.init(facility: facility), addActionProvider: nil, filterActionProvider: nil)
         let appCordinator = appDependcy.makeAppointmentsCoordinator(root: self.navigationController ?? UINavigationController())
         appCordinator

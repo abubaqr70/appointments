@@ -81,8 +81,7 @@ public class AppointmentsViewController: UIViewController {
         tableView.backgroundColor = UIColor(named: "color_app_light_gray", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none)
         return tableView
     }()
-    
-    private let date_navigator_title = BehaviorSubject<String?>(value: "Wednesday 01, 2016")
+
     private let sectionsSubject = BehaviorSubject<[NSAttributedString]>(value: [NSMutableAttributedString(string: "12:00 AM - 1:00 AM", attributes: nil),
                                                                                 NSMutableAttributedString(string: "12:00 AM - 1:00 AM", attributes: nil),
                                                                                 NSMutableAttributedString(string: "12:00 AM - 1:00 AM", attributes: nil),
@@ -91,10 +90,11 @@ public class AppointmentsViewController: UIViewController {
                                                                                 NSMutableAttributedString(string: "12:00 AM - 1:00 AM", attributes: nil),
                                                                                 NSMutableAttributedString(string: "12:00 AM - 1:00 AM", attributes: nil)])
     
-    private lazy var viewModel: AppointmentsViewModelType = AppointmentsViewModel()
+    private var viewModel: AppointmentsViewModelType
     private let disposeBag = DisposeBag()
     
-    public init() {
+    init(viewModel : AppointmentsViewModelType) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -104,7 +104,7 @@ public class AppointmentsViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        setup()
+        setup(viewModel: self.viewModel)
         tableView.rx.setDelegate(self).disposed(by: disposeBag)
         tableView.rx.setDataSource(self).disposed(by: disposeBag)
     }
@@ -112,13 +112,12 @@ public class AppointmentsViewController: UIViewController {
 }
 
 extension AppointmentsViewController{
-    private func setup() {
+    
+    private func setup(viewModel : AppointmentsViewModelType) {
         setupViews()
         setupConstraints()
         registersCells()
-        bind()
-        bindInputs()
-        bindOutputs()
+        bind(viewModel: viewModel)
     }
     
     private func setupViews() {
@@ -193,38 +192,28 @@ extension AppointmentsViewController{
 
 extension AppointmentsViewController{
     
-    private func bind() {
-                
+    private func bind(viewModel : AppointmentsViewModelType) {
+        
         sectionsSubject
             .subscribe(onNext: { [weak self] sections in
                 guard let `self` = self else { return }
                 self.sections = sections
             }).disposed(by: disposeBag)
         
-        title_button.rx.tap
-            .bind {
-                if !self.title_button.isSelected{
-                    self.title_button.isSelected = true
-                }else{
-                    self.title_button.isSelected = false
-                }
-                print("button tapped")
-            }
-            .disposed(by: disposeBag)
+        bindLabels(viewModel: viewModel)
+        bindActions(viewModel: viewModel)
     }
     
-    private func bindOutputs(){
+    private func bindLabels(viewModel : AppointmentsViewModelType){
         
-        let dateFormatr = DateFormatter()
-        dateFormatr.dateFormat = "EEEE, MMM dd, yyyy"
-        
-        viewModel.outputs.dateNavigatorTitle.map({dateFormatr.string(from: $0 ?? Date())})
+        viewModel.outputs.dateNavigatorTitle
             .asObservable()
             .bind(to: page_navigator.rx.titleTextField)
             .disposed(by: disposeBag)
+        
     }
     
-    private func bindInputs(){
+    private func bindActions(viewModel : AppointmentsViewModelType){
         
         page_navigator.rx.next
             .bind(to: viewModel.inputs.nextDateObserver)
@@ -245,9 +234,20 @@ extension AppointmentsViewController{
         segment_control.rx.selectedSegmentIndex
             .bind(to: viewModel.inputs.segmentControlObserver)
             .disposed(by: disposeBag)
-       
+        
         page_navigator.dateSubject
             .bind(to: viewModel.inputs.datePickerObserver)
+            .disposed(by: disposeBag)
+        
+        title_button.rx.tap
+            .bind {
+                if !self.title_button.isSelected{
+                    self.title_button.isSelected = true
+                }else{
+                    self.title_button.isSelected = false
+                }
+                print("button tapped")
+            }
             .disposed(by: disposeBag)
         
     }

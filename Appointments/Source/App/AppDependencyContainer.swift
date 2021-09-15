@@ -25,10 +25,6 @@ public class AppDependencyContainer {
         self.addActionProvider = addActionProvider
         self.filterActionProvider = filterActionProvider
         
-        print(self.baseURL)
-        print(self.authentication.authenticationHeader)
-        print(self.userDataStore.currentUser)
-        print(self.facilityDataStore.currentFacility)
     }
     
     
@@ -39,10 +35,11 @@ public class AppDependencyContainer {
     }
     
     func makeAppointmentsViewController(viewModel: AppointmentsViewModelType) -> AppointmentsViewController {
-        return AppointmentsViewController()
+        return AppointmentsViewController(viewModel: viewModel)
     }
     
     func makeAppointmentsViewModel() -> AppointmentsViewModelType {
         return AppointmentsViewModel()
     }
+    
 }

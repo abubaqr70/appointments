@@ -22,7 +22,7 @@ protocol AppointmentsViewModelOutputs {
     
     // Actions:
     var lastUpdatedLabel: Observable<String?> { get }
-    var dateNavigatorTitle: Observable<Date?> { get }
+    var dateNavigatorTitle: Observable<String?> { get }
     
 }
 
@@ -47,7 +47,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     //Mark: Outputs
     var appointments: Observable<[Appointment]?> { return  appointmentsSubject.asObservable()}
     var lastUpdatedLabel: Observable<String?> { return  lastUpdatedLabelSubject.asObservable()}
-    var dateNavigatorTitle: Observable<Date?> { return  dateNavigatorTitleSubject.asObservable()}
+    var dateNavigatorTitle: Observable<String?> { return  dateNavigatorTitleSubject.asObservable()}
     
     //Mark: Private Properties
     
@@ -60,13 +60,16 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     
     private let appointmentsSubject = BehaviorSubject<[Appointment]?>(value: [])
     private let lastUpdatedLabelSubject = BehaviorSubject<String?>(value: "")
-    private let dateNavigatorTitleSubject = BehaviorSubject<Date?>(value: Date())
+    private let dateNavigatorTitleSubject = BehaviorSubject<String?>(value: "")
     
     private let disposeBag = DisposeBag()
     
     init(){
         
-        datePickerSubject.asObserver()
+        let dateFormatr = DateFormatter()
+        dateFormatr.dateFormat = "EEEE, MMM dd, yyyy"
+        
+        datePickerSubject.asObserver().map({dateFormatr.string(from: $0 ?? Date())})
             .bind(to: dateNavigatorTitleSubject)
             .disposed(by: disposeBag)
         
