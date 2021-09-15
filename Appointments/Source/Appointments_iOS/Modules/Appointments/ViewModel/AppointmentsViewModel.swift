@@ -64,7 +64,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     
     private let disposeBag = DisposeBag()
     
-    init(){
+    init(appointmentsRepository : AppointmentRepository){
         
         let dateFormatr = DateFormatter()
         dateFormatr.dateFormat = "EEEE, MMM dd, yyyy"
@@ -74,8 +74,15 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             .disposed(by: disposeBag)
         
         bindActions()
+        appointmentsRepository.getAppointment(startDate: Date().timeIntervalSince1970, endDate: Date().timeIntervalSince1970).subscribe(onNext: {
+            appointment in
+            print(appointment)
+        }, onError: {
+            error in
+            print(error)
+        }).disposed(by: disposeBag)
     }
-
+    
 }
 
 extension AppointmentsViewModel {

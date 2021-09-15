@@ -15,7 +15,7 @@ public class FacilityProvider: FacilityDataStore {
         //TODO: Return User DTO
         if facility != nil {
             return facility
-        }else{
+        } else {
             return [:]
         }
     }

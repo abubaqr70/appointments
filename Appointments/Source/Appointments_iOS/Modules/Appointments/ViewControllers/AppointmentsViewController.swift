@@ -81,7 +81,7 @@ public class AppointmentsViewController: UIViewController {
         tableView.backgroundColor = UIColor(named: "color_app_light_gray", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none)
         return tableView
     }()
-
+    
     private let sectionsSubject = BehaviorSubject<[NSAttributedString]>(value: [NSMutableAttributedString(string: "12:00 AM - 1:00 AM", attributes: nil),
                                                                                 NSMutableAttributedString(string: "12:00 AM - 1:00 AM", attributes: nil),
                                                                                 NSMutableAttributedString(string: "12:00 AM - 1:00 AM", attributes: nil),

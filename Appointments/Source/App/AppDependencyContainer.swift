@@ -34,12 +34,35 @@ public class AppDependencyContainer {
         
     }
     
+    func makeAuthHeader() -> AuthHeaderProvider {
+        return AuthHeader(headers: authentication.authenticationHeader)
+    }
+    
+    func makeApiClient() -> APIClient {
+        return AlamofireClient()
+    }
+    
+    func makePathVariables() -> [String] {
+        if let facilityId = self.facilityDataStore.currentFacility?["id"] {
+            return ["facilities","\(facilityId as! Int)"]
+        }
+        return ["facilities"]
+    }
+    
+    func makeAppointmentsService(authHeader: AuthHeaderProvider, apiClient : APIClient, pathVariables :[String]) -> AppointmentService {
+        return AppointmentService(baseURL: baseURL, authHeaderProvider: authHeader, client: apiClient, pathVariables: pathVariables)
+    }
+    
+    func makeAppointmentsRepository(appintmentService : AppointmentService) -> AppointmentRepository {
+        return AppointmentRepository(appointmentService: appintmentService)
+    }
+    
     func makeAppointmentsViewController(viewModel: AppointmentsViewModelType) -> AppointmentsViewController {
         return AppointmentsViewController(viewModel: viewModel)
     }
     
-    func makeAppointmentsViewModel() -> AppointmentsViewModelType {
-        return AppointmentsViewModel()
+    func makeAppointmentsViewModel(appointmentRepositry : AppointmentRepository) -> AppointmentsViewModelType {
+        return AppointmentsViewModel(appointmentsRepository: appointmentRepositry)
     }
     
 }

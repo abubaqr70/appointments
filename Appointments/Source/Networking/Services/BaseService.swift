@@ -16,7 +16,6 @@ extension BaseService {
     func dataRequest<ResultType: Codable>(with apiClient: APIClient,
                                           request: URLRequestConvertible,
                                           completion: @escaping (Result<ResultType, Error>) -> Void) {
-        
         apiClient.dataRequest(request) { result in
             
             switch result {

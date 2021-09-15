@@ -18,20 +18,19 @@ extension Endpoint {
             preconditionFailure("Invalid Base URL")
         }
         
-        components.path = "/" + self.path
-        
         if let variables = self.pathVariables {
             for variable in variables {
-                components.path = "/" + variable
+                components.path += "/" + variable
             }
         }
         
+        components.path += "/" + self.path
         components.queryItems = self.queryItems
         
         guard let url = components.url else {
             preconditionFailure("Invalid URL components")
         }
-        
+        print(url)
         return url
     }
     

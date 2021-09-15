@@ -10,8 +10,8 @@ public class AuthenticationProvider: AuthenticationConvertible {
         return "x-care-merge-api-token"
     }
     
-    public var accessToken: String? {
+    public var accessToken: String {
         //TODO: Return Key here
-        return UserDefaults.standard.value(forKey: "api_key") as? String
+        return UserDefaults.standard.value(forKey: "api_key") as? String ?? ""
     }
 }

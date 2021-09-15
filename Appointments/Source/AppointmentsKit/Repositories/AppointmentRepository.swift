@@ -4,7 +4,7 @@ import Foundation
 import RxSwift
 
 class AppointmentRepository {
-
+    
     let appointmentService: AppointmentService
     
     init(appointmentService: AppointmentService) {

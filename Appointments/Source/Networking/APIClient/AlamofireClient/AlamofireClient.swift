@@ -9,7 +9,6 @@ class AlamofireClient: APIClient {
     
     func dataRequest(_ request: URLRequestConvertible,
                      completion: @escaping (Result<Data?, Error>) -> Void) {
-        
         AF.request(request).validate().responseData { dataResponse in
             if let error = dataResponse.error {
                 completion(Result.failure(error))
