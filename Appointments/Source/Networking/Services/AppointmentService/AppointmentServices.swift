@@ -3,45 +3,39 @@
 
 import Foundation
 
-protocol AuthHeaderProvider {
-    var headers: [String: String] { get}
-}
-
-struct AuthHeader : AuthHeaderProvider {
-    var headers: [String : String]
-}
-
 
 class AppointmentService: BaseService {
     
     private let baseURL: String
-    private let pathVariables: [String]
-    private let authHeaderProvider: AuthHeaderProvider
+    private let authHeaderProvider: AuthenticationConvertible
     private let client: APIClient
     
     init(baseURL: String,
-         authHeaderProvider: AuthHeaderProvider,
-         client: APIClient,pathVariables:[String]) {
+         authHeaderProvider: AuthenticationConvertible,
+         client: APIClient) {
         
         self.baseURL = baseURL
         self.authHeaderProvider = authHeaderProvider
         self.client = client
-        self.pathVariables = pathVariables
     }
     
-    public func getAppointments<ResultType: Codable>(startDate: TimeInterval,
+    public func getAppointments<ResultType: Codable>(for facilityID: Int,
+                                                     startDate: TimeInterval,
                                                      endDate: TimeInterval,
                                                      completion: @escaping (Result<[ResultType], Error>) -> Void) {
         
         let query = ["start_date": String(startDate),
                      "end_date": String(endDate)]
         
+        let pathVariables = ["facilities", String(facilityID)]
+        
         let endpoint: Endpoint = AppointmentEndpoint(baseURL: self.baseURL,
-                                                     pathVariables: pathVariables,query: query)
+                                                     pathVariables: pathVariables,
+                                                     query: query)
         
         let request: Request = Request<Int>(endpoint: endpoint,
                                             httpMethod: .get,
-                                            headers: self.authHeaderProvider.headers)
+                                            headers: self.authHeaderProvider.authenticationHeader)
         self.dataRequest(with: self.client,
                          request: request,
                          completion: completion)

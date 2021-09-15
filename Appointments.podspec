@@ -28,6 +28,7 @@ Pod::Spec.new do |s|
     
     s.frameworks = 'UIKit'
     s.dependency 'RxSwift'
+    s.dependency 'RxSwiftExt'
     s.dependency 'RxCocoa'
     s.dependency 'Alamofire'
 end

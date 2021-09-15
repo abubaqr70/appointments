@@ -10,6 +10,7 @@ public class AppDependencyContainer {
     private let facilityDataStore: FacilityDataStore
     private let addActionProvider: AddActionProvider?
     private let filterActionProvider: FilterActionProvider?
+    private let client: APIClient
     
     public init(baseURL: String,
                 authentication: AuthenticationConvertible,
@@ -24,45 +25,33 @@ public class AppDependencyContainer {
         self.facilityDataStore = facilityDataStore
         self.addActionProvider = addActionProvider
         self.filterActionProvider = filterActionProvider
-        
+        self.client = AlamofireClient()
     }
     
     
     public func makeAppointmentsCoordinator(root: UIViewController) -> AppCoordinator {
+        
         return AppCoordinator(root: root,
                               factory: self)
-        
-    }
-    
-    func makeAuthHeader() -> AuthHeaderProvider {
-        return AuthHeader(headers: authentication.authenticationHeader)
-    }
-    
-    func makeApiClient() -> APIClient {
-        return AlamofireClient()
-    }
-    
-    func makePathVariables() -> [String] {
-        if let facilityId = self.facilityDataStore.currentFacility?["id"] {
-            return ["facilities","\(facilityId as! Int)"]
-        }
-        return ["facilities"]
-    }
-    
-    func makeAppointmentsService(authHeader: AuthHeaderProvider, apiClient : APIClient, pathVariables :[String]) -> AppointmentService {
-        return AppointmentService(baseURL: baseURL, authHeaderProvider: authHeader, client: apiClient, pathVariables: pathVariables)
-    }
-    
-    func makeAppointmentsRepository(appintmentService : AppointmentService) -> AppointmentRepository {
-        return AppointmentRepository(appointmentService: appintmentService)
     }
     
     func makeAppointmentsViewController(viewModel: AppointmentsViewModelType) -> AppointmentsViewController {
+        
         return AppointmentsViewController(viewModel: viewModel)
     }
     
-    func makeAppointmentsViewModel(appointmentRepositry : AppointmentRepository) -> AppointmentsViewModelType {
-        return AppointmentsViewModel(appointmentsRepository: appointmentRepositry)
+    func makeAppointmentsViewModel() -> AppointmentsViewModelType {
+        
+        let service = AppointmentService(baseURL: self.baseURL,
+                                         authHeaderProvider: self.authentication,
+                                         client: self.client)
+        
+        let repository = AppointmentRepository(appointmentService: service)
+        
+        let facilityID = self.facilityDataStore.currentFacility?["id"] as? Int ?? 0
+        
+        return AppointmentsViewModel(facilityID: facilityID,
+                                     appointmentsRepository: repository )
     }
     
 }

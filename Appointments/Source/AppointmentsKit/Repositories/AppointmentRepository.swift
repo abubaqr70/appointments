@@ -11,14 +11,16 @@ class AppointmentRepository {
         self.appointmentService = appointmentService
     }
     
-    func getAppointment(startDate: TimeInterval,
+    func getAppointments(for facilityID: Int,
+                        startDate: TimeInterval,
                         endDate: TimeInterval) -> Observable<[Appointment]> {
         
         return Observable.create { [weak self] observer in
             
             guard let self = self else { return Disposables.create() }
             
-            self.appointmentService.getAppointments(startDate: startDate,
+            self.appointmentService.getAppointments(for: facilityID,
+                                                    startDate: startDate,
                                                     endDate: endDate) { (result: Result<[Appointment], Error>) in
                 
                 switch result {
