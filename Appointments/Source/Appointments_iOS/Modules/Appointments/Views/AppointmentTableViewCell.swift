@@ -3,6 +3,7 @@
 import UIKit
 import RxCocoa
 import RxSwift
+import Kingfisher
 
 class AppointmentTableViewCell: RxUITableViewCell {
     
@@ -159,8 +160,8 @@ class AppointmentTableViewCell: RxUITableViewCell {
         NSLayoutConstraint.activate([
             profile_image.leadingAnchor.constraint(equalTo: image_name_view.leadingAnchor),
             profile_image.centerYAnchor.constraint(equalTo: image_name_view.centerYAnchor),
-            //            profile_image.topAnchor.constraint(greaterThanOrEqualTo: image_name_view.topAnchor),
-            //            profile_image.bottomAnchor.constraint(greaterThanOrEqualTo: image_name_view.bottomAnchor, constant: -5),
+            profile_image.topAnchor.constraint(greaterThanOrEqualTo: image_name_view.topAnchor),
+            profile_image.bottomAnchor.constraint(greaterThanOrEqualTo: image_name_view.bottomAnchor, constant: -5),
             profile_image.widthAnchor.constraint(equalToConstant: 40),
             profile_image.heightAnchor.constraint(equalToConstant: 40)
         ])
@@ -244,4 +245,63 @@ class AppointmentTableViewCell: RxUITableViewCell {
             .disposed(by: disposeBag)
     }
     
+}
+extension Reactive where Base: AppointmentTableViewCell {
+    
+    
+    var appointments : Binder<Appointment >{
+        return Binder(self.base) { cell, appointment in
+            
+            //Mark:- Setting Room Label
+            if appointment.user?.v_room_no?.isEmpty ?? false {
+                cell.room_label.isHidden = true
+            } else {
+                cell.room_label.isHidden = false
+                cell.room_label.text = appointment.user?.v_room_no
+            }
+            
+            //Mark:- Setting Description
+            if appointment.v_title?.isEmpty ?? false {
+                cell.appointment_description_label.isHidden = true
+            } else {
+                cell.appointment_description_label.isHidden = false
+                cell.appointment_description_label.text = appointment.v_title
+            }
+            
+            //Mark:- Setting Staff Label
+            if appointment.user?.full_name?.isEmpty ?? false {
+                cell.staff_label.isHidden = true
+            } else {
+                cell.staff_label.isHidden = false
+                cell.staff_label.text = appointment.user?.full_name
+            }
+            
+            //Mark:- Setting User Names
+            var names:[String] = []
+            if let users = appointment.appointmentAttendance {
+                for user in users {
+                    names.append(user.user?.fullname ?? "")
+                }
+            }
+            
+            if names.joined(separator: ", ").isEmpty{
+                cell.name_label.isHidden = true
+            } else {
+                cell.name_label.isHidden = false
+                cell.name_label.text = names.joined(separator: ", ")
+            }
+            
+            
+            //Mark:- Setting User Image
+            guard let firstUser = appointment.appointmentAttendance?.first?.user else {return}
+            cell.profile_image.kf.indicatorType = .activity
+            cell.profile_image.kf.setImage(
+                with: URL(string: firstUser.profileImageRoute ?? ""),
+                placeholder: UIImage(named: "image_profile_placeholder"),
+                options: [
+                    .transition(.fade(1)),
+                    .cacheOriginalImage
+                ])
+        }
+    }
 }

@@ -63,7 +63,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     private let lastUpdatedLabelSubject = BehaviorSubject<String?>(value: "")
     private let dateNavigatorTitleSubject = BehaviorSubject<String?>(value: "")
     
-    private let viewDidLoadSubject = PublishSubject<Void>()
+    private let refreshAppointmentsSubject = PublishSubject<Void>()
     
     private let disposeBag = DisposeBag()
     private let facilityIDSubject: BehaviorSubject<Int>
@@ -90,15 +90,14 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     }
     
     func bindFetchAppointmentRequest() {
-        
-        let fetchRequest = self.viewDidLoadSubject
-            .startWith(())
+
+        let fetchRequest = self.refreshAppointmentsSubject
             .withLatestFrom(Observable.combineLatest(self.facilityIDSubject, self.datePickerSubject))
             .flatMap { [weak self] facilityID, date -> Observable<Event<[Appointment]>> in
                 
                 guard let self = self else { return .never() }
                 
-                let date = Date()
+//                let date = Date()
                 let startDate = Calendar.current.startOfDay(for: date)
                 var components = DateComponents()
                 components.day = 1
@@ -114,12 +113,18 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         
         fetchRequest.elements()
             .debug("Appointments")
-            .subscribe()
+            .bind(to: appointmentsSubject.asObserver())
             .disposed(by: disposeBag)
         
         fetchRequest.errors()
             .debug("Errors")
             .subscribe()
+            .disposed(by: disposeBag)
+        
+     
+        self.datePickerSubject
+            .map { _ in () }
+            .bind(to: self.refreshAppointmentsSubject)
             .disposed(by: disposeBag)
     }
     

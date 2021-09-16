@@ -24,8 +24,8 @@ class AppointmentService: BaseService {
                                                      endDate: TimeInterval,
                                                      completion: @escaping (Result<[ResultType], Error>) -> Void) {
         
-        let query = ["start_date": String(startDate),
-                     "end_date": String(endDate)]
+        let query = ["i_started_date": String(startDate),
+                     "i_ended_date": String(endDate)]
         
         let pathVariables = ["facilities", String(facilityID)]
         

@@ -63,7 +63,7 @@ class HeaderTableViewCell: RxUITableViewCell {
             cell_view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             cell_view.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -20)
         ])
-
+        
         let bottomConstraint = contentView.bottomAnchor.constraint(equalTo: cell_view.bottomAnchor, constant: 6)
         bottomConstraint.priority = UILayoutPriority(999)
         bottomConstraint.isActive = true
@@ -72,9 +72,19 @@ class HeaderTableViewCell: RxUITableViewCell {
 
 extension Reactive where Base: HeaderTableViewCell {
     
-    var heading: Binder<NSAttributedString> {
+    var heading: Binder<String> {
         return Binder(self.base) { cell, heading in
-            cell.heading_label.attributedText = heading
+            
+            //Mark:- Setting Heading Title
+            if  heading.isEmpty {
+                cell.heading_label.isHidden = true
+                cell.cell_view.isHidden = true
+            } else {
+                cell.heading_label.isHidden = false
+                cell.cell_view.isHidden = false
+                cell.heading_label.text = heading
+            }
+            
         }
     }
 }

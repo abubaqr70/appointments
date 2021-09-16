@@ -6,7 +6,7 @@ import RxCocoa
 
 public class AppointmentsViewController: UIViewController {
     
-    private var sections: [NSAttributedString] = [] {
+    private var appointments: [Appointment] = [] {
         didSet {
             tableView.reloadData()
         }
@@ -81,14 +81,6 @@ public class AppointmentsViewController: UIViewController {
         tableView.backgroundColor = UIColor(named: "color_app_light_gray", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none)
         return tableView
     }()
-    
-    private let sectionsSubject = BehaviorSubject<[NSAttributedString]>(value: [NSMutableAttributedString(string: "12:00 AM - 1:00 AM", attributes: nil),
-                                                                                NSMutableAttributedString(string: "12:00 AM - 1:00 AM", attributes: nil),
-                                                                                NSMutableAttributedString(string: "12:00 AM - 1:00 AM", attributes: nil),
-                                                                                NSMutableAttributedString(string: "12:00 AM - 1:00 AM", attributes: nil),
-                                                                                NSMutableAttributedString(string: "12:00 AM - 1:00 AM", attributes: nil),
-                                                                                NSMutableAttributedString(string: "12:00 AM - 1:00 AM", attributes: nil),
-                                                                                NSMutableAttributedString(string: "12:00 AM - 1:00 AM", attributes: nil)])
     
     private var viewModel: AppointmentsViewModelType
     private let disposeBag = DisposeBag()
@@ -194,17 +186,19 @@ extension AppointmentsViewController{
     
     private func bind(viewModel : AppointmentsViewModelType) {
         
-        sectionsSubject
-            .subscribe(onNext: { [weak self] sections in
-                guard let `self` = self else { return }
-                self.sections = sections
-            }).disposed(by: disposeBag)
+        viewModel.outputs.appointments.subscribe({ [weak self] appointments in
+            guard let `self` = self else { return }
+            self.appointments = (appointments.element ?? []) ?? []
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'"
+            self.appointments = self.appointments.sorted(by: {dateFormatter.date(from: $0.start_date?.m ?? "")?.compare(dateFormatter.date(from: $1.start_date?.m ?? "") ?? Date()) == ComparisonResult.orderedDescending})
+        }).disposed(by: disposeBag)
         
-        bindLabels(viewModel: viewModel)
+        bindtextField(viewModel: viewModel)
         bindActions(viewModel: viewModel)
     }
     
-    private func bindLabels(viewModel : AppointmentsViewModelType){
+    private func bindtextField(viewModel : AppointmentsViewModelType){
         
         viewModel.outputs.dateNavigatorTitle
             .asObservable()
@@ -257,7 +251,7 @@ extension AppointmentsViewController{
 extension AppointmentsViewController: UITableViewDelegate,UITableViewDataSource {
     
     public func numberOfSections(in tableView: UITableView) -> Int {
-        return sections.count
+        return appointments.count
     }
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -266,12 +260,13 @@ extension AppointmentsViewController: UITableViewDelegate,UITableViewDataSource 
     
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let view = HeaderTableViewCell()
-        view.rx.heading.onNext(sections[section])
+        view.rx.heading.onNext("\(appointments[section].start_date?.time ?? "") - \(appointments[section].end_date?.time ?? "")")
         return view
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: AppointmentTableViewCell.reuseIdentifier, for: indexPath) as? AppointmentTableViewCell
+        cell?.rx.appointments.onNext(appointments[indexPath.section])
         return cell!
     }
     
