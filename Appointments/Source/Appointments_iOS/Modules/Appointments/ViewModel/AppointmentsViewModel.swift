@@ -87,6 +87,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             .bind(to: dateNavigatorTitleSubject)
             .disposed(by: disposeBag)
         
+        self.bindAppointments()
         self.bindFetchAppointmentRequest()
         self.bindActions()
         
@@ -123,16 +124,6 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             .bind(to: appointmentsSubject.asObserver())
             .disposed(by: disposeBag)
         
-        appointmentsSubject
-            .map { appointments -> [(title: String, rows: [ReuseableCellViewModelType])] in
-                appointments.map { appointment -> (title: String, rows: [ReuseableCellViewModelType]) in
-                    let cellViewModel = AppointmentTVCellViewModel(appointment: appointment)
-                    let headerTitle = "\(appointment.start_date?.time ?? "") - \(appointment.end_date?.time ?? "")"
-                    return (headerTitle, [cellViewModel])
-                }
-            }
-            .bind(to: self.sectionsSubject)
-            .disposed(by: disposeBag)
         
         fetchRequest.errors()
             .debug("Errors")
@@ -143,6 +134,21 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             .map { _ in () }
             .bind(to: self.refreshAppointmentsSubject)
             .disposed(by: disposeBag)
+    }
+    
+    func bindAppointments() {
+        
+        self.appointmentsSubject
+            .map { appointments -> [(title: String, rows: [ReuseableCellViewModelType])] in
+                appointments.map { appointment -> (title: String, rows: [ReuseableCellViewModelType]) in
+                    let cellViewModel = AppointmentTVCellViewModel(appointment: appointment)
+                    let headerTitle = "\(appointment.start_date?.time ?? "") - \(appointment.end_date?.time ?? "")"
+                    return (headerTitle, [cellViewModel])
+                }
+            }
+            .bind(to: self.sectionsSubject)
+            .disposed(by: disposeBag)
+        
     }
     
 }

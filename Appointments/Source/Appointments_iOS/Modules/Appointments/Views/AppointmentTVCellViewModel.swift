@@ -12,11 +12,11 @@ protocol AppointmentTVCellViewModelInputs {
 protocol AppointmentTVCellViewModelOutputs {
     
     // Actions:
-    var nameObservable: Observable<String?> { get }
-    var roomObservable: Observable<String?> { get }
-    var appointmentDescriptionObservable: Observable<String?> { get }
-    var staffObservable: Observable<String?> { get }
-    var profileImageObservable: Observable<String?> { get }
+    var name: Observable<String?> { get }
+    var room: Observable<String?> { get }
+    var appointmentDescription: Observable<String?> { get }
+    var staff: Observable<String?> { get }
+    var profileImage: Observable<String?> { get }
     
 }
 
@@ -33,11 +33,11 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
     var outputs: AppointmentTVCellViewModelOutputs { return self }
     
     //Mark: Outputs
-    var nameObservable: Observable<String?> { return nameSubject.asObservable() }
-    var roomObservable: Observable<String?> { return roomSubject.asObservable() }
-    var appointmentDescriptionObservable: Observable<String?> { return appointmentDescriptionSubject.asObservable() }
-    var staffObservable: Observable<String?> { return staffSubject.asObservable() }
-    var profileImageObservable: Observable<String?> { return profileImageSubject.asObservable() }
+    var name: Observable<String?> { return nameSubject.asObservable() }
+    var room: Observable<String?> { return roomSubject.asObservable() }
+    var appointmentDescription: Observable<String?> { return appointmentDescriptionSubject.asObservable() }
+    var staff: Observable<String?> { return staffSubject.asObservable() }
+    var profileImage: Observable<String?> { return profileImageSubject.asObservable() }
     
     //Mark: Init
     private let disposeBag = DisposeBag()
