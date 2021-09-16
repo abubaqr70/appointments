@@ -114,6 +114,8 @@ class AppointmentTableViewCell: RxUITableViewCell {
         return view
     }()
     
+    private var viewModel: AppointmentTVCellViewModelType?
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         commonInit()
@@ -131,7 +133,6 @@ class AppointmentTableViewCell: RxUITableViewCell {
     private func setup() {
         setupViews()
         setupConstraints()
-        bind()
     }
     
     private func setupViews() {
@@ -232,7 +233,57 @@ class AppointmentTableViewCell: RxUITableViewCell {
         
     }
     
-    private func bind() {
+    override func configure(viewModel: Any) {
+        guard let viewModel = viewModel as? AppointmentTVCellViewModelType else { return }
+        self.viewModel = viewModel
+        bind(viewModel: viewModel)
+    }
+    
+    private func bind(viewModel : AppointmentTVCellViewModelType) {
+        
+        viewModel.outputs.nameObservable.map { name -> Bool in
+            guard let name = name else {return true}
+            return name.isEmpty
+        }.bind(to: self.name_label.rx.isHidden).disposed(by: disposeBag)
+        viewModel.outputs.nameObservable.bind(to: self.name_label.rx.text).disposed(by: disposeBag)
+        
+        viewModel.outputs.roomObservable.map { roomNo -> Bool in
+            guard let roomNo = roomNo else {return true}
+            return roomNo.isEmpty
+        }.bind(to: self.room_label.rx.isHidden).disposed(by: disposeBag)
+        viewModel.outputs.roomObservable.map{
+            roomNo -> String in
+            return ("Room # \(roomNo ?? "")")
+        }
+        .bind(to: self.room_label.rx.text)
+        .disposed(by: disposeBag)
+        
+        viewModel.outputs.appointmentDescriptionObservable.map { description -> Bool in
+            guard let description = description else {return true}
+            return description.isEmpty
+        }.bind(to: self.appointment_description_label.rx.isHidden).disposed(by: disposeBag)
+        viewModel.outputs.appointmentDescriptionObservable.bind(to: self.appointment_description_label.rx.text).disposed(by: disposeBag)
+        
+        viewModel.outputs.staffObservable.map { staff -> Bool in
+            guard let staff = staff else {return true}
+            return staff.isEmpty
+        }.bind(to: self.staff_label.rx.isHidden).disposed(by: disposeBag)
+        viewModel.outputs.staffObservable.bind(to: self.staff_label.rx.text).disposed(by: disposeBag)
+        
+        viewModel.outputs.profileImageObservable.map({
+            profileUrl in
+            self.profile_image.kf.indicatorType = .activity
+            self.profile_image.kf.setImage(
+                with: URL(string: profileUrl ?? ""),
+                placeholder: UIImage(named: "image_profile_placeholder"),
+                options: [
+                    .transition(.fade(1)),
+                    .cacheOriginalImage
+                ])
+        })
+        .subscribe()
+        .disposed(by: disposeBag)
+        
         checkbox_button.rx.tap
             .bind {
                 if !self.checkbox_button.isSelected{
@@ -245,63 +296,4 @@ class AppointmentTableViewCell: RxUITableViewCell {
             .disposed(by: disposeBag)
     }
     
-}
-extension Reactive where Base: AppointmentTableViewCell {
-    
-    
-    var appointments : Binder<Appointment >{
-        return Binder(self.base) { cell, appointment in
-            
-            //Mark:- Setting Room Label
-            if appointment.user?.v_room_no?.isEmpty ?? false {
-                cell.room_label.isHidden = true
-            } else {
-                cell.room_label.isHidden = false
-                cell.room_label.text = appointment.user?.v_room_no
-            }
-            
-            //Mark:- Setting Description
-            if appointment.v_title?.isEmpty ?? false {
-                cell.appointment_description_label.isHidden = true
-            } else {
-                cell.appointment_description_label.isHidden = false
-                cell.appointment_description_label.text = appointment.v_title
-            }
-            
-            //Mark:- Setting Staff Label
-            if appointment.user?.full_name?.isEmpty ?? false {
-                cell.staff_label.isHidden = true
-            } else {
-                cell.staff_label.isHidden = false
-                cell.staff_label.text = appointment.user?.full_name
-            }
-            
-            //Mark:- Setting User Names
-            var names:[String] = []
-            if let users = appointment.appointmentAttendance {
-                for user in users {
-                    names.append(user.user?.fullname ?? "")
-                }
-            }
-            
-            if names.joined(separator: ", ").isEmpty{
-                cell.name_label.isHidden = true
-            } else {
-                cell.name_label.isHidden = false
-                cell.name_label.text = names.joined(separator: ", ")
-            }
-            
-            
-            //Mark:- Setting User Image
-            guard let firstUser = appointment.appointmentAttendance?.first?.user else {return}
-            cell.profile_image.kf.indicatorType = .activity
-            cell.profile_image.kf.setImage(
-                with: URL(string: firstUser.profileImageRoute ?? ""),
-                placeholder: UIImage(named: "image_profile_placeholder"),
-                options: [
-                    .transition(.fade(1)),
-                    .cacheOriginalImage
-                ])
-        }
-    }
 }

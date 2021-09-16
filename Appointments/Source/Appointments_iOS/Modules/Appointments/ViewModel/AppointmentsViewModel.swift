@@ -18,12 +18,13 @@ protocol AppointmentsViewModelInputs {
 
 protocol AppointmentsViewModelOutputs {
     
-    //Appointments
-    var appointments: Observable<[Appointment]?> { get }
+    //Sections
+    var sections: Observable<[(title: String, rows: [ReuseableCellViewModelType])]> { get }
     
     // Actions:
     var lastUpdatedLabel: Observable<String?> { get }
     var dateNavigatorTitle: Observable<String?> { get }
+    
     
 }
 
@@ -46,9 +47,9 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     var filterObserver: AnyObserver<Void> { return filterSubject.asObserver()}
     
     //Mark: Outputs
-    var appointments: Observable<[Appointment]?> { return  appointmentsSubject.asObservable()}
     var lastUpdatedLabel: Observable<String?> { return  lastUpdatedLabelSubject.asObservable()}
     var dateNavigatorTitle: Observable<String?> { return  dateNavigatorTitleSubject.asObservable()}
+    var sections: Observable<[(title: String, rows: [ReuseableCellViewModelType])]> { return sectionsSubject.asObservable() }
     
     //Mark: Private Properties
     
@@ -59,11 +60,12 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     private let appointmentFilterSubject = PublishSubject<Void>()
     private let filterSubject = PublishSubject<Void>()
     
-    private let appointmentsSubject = BehaviorSubject<[Appointment]?>(value: [])
+    private let appointmentsSubject = BehaviorSubject<[Appointment]>(value: [])
     private let lastUpdatedLabelSubject = BehaviorSubject<String?>(value: "")
     private let dateNavigatorTitleSubject = BehaviorSubject<String?>(value: "")
     
     private let refreshAppointmentsSubject = PublishSubject<Void>()
+    private let sectionsSubject = BehaviorSubject<[(title: String, rows: [ReuseableCellViewModelType])]>(value: [])
     
     private let disposeBag = DisposeBag()
     private let facilityIDSubject: BehaviorSubject<Int>
@@ -71,7 +73,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     
     
     init(facilityID: Int,
-        appointmentsRepository: AppointmentRepository){
+         appointmentsRepository: AppointmentRepository){
         
         self.facilityIDSubject = BehaviorSubject(value: facilityID)
         self.appointmentsRepository = appointmentsRepository
@@ -87,17 +89,17 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         
         self.bindFetchAppointmentRequest()
         self.bindActions()
+        
     }
     
     func bindFetchAppointmentRequest() {
-
+        
         let fetchRequest = self.refreshAppointmentsSubject
             .withLatestFrom(Observable.combineLatest(self.facilityIDSubject, self.datePickerSubject))
             .flatMap { [weak self] facilityID, date -> Observable<Event<[Appointment]>> in
                 
                 guard let self = self else { return .never() }
                 
-//                let date = Date()
                 let startDate = Calendar.current.startOfDay(for: date)
                 var components = DateComponents()
                 components.day = 1
@@ -112,8 +114,24 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             .share()
         
         fetchRequest.elements()
-            .debug("Appointments")
+            .map({
+                appointments -> [Appointment] in
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'"
+                return appointments.sorted(by: {dateFormatter.date(from: $0.start_date?.m ?? "")?.compare(dateFormatter.date(from: $1.start_date?.m ?? "") ?? Date()) == ComparisonResult.orderedDescending})
+            })
             .bind(to: appointmentsSubject.asObserver())
+            .disposed(by: disposeBag)
+        
+        appointmentsSubject
+            .map { appointments -> [(title: String, rows: [ReuseableCellViewModelType])] in
+                appointments.map { appointment -> (title: String, rows: [ReuseableCellViewModelType]) in
+                    let cellViewModel = AppointmentTVCellViewModel(appointment: appointment)
+                    let headerTitle = "\(appointment.start_date?.time ?? "") - \(appointment.end_date?.time ?? "")"
+                    return (headerTitle, [cellViewModel])
+                }
+            }
+            .bind(to: self.sectionsSubject)
             .disposed(by: disposeBag)
         
         fetchRequest.errors()
@@ -121,7 +139,6 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             .subscribe()
             .disposed(by: disposeBag)
         
-     
         self.datePickerSubject
             .map { _ in () }
             .bind(to: self.refreshAppointmentsSubject)
@@ -133,7 +150,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
 extension AppointmentsViewModel {
     
     func bindActions() {
-       
+        
         nextDateSubject
             .withLatestFrom(self.datePickerSubject)
             .map { Calendar.current.date(byAdding: .day, value: 1, to: $0) }
@@ -167,3 +184,4 @@ extension AppointmentsViewModel {
             .disposed(by: disposeBag)
     }
 }
+

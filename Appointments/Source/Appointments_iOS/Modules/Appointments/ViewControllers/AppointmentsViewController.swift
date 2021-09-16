@@ -6,7 +6,7 @@ import RxCocoa
 
 public class AppointmentsViewController: UIViewController {
     
-    private var appointments: [Appointment] = [] {
+    private var sections: [(title: String, rows: [ReuseableCellViewModelType])] = [] {
         didSet {
             tableView.reloadData()
         }
@@ -185,13 +185,10 @@ extension AppointmentsViewController{
 extension AppointmentsViewController{
     
     private func bind(viewModel : AppointmentsViewModelType) {
-        
-        viewModel.outputs.appointments.subscribe({ [weak self] appointments in
+ 
+        viewModel.outputs.sections.subscribe({ [weak self] section in
             guard let `self` = self else { return }
-            self.appointments = (appointments.element ?? []) ?? []
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'"
-            self.appointments = self.appointments.sorted(by: {dateFormatter.date(from: $0.start_date?.m ?? "")?.compare(dateFormatter.date(from: $1.start_date?.m ?? "") ?? Date()) == ComparisonResult.orderedDescending})
+            self.sections = (section.element ?? [])
         }).disposed(by: disposeBag)
         
         bindtextField(viewModel: viewModel)
@@ -251,7 +248,7 @@ extension AppointmentsViewController{
 extension AppointmentsViewController: UITableViewDelegate,UITableViewDataSource {
     
     public func numberOfSections(in tableView: UITableView) -> Int {
-        return appointments.count
+        return sections.count
     }
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -260,13 +257,13 @@ extension AppointmentsViewController: UITableViewDelegate,UITableViewDataSource 
     
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let view = HeaderTableViewCell()
-        view.rx.heading.onNext("\(appointments[section].start_date?.time ?? "") - \(appointments[section].end_date?.time ?? "")")
+        view.rx.heading.onNext(sections[section].title)
         return view
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: AppointmentTableViewCell.reuseIdentifier, for: indexPath) as? AppointmentTableViewCell
-        cell?.rx.appointments.onNext(appointments[indexPath.section])
+        cell?.configure(viewModel: sections[indexPath.section].rows.first as Any)
         return cell!
     }
     
