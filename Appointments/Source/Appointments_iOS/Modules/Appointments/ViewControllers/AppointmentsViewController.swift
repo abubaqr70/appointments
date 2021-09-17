@@ -21,8 +21,8 @@ public class AppointmentsViewController: UIViewController {
             .userInterfaceLayoutDirection == .rightToLeft ? .forceLeftToRight : .forceRightToLeft
         button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 0)
         button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 5)
-        button.setImage(UIImage(named: "icon_arrowdown", in: Bundle(for: Self.self), compatibleWith: .none), for: .normal)
-        button.setImage(UIImage(named: "icon_arrowup", in: Bundle(for: Self.self), compatibleWith: .none), for: .selected)
+        button.setImage(UIImage.moduleImage(named: "icon_arrowdown"), for: .normal)
+        button.setImage(UIImage.moduleImage(named: "icon_arrowup"), for: .selected)
         return button
     }()
     

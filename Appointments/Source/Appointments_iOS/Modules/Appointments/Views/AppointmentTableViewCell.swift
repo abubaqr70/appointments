@@ -45,7 +45,7 @@ class AppointmentTableViewCell: RxUITableViewCell {
     
     fileprivate lazy var profileImage : UIImageView = {
         let view = UIImageView(frame: CGRect.zero)
-        view.image = UIImage(named: "image_profile_placeholder", in: Bundle(for: Self.self), compatibleWith: .none)
+        view.image = UIImage.moduleImage(named: "image_profile_placeholder")
         view.backgroundColor = UIColor.white
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 20
@@ -57,15 +57,15 @@ class AppointmentTableViewCell: RxUITableViewCell {
         let checkboxButton = UIButton(frame: CGRect.zero)
         checkboxButton.backgroundColor = UIColor.white
         checkboxButton.translatesAutoresizingMaskIntoConstraints = false
-        checkboxButton.setImage(UIImage(named: "icon_checkbox_unselected", in: Bundle(for: Self.self), compatibleWith: .none), for: .normal)
-        checkboxButton.setImage(UIImage(named: "icon_checkbox_selected", in: Bundle(for: Self.self), compatibleWith: .none), for: .selected)
+        checkboxButton.setImage(UIImage.moduleImage(named: "icon_checkbox_unselected"), for: .normal)
+        checkboxButton.setImage(UIImage.moduleImage(named: "icon_checkbox_selected"), for: .selected)
         checkboxButton.imageEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         return checkboxButton
     }()
     
     fileprivate lazy var arrowImage : UIImageView = {
         let view = UIImageView(frame: CGRect.zero)
-        view.image = UIImage(named: "icon_date_right", in: Bundle(for: Self.self), compatibleWith: .none)
+        view.image = UIImage.moduleImage(named: "icon_date_right")
         view.backgroundColor = UIColor.white
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -294,7 +294,7 @@ class AppointmentTableViewCell: RxUITableViewCell {
                 self.profileImage.kf.indicatorType = .activity
                 self.profileImage.kf.setImage(
                     with: URL(string: url),
-                    placeholder: UIImage(named: "image_profile_placeholder"),
+                    placeholder: UIImage.moduleImage(named: "image_profile_placeholder"),
                     options: [
                         .transition(.fade(1)),
                         .cacheOriginalImage
