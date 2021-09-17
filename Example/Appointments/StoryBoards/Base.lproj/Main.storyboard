@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -24,27 +25,27 @@
                                         <constraints>
                                             <constraint firstAttribute="height" constant="46" id="96b-Cc-NCH"/>
                                         </constraints>
-                                        <color key="textColor" name="WhiteColor"/>
+                                        <color key="textColor" name="AppBgColor"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
                                         <textInputTraits key="textInputTraits"/>
                                         <userDefinedRuntimeAttributes>
                                             <userDefinedRuntimeAttribute type="color" keyPath="lineColor">
-                                                <color key="value" name="shadowColor"/>
+                                                <color key="value" name="LightGrayColor"/>
                                             </userDefinedRuntimeAttribute>
                                             <userDefinedRuntimeAttribute type="color" keyPath="selectedLineColor">
-                                                <color key="value" name="shadowColor"/>
+                                                <color key="value" name="LightGrayColor"/>
                                             </userDefinedRuntimeAttribute>
                                             <userDefinedRuntimeAttribute type="color" keyPath="floatingLabelTextColor">
-                                                <color key="value" name="shadowColor"/>
+                                                <color key="value" name="LightGrayColor"/>
                                             </userDefinedRuntimeAttribute>
                                             <userDefinedRuntimeAttribute type="color" keyPath="floatingLabelActiveTextColor">
-                                                <color key="value" name="shadowColor"/>
+                                                <color key="value" name="LightGrayColor"/>
                                             </userDefinedRuntimeAttribute>
                                             <userDefinedRuntimeAttribute type="color" keyPath="placeholderColor">
-                                                <color key="value" name="shadowColor"/>
+                                                <color key="value" name="LightGrayColor"/>
                                             </userDefinedRuntimeAttribute>
                                             <userDefinedRuntimeAttribute type="color" keyPath="placeHolderColor">
-                                                <color key="value" name="shadowColor"/>
+                                                <color key="value" name="LightGrayColor"/>
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                     </textField>
@@ -53,27 +54,27 @@
                                         <constraints>
                                             <constraint firstAttribute="height" constant="46" id="olC-UQ-XAV"/>
                                         </constraints>
-                                        <color key="textColor" name="WhiteColor"/>
+                                        <color key="textColor" name="AppBgColor"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
                                         <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
                                         <userDefinedRuntimeAttributes>
                                             <userDefinedRuntimeAttribute type="color" keyPath="lineColor">
-                                                <color key="value" name="shadowColor"/>
+                                                <color key="value" name="LightGrayColor"/>
                                             </userDefinedRuntimeAttribute>
                                             <userDefinedRuntimeAttribute type="color" keyPath="selectedLineColor">
-                                                <color key="value" name="shadowColor"/>
+                                                <color key="value" name="LightGrayColor"/>
                                             </userDefinedRuntimeAttribute>
                                             <userDefinedRuntimeAttribute type="color" keyPath="floatingLabelTextColor">
-                                                <color key="value" name="shadowColor"/>
+                                                <color key="value" name="LightGrayColor"/>
                                             </userDefinedRuntimeAttribute>
                                             <userDefinedRuntimeAttribute type="color" keyPath="floatingLabelActiveTextColor">
-                                                <color key="value" name="shadowColor"/>
+                                                <color key="value" name="LightGrayColor"/>
                                             </userDefinedRuntimeAttribute>
                                             <userDefinedRuntimeAttribute type="color" keyPath="placeholderColor">
-                                                <color key="value" name="shadowColor"/>
+                                                <color key="value" name="LightGrayColor"/>
                                             </userDefinedRuntimeAttribute>
                                             <userDefinedRuntimeAttribute type="color" keyPath="placeHolderColor">
-                                                <color key="value" name="shadowColor"/>
+                                                <color key="value" name="LightGrayColor"/>
                                             </userDefinedRuntimeAttribute>
                                             <userDefinedRuntimeAttribute type="number" keyPath="secureTextButtonHeight">
                                                 <real key="value" value="40"/>
@@ -86,7 +87,7 @@
                                     </textField>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F5Q-b1-wWo" customClass="DesignableButton" customModule="Appointments_Example" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="132" width="354" height="50"/>
-                                        <color key="backgroundColor" name="LightGrayColor"/>
+                                        <color key="backgroundColor" name="color_app_blue"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="50" id="imJ-Xm-da6"/>
                                         </constraints>
@@ -103,7 +104,7 @@
                             </stackView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
-                        <color key="backgroundColor" name="AppBgColor"/>
+                        <color key="backgroundColor" name="WhiteColor"/>
                         <constraints>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="sw0-LB-8WU" secondAttribute="trailing" constant="30" id="LJT-Pg-s97"/>
                             <constraint firstItem="sw0-LB-8WU" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="dJf-aj-euo"/>
@@ -144,7 +145,7 @@
                             </searchBar>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="5ZD-sa-CDY"/>
-                        <color key="backgroundColor" name="AppBgColor"/>
+                        <color key="backgroundColor" name="WhiteColor"/>
                         <constraints>
                             <constraint firstItem="E5h-Nx-i7x" firstAttribute="leading" secondItem="5ZD-sa-CDY" secondAttribute="leading" id="T90-h9-qhS"/>
                             <constraint firstItem="E5h-Nx-i7x" firstAttribute="top" secondItem="bjm-Zo-24M" secondAttribute="bottom" id="Yep-SB-1jO"/>
@@ -186,6 +187,9 @@
         </namedColor>
         <namedColor name="WhiteColor">
             <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="color_app_blue">
+            <color red="0.0" green="0.59999999999999998" blue="0.8666666666666667" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="shadowColor">
             <color red="0.9179999828338623" green="0.92199999094009399" blue="0.9179999828338623" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
