@@ -15,7 +15,7 @@ public class AppointmentsViewController: UIViewController {
     fileprivate lazy var titleButton : UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 200, height: 40))
         button.setTitle("APPOINTMENTS", for: .normal)
-        button.setTitleColor(UIColor(named: "color_app_blue", in: Bundle(for: Self.self), compatibleWith: .none), for: .normal)
+        button.setTitleColor(UIColor.appSkyBlue, for: .normal)
         button.titleLabel?.font = UIFont.appFont(withStyle: .title3, size: 12)
         button.semanticContentAttribute = UIApplication.shared
             .userInterfaceLayoutDirection == .rightToLeft ? .forceLeftToRight : .forceRightToLeft
@@ -42,7 +42,7 @@ public class AppointmentsViewController: UIViewController {
         label.textColor = .white
         label.textAlignment = .center
         label.font = UIFont.appFont(withStyle: .title3, size: 12)
-        label.backgroundColor = UIColor(named: "color_app_dark_gray", in: Bundle(for: Self.self), compatibleWith: .none)
+        label.backgroundColor = UIColor.appGrayDark
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -59,7 +59,7 @@ public class AppointmentsViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 20))
         tableView.separatorStyle = .none
-        tableView.backgroundColor = UIColor(named: "color_app_light_gray", in: Bundle(for: Self.self), compatibleWith: .none)
+        tableView.backgroundColor = UIColor.appGrayLight
         return tableView
     }()
     

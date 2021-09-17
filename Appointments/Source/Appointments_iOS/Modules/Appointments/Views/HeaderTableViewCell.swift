@@ -18,7 +18,7 @@ class HeaderTableViewCell: RxUITableViewCell {
     fileprivate lazy var cellView : UIView = {
         let view = UIView(frame: CGRect.zero)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor(named: "color_app_blue", in: Bundle(for: Self.self), compatibleWith: .none)
+        view.backgroundColor = UIColor.appSkyBlue
         view.layer.cornerRadius = 3
         return view
     }()
@@ -46,7 +46,7 @@ class HeaderTableViewCell: RxUITableViewCell {
         selectionStyle = .none
         contentView.addSubview(cellView)
         cellView.addSubview(headingLabel)
-        contentView.backgroundColor = UIColor(named: "color_app_light_gray", in: Bundle(for: Self.self), compatibleWith: .none)
+        contentView.backgroundColor = UIColor.appGrayLight
     }
     
     private func setupConstraints() {

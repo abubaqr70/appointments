@@ -19,7 +19,7 @@ class AppointmentTableViewCell: RxUITableViewCell {
     fileprivate lazy var roomLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = UIColor(named: "color_app_dark_gray", in: Bundle(for: Self.self), compatibleWith: .none)
+        label.textColor = UIColor.appGrayDark
         label.font = UIFont.appFont(withStyle: .title3, size: 14)
         label.numberOfLines = 4
         return label
@@ -37,7 +37,7 @@ class AppointmentTableViewCell: RxUITableViewCell {
     fileprivate lazy var staffLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = UIColor(named: "color_app_dark_gray", in: Bundle(for: Self.self), compatibleWith: .none)
+        label.textColor = UIColor.appGrayDark
         label.font = UIFont.appFont(withStyle: .title3, size: 14)
         label.numberOfLines = 4
         return label
@@ -73,7 +73,7 @@ class AppointmentTableViewCell: RxUITableViewCell {
     
     fileprivate lazy var lineView : UIView = {
         let view = UIView(frame: CGRect.zero)
-        view.backgroundColor = UIColor(named: "color_app_light_gray", in: Bundle(for: Self.self), compatibleWith: .none)
+        view.backgroundColor = UIColor.appGrayLight
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -143,7 +143,7 @@ class AppointmentTableViewCell: RxUITableViewCell {
         buttonAppointmentsView.addSubview(checkboxButton)
         buttonAppointmentsView.addSubview(appointmentDescriptionLabel)
         buttonAppointmentsView.addSubview(staffLabel)
-        contentView.backgroundColor = UIColor(named: "color_app_light_gray", in: Bundle(for: Self.self), compatibleWith: .none)
+        contentView.backgroundColor = UIColor.appGrayLight
     }
     
     private func setupConstraints() {

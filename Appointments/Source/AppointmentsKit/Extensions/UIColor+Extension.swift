@@ -1,0 +1,40 @@
+// Copyright © 2021 Caremerge. All rights reserved.
+
+import Foundation
+
+enum AppColorName {
+    case appSkyBlue
+    case appGrayLight
+    case appGrayDark
+    case appGreen
+}
+
+extension UIColor {
+    static func appColor(ofName name: AppColorName) -> UIColor {
+        switch name {
+        case .appSkyBlue: return UIColor(named: "color_app_blue", in: Bundle.module, compatibleWith: nil) ?? .blue
+        case .appGrayLight: return UIColor(named: "color_app_gray_light", in: Bundle.module, compatibleWith: nil) ?? .lightGray
+        case .appGrayDark: return UIColor(named: "color_app_gray_dark", in: Bundle.module, compatibleWith: nil) ?? .darkGray
+        case .appGreen: return UIColor(named: "color_app_green", in: Bundle.module, compatibleWith: nil) ?? .green
+        }
+    }
+}
+
+extension UIColor {
+    
+    static var appSkyBlue: UIColor {
+        return .appColor(ofName: .appSkyBlue)
+    }
+    
+    static var appGrayLight: UIColor {
+        return .appColor(ofName: .appGrayLight)
+    }
+    
+    static var appGrayDark: UIColor {
+        return .appColor(ofName: .appGrayDark)
+    }
+    
+    static var appGreen: UIColor {
+        return .appColor(ofName: .appGreen)
+    }
+}

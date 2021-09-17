@@ -11,7 +11,6 @@ public class AuthenticationProvider: AuthenticationConvertible {
     }
     
     public var accessToken: String? {
-        //TODO: Return Key here
-        return UserDefaults.standard.value(forKey: "api_key") as? String ?? ""
+        return UserDefaults.standard.value(forKey: "api_key") as? String
     }
 }
