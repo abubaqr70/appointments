@@ -24,7 +24,7 @@ protocol AppointmentsViewModelOutputs {
     // Actions:
     var lastUpdatedLabel: Observable<String?> { get }
     var dateNavigatorTitle: Observable<String?> { get }
-    
+    var errorAlert: Observable<String> { get }
     
 }
 
@@ -50,6 +50,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     var lastUpdatedLabel: Observable<String?> { return  lastUpdatedLabelSubject.asObservable()}
     var dateNavigatorTitle: Observable<String?> { return  dateNavigatorTitleSubject.asObservable()}
     var sections: Observable<[(title: String, rows: [ReuseableCellViewModelType])]> { return sectionsSubject.asObservable() }
+    var errorAlert: Observable<String>{ return errorAlertSubject.asObservable() }
     
     //Mark: Private Properties
     
@@ -65,6 +66,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     private let dateNavigatorTitleSubject = BehaviorSubject<String?>(value: "")
     
     private let refreshAppointmentsSubject = PublishSubject<Void>()
+    private let errorAlertSubject = PublishSubject<String>()
     private let sectionsSubject = BehaviorSubject<[(title: String, rows: [ReuseableCellViewModelType])]>(value: [])
     
     private let disposeBag = DisposeBag()
@@ -127,7 +129,11 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         
         fetchRequest.errors()
             .debug("Errors")
-            .subscribe()
+            .map{
+                error -> String in
+                return error.localizedDescription
+            }
+            .bind(to: errorAlertSubject)
             .disposed(by: disposeBag)
         
         self.datePickerSubject

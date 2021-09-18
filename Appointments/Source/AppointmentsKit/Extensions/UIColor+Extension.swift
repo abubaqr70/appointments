@@ -13,8 +13,8 @@ extension UIColor {
     static func appColor(ofName name: AppColorName) -> UIColor {
         switch name {
         case .appSkyBlue: return UIColor(named: "color_app_blue", in: Bundle.module, compatibleWith: nil) ?? .blue
-        case .appGrayLight: return UIColor(named: "color_app_gray_light", in: Bundle.module, compatibleWith: nil) ?? .lightGray
-        case .appGrayDark: return UIColor(named: "color_app_gray_dark", in: Bundle.module, compatibleWith: nil) ?? .darkGray
+        case .appGrayLight: return UIColor(named: "color_app_light_gray", in: Bundle.module, compatibleWith: nil) ?? .lightGray
+        case .appGrayDark: return UIColor(named: "color_app_dark_gray", in: Bundle.module, compatibleWith: nil) ?? .darkGray
         case .appGreen: return UIColor(named: "color_app_green", in: Bundle.module, compatibleWith: nil) ?? .green
         }
     }

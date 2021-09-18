@@ -4,6 +4,6 @@ import Foundation
 
 extension Bundle {
     static var module: Bundle {
-        return Bundle(for: Self.self)
+        return Bundle(for: AppDependencyContainer.self)
     }
 }

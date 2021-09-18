@@ -149,16 +149,8 @@ extension AppointmentsViewController{
     ///MARK:- Navigation Setup
     func setupNavigationBar(){
         self.navigationController?.navigationBar.barTintColor = .white
-        self.navigationController?.navigationBar.tintColor = UIColor(named: "color_app_blue", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none)
+        self.navigationController?.navigationBar.tintColor = UIColor.appSkyBlue
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
-    }
-    
-    @objc func didTapAddButton(_ sender: UIBarButtonItem){
-        
-    }
-    
-    @objc func didTapFilterButton(_ sender: UIBarButtonItem){
-        
     }
 }
 
@@ -173,6 +165,7 @@ extension AppointmentsViewController{
         
         bindtextField(viewModel: viewModel)
         bindActions(viewModel: viewModel)
+        bindErrorAlert(viewModel: viewModel)
     }
     
     private func bindtextField(viewModel : AppointmentsViewModelType){
@@ -215,6 +208,18 @@ extension AppointmentsViewController{
             .disposed(by: disposeBag)
         
         
+    }
+    
+    private func bindErrorAlert(viewModel: AppointmentsViewModelType) {
+        
+        viewModel.outputs.errorAlert
+            .subscribe(onNext: { [weak self] message in
+                let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+                let cancelAction = UIAlertAction(title: "OK", style: .default)
+                alert.addAction(cancelAction)
+                self?.present(alert, animated: true)
+            })
+            .disposed(by: disposeBag)
     }
     
 }
