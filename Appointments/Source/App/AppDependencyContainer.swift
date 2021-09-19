@@ -10,6 +10,7 @@ public class AppDependencyContainer {
     private let facilityDataStore: FacilityDataStore
     private let addActionProvider: AddActionProvider?
     private let filterActionProvider: FilterActionProvider?
+    private let client: APIClient
     
     public init(baseURL: String,
                 authentication: AuthenticationConvertible,
@@ -24,21 +25,33 @@ public class AppDependencyContainer {
         self.facilityDataStore = facilityDataStore
         self.addActionProvider = addActionProvider
         self.filterActionProvider = filterActionProvider
+        self.client = AlamofireClient()
     }
     
     
-    func makeAppointmentsCoordinator(root: UIViewController) -> AppCoordinator {
+    public func makeAppointmentsCoordinator(root: UIViewController) -> AppCoordinator {
+        
         return AppCoordinator(root: root,
                               factory: self)
-        
     }
     
-    
     func makeAppointmentsViewController(viewModel: AppointmentsViewModelType) -> AppointmentsViewController {
-        return AppointmentsViewController()
+        
+        return AppointmentsViewController(viewModel: viewModel)
     }
     
     func makeAppointmentsViewModel() -> AppointmentsViewModelType {
-        return AppointmentsViewModel()
+        
+        let service = AppointmentService(baseURL: self.baseURL,
+                                         authHeaderProvider: self.authentication,
+                                         client: self.client)
+        
+        let repository = AppointmentRepository(appointmentService: service)
+        
+        let facilityID = self.facilityDataStore.currentFacility?["id"] as? Int ?? 0
+        
+        return AppointmentsViewModel(facilityID: facilityID,
+                                     appointmentsRepository: repository )
     }
+    
 }

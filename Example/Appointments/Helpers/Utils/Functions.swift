@@ -51,7 +51,7 @@ class Functions: NSObject {
     static func showActivity(progres:Double = 0.0){
         if progres == 0.0{
             SVProgressHUD.show()
-            SVProgressHUD.setDefaultMaskType(.clear)
+            SVProgressHUD.setDefaultMaskType(.black)
             
         }else{
             let value = progres*100

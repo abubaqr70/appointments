@@ -7,7 +7,7 @@ struct AppointmentEndpoint: Endpoint {
     let baseURL: String
     let queryItems: [URLQueryItem]
     let pathVariables: [String]?
-    let path: String = "/appointments"
+    let path: String = "appointments"
     
     init(baseURL: String,
          pathVariables: [String]? = nil,

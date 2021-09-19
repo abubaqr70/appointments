@@ -20,25 +20,42 @@ class UIPageNavigator: UIView {
         return button
     }()
     
-    fileprivate lazy var titleButton: UIButton = {
-        let button = UIButton(frame: CGRect.zero)
-        button.setTitleColor( UIColor.darkGray, for: .normal)
-        button.titleLabel?.font = UIFont.appFont(withStyle: .title3, size: 14)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
+    fileprivate lazy var titletextField: UITextField = {
+        let textField = UITextField(frame: CGRect.zero)
+        textField.textColor = UIColor.darkGray
+        textField.font = UIFont.appFont(withStyle: .title3, size: 14)
+        textField.contentMode = .center
+        textField.textAlignment = .center
+        textField.borderStyle = .none
+        textField.tintColor = .clear
+        textField.inputView = date_picker
+        textField.inputAccessoryView = tool_bar
+        return textField
     }()
     
-    fileprivate lazy var titleLable: UILabel = {
-        let label = UILabel(frame: CGRect.zero)
-        label.font = UIFont.appFont(withStyle: .body, size: 18)
-        label.textAlignment = .center
-        label.textColor = UIColor.lightGray
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
+    fileprivate lazy var date_picker: UIDatePicker = {
+        let datePicker = UIDatePicker()
+        datePicker.datePickerMode = .date
+        if #available(iOS 13.4, *) {
+            datePicker.preferredDatePickerStyle = .wheels
+        }
+        datePicker.addTarget(self, action: #selector(dueDateChanged(sender:)), for: UIControl.Event.valueChanged)
+        datePicker.frame = CGRect(x:0.0, y:0, width: self.frame.width, height:250)
+        return datePicker
     }()
+    
+    fileprivate lazy var tool_bar : UIToolbar = {
+        let toolBar = UIToolbar()
+        let doneButton = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(self.datePickerDone))
+        let cancelButton = UIBarButtonItem(title: "Cancel", style: .done, target: self, action: #selector(self.tapCancel))
+        toolBar.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: 44)
+        toolBar.setItems([cancelButton, UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil), doneButton], animated: true)
+        return toolBar
+    }()
+    
     
     fileprivate lazy var stackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [previousButton, titleButton, nextButton])
+        let stackView = UIStackView(arrangedSubviews: [previousButton, titletextField, nextButton])
         stackView.axis = .horizontal
         stackView.alignment = .fill
         stackView.distribution = .fill
@@ -84,10 +101,33 @@ class UIPageNavigator: UIView {
             stackView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             stackView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
         ])
-        
+    }
+    
+    @objc func dueDateChanged(sender:UIDatePicker){
         
     }
+    
+    @objc func datePickerDone() {
+        titletextField.resignFirstResponder()
+        let dateFormatr = DateFormatter()
+        dateFormatr.dateFormat = "EEEE, MMM dd, yyyy"
+        
+        date_picker.rx.date.map{ return dateFormatr.string(from: $0)}
+            .bind(to: titletextField.rx.text)
+            .disposed(by: disposeBag)
+        
+        date_picker.rx.date
+            .bind(to: dateSubject)
+            .disposed(by: disposeBag)
+    }
+    
+    @objc func tapCancel() {
+        titletextField.resignFirstResponder()
+    }
+    
+    let dateSubject : BehaviorSubject = BehaviorSubject<Date>(value: Date())
 }
+
 
 extension Reactive where Base: UIPageNavigator {
     
@@ -95,16 +135,10 @@ extension Reactive where Base: UIPageNavigator {
     
     var previous: ControlEvent<Void> { return self.base.previousButton.rx.tap }
     
-    var title: Binder<String?> { return self.base.titleLable.rx.text }
-    
-    var titleBtnTap: ControlEvent<Void> { return self.base.titleButton.rx.tap }
-    
-    var titleBtn: Binder<String?> { return self.base.titleButton.rx.title(for: .normal) }
+    var titleTextField: Binder<String?> { return self.base.titletextField.rx.text }
     
     var nextEnable: Binder<Bool> { return self.base.nextButton.rx.isEnabled }
     
     var previousEnable: Binder<Bool> { return self.base.previousButton.rx.isEnabled }
-    
-    var titleBtnEnable: Binder<Bool> { return self.base.titleButton.rx.isEnabled }
     
 }

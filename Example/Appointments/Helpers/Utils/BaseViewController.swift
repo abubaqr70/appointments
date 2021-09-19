@@ -22,8 +22,8 @@ class BaseViewController: UIViewController {
         let viewController = Storyboard.Main.instantiateViewController(withIdentifier: identifier)
         let nav1 = UINavigationController()
         nav1.viewControllers = [viewController]
-        nav1.navigationBar.tintColor = .white
-        nav1.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+        nav1.navigationBar.tintColor = UIColor(named: "blue_Color")
+        nav1.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor(named: "blue_Color") as Any]
         UIApplication.shared.windows.first?.rootViewController = nav1
         UIApplication.shared.windows.first?.makeKeyAndVisible()
     }

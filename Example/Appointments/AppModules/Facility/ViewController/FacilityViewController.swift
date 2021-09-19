@@ -3,6 +3,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Appointments
 
 class FacilityViewController: BaseViewController {
     
@@ -32,6 +33,23 @@ class FacilityViewController: BaseViewController {
             cell.selectionStyle = .none
         }.disposed(by: disposeBag)
         
+        self.facilityTblView.rx.modelSelected(Facilities.self).subscribe(onNext: { [weak self]
+            facility in
+            guard let self = self else {return}
+            do{
+                let data = try JSONEncoder().encode(facility)
+                do {
+                    let responseModel = try? JSONSerialization.jsonObject(with: data, options: [])
+                    guard let dictionary = responseModel as? [String : Any] else {
+                        return
+                    }
+                    self.didSelect(facility: dictionary)
+                }
+            }catch let error as NSError{
+                print(error.localizedDescription)
+            }
+        }).disposed(by: disposeBag)
+        
     }
     
     private func addSearchBarObserver() {
@@ -46,6 +64,15 @@ class FacilityViewController: BaseViewController {
                     let query = query.element else { return }
                 self?.searchText.onNext(query)
             }
+            .disposed(by: disposeBag)
+    }
+    
+    private func didSelect(facility: [String:Any]){
+        let appDependcy = AppDependencyContainer.init(baseURL: APPURL.Domain, authentication: AuthenticationProvider.init(), userDataStore: UserProvider.init(), facilityDataStore: FacilityProvider.init(facility: facility), addActionProvider: nil, filterActionProvider: nil)
+        let appCordinator = appDependcy.makeAppointmentsCoordinator(root: self.navigationController ?? UINavigationController())
+        appCordinator
+            .start()
+            .subscribe()
             .disposed(by: disposeBag)
     }
     

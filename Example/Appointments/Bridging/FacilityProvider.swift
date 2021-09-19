@@ -6,15 +6,17 @@ import Appointments
 
 public class FacilityProvider: FacilityDataStore {
     
+    let facility: [String:Any]?
+    init(facility: [String:Any]) {
+        self.facility = facility
+    }
+    
     public var currentFacility: [String : Any]? {
         //TODO: Return User DTO
-        let user = Functions.getJSON("facilities") ?? Data()
-        do {
-            let responseModel = try? JSONSerialization.jsonObject(with: user, options: [])
-            guard let dictionary = responseModel as? [String : Any] else {
-                return [:]
-            }
-            return dictionary
+        if facility != nil {
+            return facility
+        } else {
+            return [:]
         }
     }
 }

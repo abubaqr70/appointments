@@ -6,7 +6,7 @@ import RxSwift
 
 class HeaderTableViewCell: RxUITableViewCell {
     
-    fileprivate lazy var heading_label: UILabel = {
+    fileprivate lazy var headingLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .white
@@ -15,10 +15,10 @@ class HeaderTableViewCell: RxUITableViewCell {
         return label
     }()
     
-    fileprivate lazy var cell_view : UIView = {
+    fileprivate lazy var cellView : UIView = {
         let view = UIView(frame: CGRect.zero)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor(named: "color_app_blue", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none)
+        view.backgroundColor = UIColor.appSkyBlue
         view.layer.cornerRadius = 3
         return view
     }()
@@ -44,27 +44,27 @@ class HeaderTableViewCell: RxUITableViewCell {
     
     private func setupViews() {
         selectionStyle = .none
-        contentView.addSubview(cell_view)
-        cell_view.addSubview(heading_label)
-        contentView.backgroundColor = UIColor(named: "color_app_light_gray", in: Bundle(for: AppointmentsViewController.self), compatibleWith: .none)
+        contentView.addSubview(cellView)
+        cellView.addSubview(headingLabel)
+        contentView.backgroundColor = UIColor.appGrayLight
     }
     
     private func setupConstraints() {
         
         NSLayoutConstraint.activate([
-            heading_label.topAnchor.constraint(equalTo: cell_view.topAnchor, constant: 5),
-            heading_label.leadingAnchor.constraint(equalTo: cell_view.leadingAnchor, constant: 20),
-            heading_label.trailingAnchor.constraint(equalTo: cell_view.trailingAnchor, constant: -20),
-            heading_label.bottomAnchor.constraint(equalTo: cell_view.bottomAnchor, constant: -5)
+            headingLabel.topAnchor.constraint(equalTo: cellView.topAnchor, constant: 5),
+            headingLabel.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 20),
+            headingLabel.trailingAnchor.constraint(equalTo: cellView.trailingAnchor, constant: -20),
+            headingLabel.bottomAnchor.constraint(equalTo: cellView.bottomAnchor, constant: -5)
         ])
         
         NSLayoutConstraint.activate([
-            cell_view.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
-            cell_view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-            cell_view.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -20)
+            cellView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
+            cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            cellView.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -20)
         ])
-
-        let bottomConstraint = contentView.bottomAnchor.constraint(equalTo: cell_view.bottomAnchor, constant: 6)
+        
+        let bottomConstraint = contentView.bottomAnchor.constraint(equalTo: cellView.bottomAnchor, constant: 6)
         bottomConstraint.priority = UILayoutPriority(999)
         bottomConstraint.isActive = true
     }
@@ -72,9 +72,19 @@ class HeaderTableViewCell: RxUITableViewCell {
 
 extension Reactive where Base: HeaderTableViewCell {
     
-    var heading: Binder<NSAttributedString> {
+    var heading: Binder<String> {
         return Binder(self.base) { cell, heading in
-            cell.heading_label.attributedText = heading
+            
+            //Mark:- Setting Heading Title
+            if  heading.isEmpty {
+                cell.headingLabel.isHidden = true
+                cell.cellView.isHidden = true
+            } else {
+                cell.headingLabel.isHidden = false
+                cell.cellView.isHidden = false
+                cell.headingLabel.text = heading
+            }
+            
         }
     }
 }

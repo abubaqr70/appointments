@@ -3,18 +3,15 @@
 
 import Foundation
 
-protocol AuthHeaderProvider {
-    var headers: [String: String] { get }
-}
 
 class AppointmentService: BaseService {
     
     private let baseURL: String
-    private let authHeaderProvider: AuthHeaderProvider
+    private let authHeaderProvider: AuthenticationConvertible
     private let client: APIClient
     
     init(baseURL: String,
-         authHeaderProvider: AuthHeaderProvider,
+         authHeaderProvider: AuthenticationConvertible,
          client: APIClient) {
         
         self.baseURL = baseURL
@@ -22,20 +19,23 @@ class AppointmentService: BaseService {
         self.client = client
     }
     
-    public func getAppointments<ResultType: Codable>(startDate: TimeInterval,
-                                            endDate: TimeInterval,
-                                            completion: @escaping (Result<[ResultType], Error>) -> Void) {
+    public func getAppointments<ResultType: Codable>(for facilityID: Int,
+                                                     startDate: TimeInterval,
+                                                     endDate: TimeInterval,
+                                                     completion: @escaping (Result<[ResultType], Error>) -> Void) {
         
-        let query = ["start_date": String(startDate),
-                     "end_date": String(endDate)]
+        let query = ["i_started_date": String(startDate),
+                     "i_ended_date": String(endDate)]
+        
+        let pathVariables = ["facilities", String(facilityID)]
         
         let endpoint: Endpoint = AppointmentEndpoint(baseURL: self.baseURL,
+                                                     pathVariables: pathVariables,
                                                      query: query)
         
         let request: Request = Request<Int>(endpoint: endpoint,
                                             httpMethod: .get,
-                                            headers: self.authHeaderProvider.headers)
-        
+                                            headers: self.authHeaderProvider.authenticationHeader)
         self.dataRequest(with: self.client,
                          request: request,
                          completion: completion)

@@ -20,13 +20,13 @@ struct Request<BodyType: Encodable> {
     let httpMethod: HTTPMethod
     let type: RequestType
     let body: BodyType?
-    let headers: [String: String]?
+    let headers: [String: String?]?
     
     init(endpoint: Endpoint,
          httpMethod: HTTPMethod,
          type: RequestType = .json,
          body: BodyType? = nil,
-         headers: [String: String]? = nil) {
+         headers: [String: String?]? = nil) {
         
         self.endpoint = endpoint
         self.httpMethod = httpMethod
@@ -46,7 +46,7 @@ extension Request: URLRequestConvertible {
         urlRequest.httpMethod = self.httpMethod.rawValue
         
         if let headers = self.headers {
-            _ = headers.map { urlRequest.addValue($0.value, forHTTPHeaderField: $0.key) }
+            _ = headers.map { urlRequest.addValue($0.value ?? "", forHTTPHeaderField: $0.key) }
         }
         _ = self.type.headers.map { urlRequest.addValue($0.value, forHTTPHeaderField: $0.key) }
         
