@@ -29,9 +29,11 @@ public class AppDependencyContainer {
     }
     
     
-    public func makeAppointmentsCoordinator(root: UIViewController) -> AppCoordinator {
+    public func makeAppointmentsCoordinator(root: UIViewController,
+                                            navigationType: NavigationType) -> AppCoordinator {
         
         return AppCoordinator(root: root,
+                              navigationType: navigationType,
                               factory: self)
     }
     
