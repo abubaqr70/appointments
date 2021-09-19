@@ -32,4 +32,5 @@ Pod::Spec.new do |s|
     s.dependency 'RxCocoa'
     s.dependency 'Alamofire'
     s.dependency 'Kingfisher'
+    s.dependency 'MBProgressHUD', '~> 0.9.1'
 end

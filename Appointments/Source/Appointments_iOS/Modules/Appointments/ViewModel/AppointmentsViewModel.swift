@@ -25,7 +25,7 @@ protocol AppointmentsViewModelOutputs {
     var lastUpdatedLabel: Observable<String?> { get }
     var dateNavigatorTitle: Observable<String?> { get }
     var errorAlert: Observable<String> { get }
-    
+    var isLoading: Observable<Bool> { get }
 }
 
 protocol AppointmentsViewModelType {
@@ -51,6 +51,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     var dateNavigatorTitle: Observable<String?> { return  dateNavigatorTitleSubject.asObservable()}
     var sections: Observable<[(title: String, rows: [ReuseableCellViewModelType])]> { return sectionsSubject.asObservable() }
     var errorAlert: Observable<String>{ return errorAlertSubject.asObservable() }
+    var isLoading: Observable<Bool>{ return loadingSubject.asObservable() }
     
     //Mark: Private Properties
     
@@ -68,6 +69,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     private let refreshAppointmentsSubject = PublishSubject<Void>()
     private let errorAlertSubject = PublishSubject<String>()
     private let sectionsSubject = BehaviorSubject<[(title: String, rows: [ReuseableCellViewModelType])]>(value: [])
+    private let loadingSubject = BehaviorSubject<Bool>(value: false)
     
     private let disposeBag = DisposeBag()
     private let facilityIDSubject: BehaviorSubject<Int>
@@ -100,9 +102,9 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         let fetchRequest = self.refreshAppointmentsSubject
             .withLatestFrom(Observable.combineLatest(self.facilityIDSubject, self.datePickerSubject))
             .flatMap { [weak self] facilityID, date -> Observable<Event<[Appointment]>> in
-                
                 guard let self = self else { return .never() }
                 
+                self.loadingSubject.onNext(true)
                 let startDate = Calendar.current.startOfDay(for: date)
                 var components = DateComponents()
                 components.day = 1
@@ -117,8 +119,10 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             .share()
         
         fetchRequest.elements()
-            .map({
+            .map({ [weak self]
                 appointments -> [Appointment] in
+                guard let self = self else { return []}
+                self.loadingSubject.onNext(false)
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'"
                 return appointments.sorted(by: {dateFormatter.date(from: $0.start_date?.m ?? "")?.compare(dateFormatter.date(from: $1.start_date?.m ?? "") ?? Date()) == ComparisonResult.orderedDescending})
@@ -129,8 +133,10 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         
         fetchRequest.errors()
             .debug("Errors")
-            .map{
+            .map{ [weak self]
                 error -> String in
+                guard let self = self else { return ""}
+                self.loadingSubject.onNext(false)
                 return error.localizedDescription
             }
             .bind(to: errorAlertSubject)

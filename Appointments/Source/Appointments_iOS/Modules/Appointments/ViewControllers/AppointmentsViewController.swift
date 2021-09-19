@@ -3,6 +3,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import MBProgressHUD
 
 public class AppointmentsViewController: UIViewController {
     
@@ -63,6 +64,13 @@ public class AppointmentsViewController: UIViewController {
         return tableView
     }()
     
+    fileprivate lazy var progressHud: MBProgressHUD = {
+        let hud = MBProgressHUD()
+        hud.removeFromSuperViewOnHide = false
+        hud.labelText = "Loading"
+        return hud
+    }()
+    
     private var viewModel: AppointmentsViewModelType
     private let disposeBag = DisposeBag()
     
@@ -101,6 +109,7 @@ extension AppointmentsViewController{
         self.view.addSubview(lastUpdatedLabel)
         self.view.addSubview(pageNavigator)
         self.view.addSubview(tableView)
+        self.view.addSubview(progressHud)
         view.backgroundColor = .white
     }
     
@@ -162,6 +171,13 @@ extension AppointmentsViewController{
             guard let `self` = self else { return }
             self.sections = (section.element ?? [])
         }).disposed(by: disposeBag)
+        
+        viewModel.outputs.isLoading
+            .subscribe(onNext: { [weak self] loading in
+                guard let `self` = self else { return }
+                loading ? self.progressHud.show(true) : self.progressHud.hide(true)
+            })
+            .disposed(by: disposeBag)
         
         bindtextField(viewModel: viewModel)
         bindActions(viewModel: viewModel)
