@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = 'Appointments'
-    s.version          = '0.0.2-rc.6'
+    s.version          = '0.0.2-rc.7'
     s.summary          = 'Appointment pod for iOS Apps'
     
     s.description      = <<-DESC
@@ -34,5 +34,5 @@ Pod::Spec.new do |s|
     s.dependency 'RxSwiftExt', '6.0.1'
     s.dependency 'Alamofire'
     s.dependency 'Kingfisher'
-    s.dependency 'MBProgressHUD', '1.2.0'
+    s.dependency 'MBProgressHUD', '0.9.2'
 end
