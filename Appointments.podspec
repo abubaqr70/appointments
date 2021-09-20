@@ -29,10 +29,10 @@ Pod::Spec.new do |s|
     }
     
     s.frameworks = 'UIKit'
-    s.dependency 'RxSwift'
-    s.dependency 'RxSwiftExt'
-    s.dependency 'RxCocoa'
+    s.dependency 'RxSwift', '6.2.0'
+    s.dependency 'RxCocoa', '6.2.0'
+    s.dependency 'RxSwiftExt', '6.0.1'
     s.dependency 'Alamofire'
     s.dependency 'Kingfisher'
-    s.dependency 'MBProgressHUD'
+    s.dependency 'MBProgressHUD', '1.2.0'
 end

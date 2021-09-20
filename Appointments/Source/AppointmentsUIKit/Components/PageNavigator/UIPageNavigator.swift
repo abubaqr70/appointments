@@ -20,7 +20,7 @@ class UIPageNavigator: UIView {
         return button
     }()
     
-    fileprivate lazy var titletextField: UITextField = {
+    fileprivate lazy var titleTextField: UITextField = {
         let textField = UITextField(frame: CGRect.zero)
         textField.textColor = UIColor.darkGray
         textField.font = UIFont.appFont(withStyle: .title3, size: 14)
@@ -55,7 +55,7 @@ class UIPageNavigator: UIView {
     
     
     fileprivate lazy var stackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [previousButton, titletextField, nextButton])
+        let stackView = UIStackView(arrangedSubviews: [previousButton, titleTextField, nextButton])
         stackView.axis = .horizontal
         stackView.alignment = .fill
         stackView.distribution = .fill
@@ -108,12 +108,12 @@ class UIPageNavigator: UIView {
     }
     
     @objc func datePickerDone() {
-        titletextField.resignFirstResponder()
+        titleTextField.resignFirstResponder()
         let dateFormatr = DateFormatter()
         dateFormatr.dateFormat = "EEEE, MMM dd, yyyy"
         
         date_picker.rx.date.map{ return dateFormatr.string(from: $0)}
-            .bind(to: titletextField.rx.text)
+            .bind(to: titleTextField.rx.text)
             .disposed(by: disposeBag)
         
         date_picker.rx.date
@@ -122,7 +122,7 @@ class UIPageNavigator: UIView {
     }
     
     @objc func tapCancel() {
-        titletextField.resignFirstResponder()
+        titleTextField.resignFirstResponder()
     }
     
     let dateSubject : BehaviorSubject = BehaviorSubject<Date>(value: Date())
@@ -135,7 +135,7 @@ extension Reactive where Base: UIPageNavigator {
     
     var previous: ControlEvent<Void> { return self.base.previousButton.rx.tap }
     
-    var titleTextField: Binder<String?> { return self.base.titletextField.rx.text }
+    var titleTextField: Binder<String?> { return self.base.titleTextField.rx.text }
     
     var nextEnable: Binder<Bool> { return self.base.nextButton.rx.isEnabled }
     

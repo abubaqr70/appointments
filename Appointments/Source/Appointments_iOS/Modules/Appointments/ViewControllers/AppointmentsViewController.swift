@@ -67,7 +67,7 @@ public class AppointmentsViewController: UIViewController {
     fileprivate lazy var progressHud: MBProgressHUD = {
         let hud = MBProgressHUD()
         hud.removeFromSuperViewOnHide = false
-        hud.labelText = "Loading"
+        hud.label.text = "Loading"
         return hud
     }()
     
@@ -175,7 +175,7 @@ extension AppointmentsViewController{
         viewModel.outputs.isLoading
             .subscribe(onNext: { [weak self] loading in
                 guard let `self` = self else { return }
-                loading ? self.progressHud.show(true) : self.progressHud.hide(true)
+                loading ? self.progressHud.show(animated: true) : self.progressHud.hide(animated: true)
             })
             .disposed(by: disposeBag)
         
