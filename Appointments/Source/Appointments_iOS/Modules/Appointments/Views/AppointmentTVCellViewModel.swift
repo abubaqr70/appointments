@@ -7,7 +7,7 @@ import RxSwift
 protocol AppointmentTVCellViewModelInputs {
     
     //TODO :- Inputs here
-    var checkbox : AnyObserver<Void> { get }
+    var markCheckbox : AnyObserver<Void> { get }
 }
 
 protocol AppointmentTVCellViewModelOutputs {
@@ -18,8 +18,8 @@ protocol AppointmentTVCellViewModelOutputs {
     var appointmentDescription: Observable<String?> { get }
     var staff: Observable<String?> { get }
     var profileImage: Observable<String?> { get }
-    var checkboxSelected : Observable<Bool> { get }
-    var checkboxEnabled : Observable<Bool> { get }
+    var markPresent : Observable<Bool> { get }
+    var markPresentEnabled : Observable<Bool> { get }
     
 }
 
@@ -36,7 +36,7 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
     var outputs: AppointmentTVCellViewModelOutputs { return self }
     
     //Mark: Inputs
-    var checkbox: AnyObserver<Void> { return checkboxSubject.asObserver()}
+    var markCheckbox: AnyObserver<Void> { return markcheckboxSubject.asObserver()}
     
     //Mark: Outputs
     var name: Observable<String?> { return nameSubject.asObservable() }
@@ -44,8 +44,8 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
     var appointmentDescription: Observable<String?> { return appointmentDescriptionSubject.asObservable() }
     var staff: Observable<String?> { return staffSubject.asObservable() }
     var profileImage: Observable<String?> { return profileImageSubject.asObservable() }
-    var checkboxSelected: Observable<Bool> { return checkboxSelectedSubject.asObservable()}
-    var checkboxEnabled: Observable<Bool> { return checkboxEnabledSubject.asObservable()}
+    var markPresent: Observable<Bool> { return markPresentSubject.asObservable()}
+    var markPresentEnabled: Observable<Bool> { return markPresentEnabledSubject.asObservable()}
     
     //Mark: Init
     private let disposeBag = DisposeBag()
@@ -55,16 +55,16 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
     let staffSubject: BehaviorSubject<String?>
     let profileImageSubject: BehaviorSubject<String?>
     let appointmentsSubject: BehaviorSubject<Appointment>
-    let checkboxSubject : BehaviorSubject<Void>
-    let checkboxSelectedSubject : BehaviorSubject<Bool>
-    let checkboxEnabledSubject : BehaviorSubject<Bool>
+    let markcheckboxSubject : BehaviorSubject<Void>
+    let markPresentSubject : BehaviorSubject<Bool>
+    let markPresentEnabledSubject : BehaviorSubject<Bool>
     
     init(appointment: Appointment) {
         
         //Mark:- Setting User Names
-        checkboxSubject = BehaviorSubject(value: ())
-        checkboxEnabledSubject = BehaviorSubject(value: true)
-        checkboxSelectedSubject = BehaviorSubject(value: true)
+        markcheckboxSubject = BehaviorSubject(value: ())
+        markPresentEnabledSubject = BehaviorSubject(value: true)
+        markPresentSubject = BehaviorSubject(value: true)
         appointmentsSubject = BehaviorSubject(value: appointment)
         nameSubject = BehaviorSubject(value: "")
         roomSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.v_room_no)
@@ -92,15 +92,19 @@ extension AppointmentTVCellViewModel {
     
     func bindActions(appointment: Appointment) {
         
-        checkboxSelectedSubject.onNext( appointment.appointmentAttendance?.first?.i_present == "present" ? false : true )
-        checkboxEnabledSubject.onNext( appointment.appointmentAttendance?.first?.i_present == "present" ? false : true)
-        checkboxSubject
-            .withLatestFrom(self.checkboxSelectedSubject)
-            .map { selection -> Bool in
-                return !selection
+        markPresentSubject.onNext( appointment.appointmentAttendance?.first?.i_present == "present" ? false : true )
+
+        markcheckboxSubject
+            .withLatestFrom(self.markPresentSubject)
+            .map { isPresent -> Bool in
+                return !isPresent
             }
             .unwrap()
-            .bind(to: self.checkboxSelectedSubject)
+            .subscribe(onNext: {
+                present in
+                self.markPresentEnabledSubject.onNext(present)
+                self.markPresentSubject.onNext(!present)
+            })
             .disposed(by: disposeBag)
         
     }
