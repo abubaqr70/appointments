@@ -7,6 +7,7 @@ import RxSwift
 protocol AppointmentTVCellViewModelInputs {
     
     //TODO :- Inputs here
+    var checkbox : AnyObserver<Void> { get }
 }
 
 protocol AppointmentTVCellViewModelOutputs {
@@ -17,6 +18,8 @@ protocol AppointmentTVCellViewModelOutputs {
     var appointmentDescription: Observable<String?> { get }
     var staff: Observable<String?> { get }
     var profileImage: Observable<String?> { get }
+    var checkboxSelected : Observable<Bool> { get }
+    var checkboxEnabled : Observable<Bool> { get }
     
 }
 
@@ -32,12 +35,17 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
     var inputs: AppointmentTVCellViewModelInputs { return self }
     var outputs: AppointmentTVCellViewModelOutputs { return self }
     
+    //Mark: Inputs
+    var checkbox: AnyObserver<Void> { return checkboxSubject.asObserver()}
+    
     //Mark: Outputs
     var name: Observable<String?> { return nameSubject.asObservable() }
     var room: Observable<String?> { return roomSubject.asObservable() }
     var appointmentDescription: Observable<String?> { return appointmentDescriptionSubject.asObservable() }
     var staff: Observable<String?> { return staffSubject.asObservable() }
     var profileImage: Observable<String?> { return profileImageSubject.asObservable() }
+    var checkboxSelected: Observable<Bool> { return checkboxSelectedSubject.asObservable()}
+    var checkboxEnabled: Observable<Bool> { return checkboxEnabledSubject.asObservable()}
     
     //Mark: Init
     private let disposeBag = DisposeBag()
@@ -47,10 +55,16 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
     let staffSubject: BehaviorSubject<String?>
     let profileImageSubject: BehaviorSubject<String?>
     let appointmentsSubject: BehaviorSubject<Appointment>
+    let checkboxSubject : BehaviorSubject<Void>
+    let checkboxSelectedSubject : BehaviorSubject<Bool>
+    let checkboxEnabledSubject : BehaviorSubject<Bool>
     
     init(appointment: Appointment) {
         
         //Mark:- Setting User Names
+        checkboxSubject = BehaviorSubject(value: ())
+        checkboxEnabledSubject = BehaviorSubject(value: true)
+        checkboxSelectedSubject = BehaviorSubject(value: true)
         appointmentsSubject = BehaviorSubject(value: appointment)
         nameSubject = BehaviorSubject(value: "")
         roomSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.v_room_no)
@@ -68,7 +82,27 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
             }
             .bind(to: nameSubject)
             .disposed(by: disposeBag)
+        
+        bindActions(appointment: appointment)
     }
     
+}
+
+extension AppointmentTVCellViewModel {
+    
+    func bindActions(appointment: Appointment) {
+        
+        checkboxSelectedSubject.onNext( appointment.appointmentAttendance?.first?.i_present == "present" ? false : true )
+        checkboxEnabledSubject.onNext( appointment.appointmentAttendance?.first?.i_present == "present" ? false : true)
+        checkboxSubject
+            .withLatestFrom(self.checkboxSelectedSubject)
+            .map { selection -> Bool in
+                return !selection
+            }
+            .unwrap()
+            .bind(to: self.checkboxSelectedSubject)
+            .disposed(by: disposeBag)
+        
+    }
 }
 

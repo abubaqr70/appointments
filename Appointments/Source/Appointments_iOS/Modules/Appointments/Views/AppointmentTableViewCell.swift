@@ -303,15 +303,23 @@ class AppointmentTableViewCell: RxUITableViewCell {
             .disposed(by: disposeBag)
         
         checkboxButton.rx.tap
-            .subscribe(onNext: { [weak self] in
+            .bind(to: viewModel.inputs.checkbox)
+            .disposed(by: disposeBag)
+        
+        viewModel.outputs.checkboxSelected
+            .subscribe(onNext: { [weak self] selected in
                 guard let self = self else { return }
-                if !self.checkboxButton.isSelected {
-                    self.checkboxButton.isSelected = true
-                } else {
-                    self.checkboxButton.isSelected = false
-                }
+                self.checkboxButton.rx.isSelected.onNext(selected)
             })
             .disposed(by: disposeBag)
+        
+        viewModel.outputs.checkboxEnabled
+            .subscribe(onNext: { [weak self] selected in
+                guard let self = self else { return }
+                self.checkboxButton.rx.isEnabled.onNext(selected)
+            })
+            .disposed(by: disposeBag)
+    
     }
     
 }
