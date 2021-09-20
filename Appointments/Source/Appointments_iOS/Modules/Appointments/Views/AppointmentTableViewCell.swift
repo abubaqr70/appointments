@@ -57,8 +57,6 @@ class AppointmentTableViewCell: RxUITableViewCell {
         let checkboxButton = UIButton(frame: CGRect.zero)
         checkboxButton.backgroundColor = UIColor.white
         checkboxButton.translatesAutoresizingMaskIntoConstraints = false
-        checkboxButton.setImage(UIImage.moduleImage(named: "icon_checkbox_unselected"), for: .normal)
-        checkboxButton.setImage(UIImage.moduleImage(named: "icon_checkbox_selected"), for: .selected)
         checkboxButton.imageEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         return checkboxButton
     }()
@@ -303,15 +301,27 @@ class AppointmentTableViewCell: RxUITableViewCell {
             .disposed(by: disposeBag)
         
         checkboxButton.rx.tap
-            .subscribe(onNext: { [weak self] in
+            .bind(to: viewModel.inputs.markCheckbox)
+            .disposed(by: disposeBag)
+        
+        viewModel.outputs.markPresent
+            .subscribe(onNext: { [weak self] selected in
                 guard let self = self else { return }
-                if !self.checkboxButton.isSelected {
-                    self.checkboxButton.isSelected = true
-                } else {
-                    self.checkboxButton.isSelected = false
+                if selected {
+                    self.checkboxButton.setImage(UIImage.moduleImage(named: "icon_checkbox_selected"), for: .normal)
+                }else{
+                    self.checkboxButton.setImage(UIImage.moduleImage(named: "icon_checkbox_unselected"), for: .normal)
                 }
             })
             .disposed(by: disposeBag)
+        
+        viewModel.outputs.markPresentEnabled
+            .subscribe(onNext: { [weak self] selected in
+                guard let self = self else { return }
+                self.checkboxButton.rx.isEnabled.onNext(!selected)
+            })
+            .disposed(by: disposeBag)
+    
     }
     
 }
