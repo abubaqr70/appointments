@@ -2,13 +2,13 @@ use_frameworks!
 
 platform :ios, '12.1'
 
-#source 'https://github.com/CocoaPods/Specs.git'
+source 'https://github.com/CocoaPods/Specs.git'
 
 target 'Appointments_Example' do
   pod 'Appointments', :path => '../'
-  pod 'RxSwift'
-  pod 'RxCocoa'
-  pod 'RxSwiftExt'
+  pod 'RxSwift', '6.2.0'
+  pod 'RxCocoa', '6.2.0'
+  pod 'RxSwiftExt', '6.0.1'
   pod 'Alamofire'
   pod 'JVFloatLabeledTextField'
   pod 'SVProgressHUD'
