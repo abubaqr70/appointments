@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = 'Appointments'
-    s.version          = '0.0.2-rc.4'
+    s.version          = '0.0.2-rc.8'
     s.summary          = 'Appointment pod for iOS Apps'
     
     s.description      = <<-DESC
@@ -29,10 +29,11 @@ Pod::Spec.new do |s|
     }
     
     s.frameworks = 'UIKit'
-    s.dependency 'RxSwift'
-    s.dependency 'RxSwiftExt'
-    s.dependency 'RxCocoa'
+    s.dependency 'RxSwift', '6.2.0'
+    s.dependency 'RxCocoa', '6.2.0'
+    s.dependency 'RxSwiftExt', '6.0.1'
     s.dependency 'Alamofire'
     s.dependency 'Kingfisher'
-    s.dependency 'MBProgressHUD', '~> 0.9.1'
+    s.dependency 'SVProgressHUD'
+    
 end

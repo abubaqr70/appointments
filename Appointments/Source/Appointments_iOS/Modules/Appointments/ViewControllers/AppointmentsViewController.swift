@@ -3,7 +3,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
-import MBProgressHUD
+import SVProgressHUD
 
 public class AppointmentsViewController: UIViewController {
     
@@ -64,12 +64,6 @@ public class AppointmentsViewController: UIViewController {
         return tableView
     }()
     
-    fileprivate lazy var progressHud: MBProgressHUD = {
-        let hud = MBProgressHUD()
-        hud.removeFromSuperViewOnHide = false
-        hud.labelText = "Loading"
-        return hud
-    }()
     
     private var viewModel: AppointmentsViewModelType
     private let disposeBag = DisposeBag()
@@ -109,9 +103,23 @@ extension AppointmentsViewController{
         self.view.addSubview(lastUpdatedLabel)
         self.view.addSubview(pageNavigator)
         self.view.addSubview(tableView)
-        self.view.addSubview(progressHud)
         view.backgroundColor = .white
     }
+    
+    private func showActivity(){
+        SVProgressHUD.show(withStatus: "Loading")
+        SVProgressHUD.setDefaultAnimationType(.native)
+        SVProgressHUD.setDefaultStyle(.custom)
+        SVProgressHUD.setDefaultMaskType(.custom)
+        SVProgressHUD.setForegroundColor(UIColor.white)                                         //Ring Color
+        SVProgressHUD.setBackgroundColor(UIColor.black.withAlphaComponent(0.8))                 //HUD Color
+        SVProgressHUD.setBackgroundLayerColor(UIColor.clear)                                    //Background Color
+    }
+    
+    private func dismissActivity(){
+        SVProgressHUD.dismiss()
+    }
+    
     
     private func setupConstraints() {
         
@@ -175,7 +183,7 @@ extension AppointmentsViewController{
         viewModel.outputs.isLoading
             .subscribe(onNext: { [weak self] loading in
                 guard let `self` = self else { return }
-                loading ? self.progressHud.show(true) : self.progressHud.hide(true)
+                loading ? self.showActivity() : self.dismissActivity()
             })
             .disposed(by: disposeBag)
         
@@ -263,7 +271,6 @@ extension AppointmentsViewController: UITableViewDelegate,UITableViewDataSource 
         
         let element = sections[indexPath.section].rows[indexPath.row]
         cell.configure(viewModel: element)
-        
         return cell
     }
     
