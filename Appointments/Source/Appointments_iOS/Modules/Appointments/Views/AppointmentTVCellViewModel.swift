@@ -102,8 +102,8 @@ extension AppointmentTVCellViewModel {
             .unwrap()
             .subscribe(onNext: {
                 present in
-                self.markPresentEnabledSubject.onNext(present)
-                self.markPresentSubject.onNext(!present)
+                self.markPresentSubject.onNext(present)
+                self.markPresentEnabledSubject.onNext(!present)
             })
             .disposed(by: disposeBag)
         

@@ -318,7 +318,7 @@ class AppointmentTableViewCell: RxUITableViewCell {
         viewModel.outputs.markPresentEnabled
             .subscribe(onNext: { [weak self] selected in
                 guard let self = self else { return }
-                self.checkboxButton.rx.isEnabled.onNext(!selected)
+                self.checkboxButton.rx.isEnabled.onNext(selected)
             })
             .disposed(by: disposeBag)
     
