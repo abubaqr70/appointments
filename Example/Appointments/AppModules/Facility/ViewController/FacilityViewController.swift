@@ -68,9 +68,16 @@ class FacilityViewController: BaseViewController {
     }
     
     private func didSelect(facility: [String:Any]){
-        let appDependcy = AppDependencyContainer.init(baseURL: APPURL.Domain, authentication: AuthenticationProvider.init(), userDataStore: UserProvider.init(), facilityDataStore: FacilityProvider.init(facility: facility), addActionProvider: nil, filterActionProvider: nil)
-        let appCordinator = appDependcy.makeAppointmentsCoordinator(root: self.navigationController ?? UINavigationController())
-        appCordinator
+        let appDependency = AppDependencyContainer(baseURL: APPURL.Domain,
+                                                   authentication: AuthenticationProvider.init(),
+                                                   userDataStore: UserProvider.init(),
+                                                   facilityDataStore: FacilityProvider.init(facility: facility),
+                                                   addActionProvider: nil,
+                                                   filterActionProvider: nil)
+        
+        let appCoordinator = appDependency.makeAppointmentsCoordinator(root: self.navigationController ?? UINavigationController(),
+                                                                       navigationType: .present)
+        appCoordinator
             .start()
             .subscribe()
             .disposed(by: disposeBag)

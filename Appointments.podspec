@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = 'Appointments'
-    s.version          = '0.0.2-rc.1'
+    s.version          = '0.0.2-rc.4'
     s.summary          = 'Appointment pod for iOS Apps'
     
     s.description      = <<-DESC
@@ -24,7 +24,9 @@ Pod::Spec.new do |s|
     s.swift_version = '5'
     
     s.source_files = 'Appointments/Source/**/*.{h,m,swift}'
-    s.resource = 'Appointments/**/*.{xcdatamodeld,xcassets,otf}'
+    s.resource_bundles = {
+        'Appointments' => ['Appointments/**/*.{xcdatamodeld,xcassets,otf}']
+    }
     
     s.frameworks = 'UIKit'
     s.dependency 'RxSwift'
