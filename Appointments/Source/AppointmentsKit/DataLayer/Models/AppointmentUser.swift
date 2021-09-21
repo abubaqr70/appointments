@@ -4,40 +4,40 @@ import Foundation
 
 struct AppointmentUser : Codable {
     
-	let imageContent : String?
-	let fullname : String?
-	let profileImageRoute : String?
-	let thumbnail : String?
-	let passwordChangedDuration : String?
-	let full_name : String?
-	let gender : String?
-	let initials : String?
-	let formattedAdmissionDate : String?
-	let occupation : String?
-	let id : Int?
-	let v_first_name : String?
-	let v_last_name : String?
-	let v_room_no : String?
-	let v_picture : String?
+    let imageContent : String?
+    let fullname : String?
+    let profileImageRoute : String?
+    let thumbnail : String?
+    let passwordChangedDuration : String?
+    let full_name : String?
+    let gender : String?
+    let initials : String?
+    let formattedAdmissionDate : String?
+    let occupation : String?
+    let id : Int?
+    let v_first_name : String?
+    let v_last_name : String?
+    let v_room_no : String?
+    let v_picture : String?
 
-	enum CodingKeys: String, CodingKey {
+    enum CodingKeys: String, CodingKey {
 
-		case imageContent = "imageContent"
-		case fullname = "fullname"
-		case profileImageRoute = "profileImageRoute"
-		case thumbnail = "thumbnail"
-		case passwordChangedDuration = "passwordChangedDuration"
-		case full_name = "full_name"
-		case gender = "gender"
-		case initials = "initials"
-		case formattedAdmissionDate = "formattedAdmissionDate"
-		case occupation = "occupation"
-		case id = "id"
-		case v_first_name = "v_first_name"
-		case v_last_name = "v_last_name"
-		case v_room_no = "v_room_no"
-		case v_picture = "v_picture"
-	}
+        case imageContent = "imageContent"
+        case fullname = "fullname"
+        case profileImageRoute = "profileImageRoute"
+        case thumbnail = "thumbnail"
+        case passwordChangedDuration = "passwordChangedDuration"
+        case full_name = "full_name"
+        case gender = "gender"
+        case initials = "initials"
+        case formattedAdmissionDate = "formattedAdmissionDate"
+        case occupation = "occupation"
+        case id = "id"
+        case v_first_name = "v_first_name"
+        case v_last_name = "v_last_name"
+        case v_room_no = "v_room_no"
+        case v_picture = "v_picture"
+    }
 
 }
 
