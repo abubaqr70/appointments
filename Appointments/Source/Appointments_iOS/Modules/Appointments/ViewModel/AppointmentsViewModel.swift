@@ -72,14 +72,14 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     private let loadingSubject = BehaviorSubject<Bool>(value: false)
     
     private let disposeBag = DisposeBag()
-    private let facilityIDSubject: BehaviorSubject<Int>
+    private let facilityDataStore: FacilityDataStore
     private let appointmentsRepository: AppointmentRepository
     
     
-    init(facilityID: Int,
+    init(facilityDataStore: FacilityDataStore,
          appointmentsRepository: AppointmentRepository){
         
-        self.facilityIDSubject = BehaviorSubject(value: facilityID)
+        self.facilityDataStore = facilityDataStore
         self.appointmentsRepository = appointmentsRepository
         
         self.datePickerSubject
@@ -100,9 +100,9 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     func bindFetchAppointmentRequest() {
         
         let fetchRequest = self.refreshAppointmentsSubject
-            .withLatestFrom(Observable.combineLatest(self.facilityIDSubject, self.datePickerSubject))
-            .flatMap { [weak self] facilityID, date -> Observable<Event<[Appointment]>> in
-                guard let self = self else { return .never() }
+            .withLatestFrom(self.datePickerSubject)
+            .flatMap { [weak self] date -> Observable<Event<[Appointment]>> in
+                guard let self = self, let facilityID = self.facilityDataStore.currentFacility?["facility_id"] as? Int else { return .never() }
                 
                 self.loadingSubject.onNext(true)
                 let startDate = Calendar.current.startOfDay(for: date)
