@@ -41,7 +41,7 @@ struct Appointment: Codable {
     let appointmentTags : [AppointmentTags]?
     let appointmentAttendance : [AppointmentAttendance]?
     let user : AppointmentUser?
-    let userGroup : String?
+    let userGroup : UserGroup?
     let isAppointment : Bool?
 
     enum CodingKeys: String, CodingKey {
@@ -130,7 +130,7 @@ extension Appointment {
         appointmentTags = try values.decodeIfPresent([AppointmentTags].self, forKey: .appointmentTags)
         appointmentAttendance = try values.decodeIfPresent([AppointmentAttendance].self, forKey: .appointmentAttendance)
         user = try values.decodeIfPresent(AppointmentUser.self, forKey: .user)
-        userGroup = try values.decodeIfPresent(String.self, forKey: .userGroup)
+        userGroup = try values.decodeIfPresent(UserGroup.self, forKey: .userGroup)
         isAppointment = try values.decodeIfPresent(Bool.self, forKey: .isAppointment)
     }
     
