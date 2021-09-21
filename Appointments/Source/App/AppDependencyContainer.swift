@@ -49,10 +49,8 @@ public class AppDependencyContainer {
                                          client: self.client)
         
         let repository = AppointmentRepository(appointmentService: service)
-        
-        let facilityID = self.facilityDataStore.currentFacility?["id"] as? Int ?? 0
-        
-        return AppointmentsViewModel(facilityID: facilityID,
+                
+        return AppointmentsViewModel(facilityDataStore: self.facilityDataStore,
                                      appointmentsRepository: repository )
     }
     
