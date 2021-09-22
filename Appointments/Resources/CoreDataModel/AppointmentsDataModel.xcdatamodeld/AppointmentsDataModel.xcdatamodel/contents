@@ -1,9 +1,148 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="18154" systemVersion="20F71" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="18154" systemVersion="20G95" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="CDAppointment" representedClassName="CDAppointment" syncable="YES">
-        <attribute name="title" optional="YES" attributeType="String"/>
+        <attribute name="event_length" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="event_pid" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="fk_created_by_id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="fk_facility_id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="fk_group_id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="fk_parent_event_id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="fk_patient_id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="fk_resident_id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="fk_therapist_id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="fk_therapy_id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="fk_updated_by_id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="fk_wing_id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="i_created" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="i_ended_date" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="i_is_clinical" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="i_is_critical" optional="YES" attributeType="Boolean" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="i_is_reminder" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="i_is_therapy" optional="YES" attributeType="Boolean" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="i_last_updated" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="i_occurrence_id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="i_started_date" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="is_rec" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isAppointment" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="rec_pattern" optional="YES" attributeType="String"/>
+        <attribute name="rec_type" optional="YES" attributeType="String"/>
+        <attribute name="seriesEndDate" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="seriesStartDate" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="t_description" optional="YES" attributeType="String"/>
+        <attribute name="v_location" optional="YES" attributeType="String"/>
+        <attribute name="v_note_to_staff" optional="YES" attributeType="String"/>
+        <attribute name="v_title" optional="YES" attributeType="String"/>
+        <attribute name="v_video_link" optional="YES" attributeType="String"/>
+        <relationship name="appointmentAttendance" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CDAppointmentAttendance" inverseName="ofCDAppointments" inverseEntity="CDAppointmentAttendance"/>
+        <relationship name="appointmentTags" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CDAppointmentTags" inverseName="ofCDAppointments" inverseEntity="CDAppointmentTags"/>
+        <relationship name="end_date" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="CDEnd_date" inverseName="ofCDAppointments" inverseEntity="CDEnd_date"/>
+        <relationship name="start_date" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="CDStart_date" inverseName="ofCDAppointments" inverseEntity="CDStart_date"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="CDAppointmentUser" inverseName="ofCDAppointments" inverseEntity="CDAppointmentUser"/>
+        <relationship name="userGroup" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="CDUserGroup" inverseName="ofCDAppointments" inverseEntity="CDUserGroup"/>
+    </entity>
+    <entity name="CDAppointmentAttendance" representedClassName="CDAppointmentAttendance" syncable="YES" codeGenerationType="class">
+        <attribute name="fk_appointment_id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="fk_created_by_id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="fk_resident_id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="fk_updated_by_id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="i_cancel_reminder" optional="YES" attributeType="String"/>
+        <attribute name="i_created" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="i_present" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="i_registered" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="i_reminder_sent" optional="YES" attributeType="String"/>
+        <attribute name="i_reminder_sent_time" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="i_updated" optional="YES" attributeType="Integer 64" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="ofCDAppointments" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDAppointment" inverseName="appointmentAttendance" inverseEntity="CDAppointment"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="CDAppointmentUser" inverseName="ofCDAppointmentUser" inverseEntity="CDAppointmentUser"/>
+    </entity>
+    <entity name="CDAppointmentTags" representedClassName="CDAppointmentTags" syncable="YES" codeGenerationType="class">
+        <attribute name="fk_appointment_id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="fk_tag_id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="v_tag_actual_text" optional="YES" attributeType="String"/>
+        <relationship name="ofCDAppointments" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDAppointment" inverseName="appointmentTags" inverseEntity="CDAppointment"/>
+    </entity>
+    <entity name="CDAppointmentUser" representedClassName="CDAppointmentUser" syncable="YES" codeGenerationType="class">
+        <attribute name="formattedAdmissionDate" optional="YES" attributeType="String"/>
+        <attribute name="full_name" optional="YES" attributeType="String"/>
+        <attribute name="fullname" optional="YES" attributeType="String"/>
+        <attribute name="gender" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="imageContent" optional="YES" attributeType="String"/>
+        <attribute name="initials" optional="YES" attributeType="String"/>
+        <attribute name="occupation" optional="YES" attributeType="String"/>
+        <attribute name="passwordChangedDuration" optional="YES" attributeType="String"/>
+        <attribute name="profileImageRoute" optional="YES" attributeType="String"/>
+        <attribute name="thumbnail" optional="YES" attributeType="String"/>
+        <attribute name="v_first_name" optional="YES" attributeType="String"/>
+        <attribute name="v_last_name" optional="YES" attributeType="String"/>
+        <attribute name="v_picture" optional="YES" attributeType="String"/>
+        <attribute name="v_room_no" optional="YES" attributeType="String"/>
+        <relationship name="ofCDAppointments" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDAppointment" inverseName="user" inverseEntity="CDAppointment"/>
+        <relationship name="ofCDAppointmentUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDAppointmentAttendance" inverseName="user" inverseEntity="CDAppointmentAttendance"/>
+    </entity>
+    <entity name="CDEnd_date" representedClassName="CDEnd_date" syncable="YES" codeGenerationType="class">
+        <attribute name="d" optional="YES" attributeType="String"/>
+        <attribute name="m" optional="YES" attributeType="String"/>
+        <attribute name="s" optional="YES" attributeType="String"/>
+        <attribute name="t" optional="YES" attributeType="String"/>
+        <attribute name="time" optional="YES" attributeType="String"/>
+        <relationship name="ofCDAppointments" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDAppointment" inverseName="end_date" inverseEntity="CDAppointment"/>
+    </entity>
+    <entity name="CDFacilityCategory" representedClassName="CDFacilityCategory" syncable="YES" codeGenerationType="class">
+        <attribute name="fk_facility_id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="i_created_at" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="i_updated_at" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="v_name" optional="YES" attributeType="String"/>
+        <relationship name="of_CDUserGroup" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDUserGroup" inverseName="facility_Category" inverseEntity="CDUserGroup"/>
+        <relationship name="ofCDUserGroup" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDUserGroup" inverseName="facilityCategory" inverseEntity="CDUserGroup"/>
+    </entity>
+    <entity name="CDFacilityGroupMembers" representedClassName="CDFacilityGroupMembers" syncable="YES" codeGenerationType="class">
+        <attribute name="fk_group_id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="fk_user_id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="i_created_at" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="i_updated_at" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="v_member_type" optional="YES" attributeType="String"/>
+        <relationship name="of_CDFacilityGroupMembers" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDUserGroup" inverseName="facility_GroupMembers" inverseEntity="CDUserGroup"/>
+        <relationship name="ofCDFacilityGroupMembers" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDUserGroup" inverseName="facilityGroupMembers" inverseEntity="CDUserGroup"/>
+    </entity>
+    <entity name="CDStart_date" representedClassName="CDStart_date" syncable="YES" codeGenerationType="class">
+        <attribute name="d" optional="YES" attributeType="String"/>
+        <attribute name="m" optional="YES" attributeType="String"/>
+        <attribute name="s" optional="YES" attributeType="String"/>
+        <attribute name="t" optional="YES" attributeType="String"/>
+        <attribute name="time" optional="YES" attributeType="String"/>
+        <relationship name="ofCDAppointments" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDAppointment" inverseName="start_date" inverseEntity="CDAppointment"/>
+    </entity>
+    <entity name="CDUserGroup" representedClassName="CDUserGroup" syncable="YES" codeGenerationType="class">
+        <attribute name="fk_care_level_id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="fk_category_id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="fk_facility_id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="fk_program_id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="i_created_at" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="i_deleted_at" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="i_updated_at" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="v_name" optional="YES" attributeType="String"/>
+        <relationship name="facility_Category" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="CDFacilityCategory" inverseName="of_CDUserGroup" inverseEntity="CDFacilityCategory"/>
+        <relationship name="facility_GroupMembers" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CDFacilityGroupMembers" inverseName="of_CDFacilityGroupMembers" inverseEntity="CDFacilityGroupMembers"/>
+        <relationship name="facilityCategory" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="CDFacilityCategory" inverseName="ofCDUserGroup" inverseEntity="CDFacilityCategory"/>
+        <relationship name="facilityGroupMembers" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CDFacilityGroupMembers" inverseName="ofCDFacilityGroupMembers" inverseEntity="CDFacilityGroupMembers"/>
+        <relationship name="ofCDAppointments" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDAppointment" inverseName="userGroup" inverseEntity="CDAppointment"/>
     </entity>
     <elements>
-        <element name="CDAppointment" positionX="-63" positionY="-18" width="128" height="44"/>
+        <element name="CDAppointment" positionX="-63" positionY="-18" width="128" height="614"/>
+        <element name="CDAppointmentAttendance" positionX="-63" positionY="144" width="128" height="239"/>
+        <element name="CDAppointmentTags" positionX="-63" positionY="144" width="128" height="104"/>
+        <element name="CDAppointmentUser" positionX="-54" positionY="153" width="128" height="284"/>
+        <element name="CDEnd_date" positionX="-36" positionY="162" width="128" height="119"/>
+        <element name="CDStart_date" positionX="-18" positionY="171" width="128" height="119"/>
+        <element name="CDUserGroup" positionX="0" positionY="180" width="128" height="239"/>
+        <element name="CDFacilityCategory" positionX="18" positionY="189" width="128" height="134"/>
+        <element name="CDFacilityGroupMembers" positionX="36" positionY="198" width="128" height="149"/>
     </elements>
 </model>

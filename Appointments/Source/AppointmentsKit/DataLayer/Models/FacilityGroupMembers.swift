@@ -3,6 +3,7 @@
 import Foundation
 
 struct FacilityGroupMembers : Codable {
+    
 	let id : Int?
 	let fk_user_id : Int?
 	let fk_group_id : Int?

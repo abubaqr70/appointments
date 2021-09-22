@@ -3,6 +3,7 @@
 import Foundation
 
 struct FacilityCategory : Codable {
+    
 	let id : Int?
 	let v_name : String?
 	let fk_facility_id : Int?
