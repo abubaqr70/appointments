@@ -32,6 +32,7 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
     func saveAppointment(_ appointment: Appointment) {
         let entity = self.createCDAppointment()
 //        entity.title = appointment.title
+        
         self.saveCDAppointment(entity)
     }
 

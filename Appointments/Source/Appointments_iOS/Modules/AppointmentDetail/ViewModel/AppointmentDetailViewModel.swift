@@ -80,9 +80,9 @@ class AppointmentDetailViewModel: AppointmentDetailViewModelType, AppointmentDet
         isPresentSubject = BehaviorSubject(value: true)
         appointmentsSubject = BehaviorSubject(value: appointment)
         nameSubject = BehaviorSubject(value: "")
-        roomSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.v_room_no)
-        appointmentTitleSubject = BehaviorSubject(value: appointment.v_title)
-        appointmentDescriptionSubject = BehaviorSubject(value: appointment.t_description?.htmlToAttributedString)
+        roomSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.roomNo)
+        appointmentTitleSubject = BehaviorSubject(value: appointment.title)
+        appointmentDescriptionSubject = BehaviorSubject(value: appointment.description?.htmlToAttributedString)
         appointmentTypeSubject = BehaviorSubject(value: NSAttributedString(string: ""))
         locationSubject = BehaviorSubject(value: NSAttributedString(string: ""))
         staffSubject = BehaviorSubject(value: NSAttributedString(string: ""))
@@ -92,7 +92,7 @@ class AppointmentDetailViewModel: AppointmentDetailViewModelType, AppointmentDet
         if appointment.user != nil {
             appointmentsSubject
                 .map { appointments -> NSMutableAttributedString in
-                    let attributedString = NSMutableAttributedString(string: "Staff: \(appointments.user?.fullname ?? "")", attributes: [
+                    let attributedString = NSMutableAttributedString(string: "Staff: \(appointments.user?.fullName ?? "")", attributes: [
                         .font: UIFont.appFont(withStyle: .title3, size: 14)
                     ])
                     attributedString.addAttribute(.font, value: UIFont.appFont(withStyle: .largeTitle, size: 14), range: NSRange(location: 0, length: 6))
@@ -103,7 +103,7 @@ class AppointmentDetailViewModel: AppointmentDetailViewModelType, AppointmentDet
         }else{
             appointmentsSubject
                 .map { appointments -> NSMutableAttributedString in
-                    let attributedString = NSMutableAttributedString(string: "Staff: \(appointments.userGroup?.v_name ?? "")", attributes: [
+                    let attributedString = NSMutableAttributedString(string: "Staff: \(appointments.userGroup?.name ?? "")", attributes: [
                         .font: UIFont.appFont(withStyle: .title3, size: 14)
                     ])
                     attributedString.addAttribute(.font, value: UIFont.appFont(withStyle: .largeTitle, size: 14), range: NSRange(location: 0, length: 6))
@@ -115,7 +115,7 @@ class AppointmentDetailViewModel: AppointmentDetailViewModelType, AppointmentDet
         
         appointmentsSubject
             .map { appointments -> NSMutableAttributedString in
-                let attributedString = NSMutableAttributedString(string: "Location: \(appointments.v_location ?? "")", attributes: [
+                let attributedString = NSMutableAttributedString(string: "Location: \(appointments.location ?? "")", attributes: [
                     .font: UIFont.appFont(withStyle: .title3, size: 14)
                 ])
                 attributedString.addAttribute(.font, value: UIFont.appFont(withStyle: .largeTitle, size: 14), range: NSRange(location: 0, length: 9))
@@ -126,7 +126,7 @@ class AppointmentDetailViewModel: AppointmentDetailViewModelType, AppointmentDet
         
         appointmentsSubject
             .map { appointments -> NSMutableAttributedString in
-                let attributedString = NSMutableAttributedString(string: "Appointment Type: \(appointments.fk_therapy_id ?? 0)", attributes: [
+                let attributedString = NSMutableAttributedString(string: "Appointment Type: \(appointments.therapyId ?? 0)", attributes: [
                     .font: UIFont.appFont(withStyle: .title3, size: 14),
                 ])
                 attributedString.addAttribute(.font, value: UIFont.appFont(withStyle: .largeTitle, size: 14), range: NSRange(location: 0, length: 17))
@@ -141,7 +141,7 @@ class AppointmentDetailViewModel: AppointmentDetailViewModelType, AppointmentDet
             .map { appointments -> String in
                 appointments.appointmentAttendance.map { appointmentAttendance -> [String] in
                     appointmentAttendance.map{ user -> String in
-                        user.user?.fullname ?? ""
+                        user.user?.fullName ?? ""
                     }
                 }?.joined(separator: ", ") ?? ""
             }
@@ -153,7 +153,7 @@ class AppointmentDetailViewModel: AppointmentDetailViewModelType, AppointmentDet
                 appointments -> String in
                 let dateFormatterFromString = DateFormatter()
                 dateFormatterFromString.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'"
-                let date = dateFormatterFromString.date(from: appointment.start_date?.m ?? "")
+                let date = dateFormatterFromString.date(from: appointment.startDate?.date ?? "")
                 let dateFormatterFromDate = DateFormatter()
                 dateFormatterFromDate.dateFormat = "EEEE, MMM dd, yyyy"
                 return dateFormatterFromDate.string(from: date ?? Date())
@@ -164,7 +164,7 @@ class AppointmentDetailViewModel: AppointmentDetailViewModelType, AppointmentDet
         appointmentsSubject
             .map({
                 appointments -> String in
-                return "\(appointment.start_date?.time ?? "") - \(appointment.end_date?.time ?? "")"
+                return "\(appointment.startDate?.timeString ?? "") - \(appointment.endDate?.timeString ?? "")"
             })
             .bind(to: timeSubject)
             .disposed(by: disposeBag)
@@ -178,7 +178,7 @@ extension AppointmentDetailViewModel {
     
     func bindActions(appointment: Appointment) {
         
-        isPresentSubject.onNext( appointment.appointmentAttendance?.first?.i_present == "present" ? false : true )
+        isPresentSubject.onNext( appointment.appointmentAttendance?.first?.present == "present" ? false : true )
         
         markPresentSubject
             .withLatestFrom(self.isPresent)
