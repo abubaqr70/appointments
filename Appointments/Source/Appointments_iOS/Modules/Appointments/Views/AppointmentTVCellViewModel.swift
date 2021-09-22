@@ -49,15 +49,15 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
     
     //Mark: Init
     private let disposeBag = DisposeBag()
-    let nameSubject: BehaviorSubject<String?>
-    let roomSubject: BehaviorSubject<String?>
-    let appointmentDescriptionSubject: BehaviorSubject<String?>
-    let staffSubject: BehaviorSubject<String?>
-    let profileImageSubject: BehaviorSubject<String?>
-    let appointmentsSubject: BehaviorSubject<Appointment>
-    let markcheckboxSubject : BehaviorSubject<Void>
-    let markPresentSubject : BehaviorSubject<Bool>
-    let markPresentEnabledSubject : BehaviorSubject<Bool>
+    private let nameSubject: BehaviorSubject<String?>
+    private let roomSubject: BehaviorSubject<String?>
+    private let appointmentDescriptionSubject: BehaviorSubject<String?>
+    private let staffSubject: BehaviorSubject<String?>
+    private let profileImageSubject: BehaviorSubject<String?>
+    private let appointmentsSubject: BehaviorSubject<Appointment>
+    private let markcheckboxSubject : BehaviorSubject<Void>
+    private let markPresentSubject : BehaviorSubject<Bool>
+    private let markPresentEnabledSubject : BehaviorSubject<Bool>
     
     init(appointment: Appointment) {
         

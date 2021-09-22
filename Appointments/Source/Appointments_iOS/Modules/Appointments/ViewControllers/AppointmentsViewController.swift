@@ -13,6 +13,12 @@ public class AppointmentsViewController: UIViewController {
         }
     }
     
+    private var appointments: [Appointment] = [] {
+        didSet {
+            tableView.reloadData()
+        }
+    }
+    
     fileprivate lazy var titleButton : UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 200, height: 40))
         button.setTitle("APPOINTMENTS", for: .normal)
@@ -180,6 +186,11 @@ extension AppointmentsViewController{
             self.sections = (section.element ?? [])
         }).disposed(by: disposeBag)
         
+        viewModel.outputs.appointments.subscribe({ [weak self] appointment in
+            guard let `self` = self else { return }
+            self.appointments = (appointment.element ?? [])
+        }).disposed(by: disposeBag)
+        
         viewModel.outputs.isLoading
             .subscribe(onNext: { [weak self] loading in
                 guard let `self` = self else { return }
@@ -276,5 +287,8 @@ extension AppointmentsViewController: UITableViewDelegate,UITableViewDataSource 
     
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
+        let viewModel = AppointmentDetailViewModel(appointment: appointments[indexPath.section])
+        let viewController = AppointmentDetailViewController(viewModel: viewModel)
+        self.navigationController?.pushViewController(viewController, animated: true)
     }
 }
