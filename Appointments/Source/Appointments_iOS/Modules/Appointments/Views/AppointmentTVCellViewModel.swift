@@ -67,12 +67,12 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
         markPresentSubject = BehaviorSubject(value: true)
         appointmentsSubject = BehaviorSubject(value: appointment)
         nameSubject = BehaviorSubject(value: "")
-        roomSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.v_room_no)
-        appointmentDescriptionSubject = BehaviorSubject(value: appointment.v_title)
+        roomSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.roomNo)
+        appointmentDescriptionSubject = BehaviorSubject(value: appointment.title)
         if appointment.user != nil {
-            staffSubject = BehaviorSubject(value: appointment.user?.fullname)
+            staffSubject = BehaviorSubject(value: appointment.user?.fullName)
         }else{
-            staffSubject = BehaviorSubject(value: appointment.userGroup?.v_name)
+            staffSubject = BehaviorSubject(value: appointment.userGroup?.name)
         }
        
         profileImageSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.profileImageRoute)
@@ -81,7 +81,7 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
             .map { appointments -> String in
                 appointments.appointmentAttendance.map { appointmentAttendance -> [String] in
                     appointmentAttendance.map{ user -> String in
-                        user.user?.fullname ?? ""
+                        user.user?.fullName ?? ""
                     }
                 }?.joined(separator: ", ") ?? ""
             }
@@ -97,7 +97,7 @@ extension AppointmentTVCellViewModel {
     
     func bindActions(appointment: Appointment) {
         
-        markPresentSubject.onNext( appointment.appointmentAttendance?.first?.i_present == "present" ? false : true )
+        markPresentSubject.onNext( appointment.appointmentAttendance?.first?.present == "present" ? false : true )
 
         markcheckboxSubject
             .withLatestFrom(self.markPresentSubject)

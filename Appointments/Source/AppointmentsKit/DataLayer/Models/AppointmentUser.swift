@@ -5,38 +5,38 @@ import Foundation
 struct AppointmentUser : Codable {
     
     let imageContent : String?
-    let fullname : String?
+    let fullName : String?
     let profileImageRoute : String?
     let thumbnail : String?
     let passwordChangedDuration : String?
-    let full_name : String?
+    let full_Name : String?
     let gender : String?
     let initials : String?
     let formattedAdmissionDate : String?
     let occupation : String?
     let id : Int?
-    let v_first_name : String?
-    let v_last_name : String?
-    let v_room_no : String?
-    let v_picture : String?
+    let firstName : String?
+    let lastName : String?
+    let roomNo : String?
+    let picture : String?
 
     enum CodingKeys: String, CodingKey {
 
         case imageContent = "imageContent"
-        case fullname = "fullname"
+        case fullName = "fullname"
         case profileImageRoute = "profileImageRoute"
         case thumbnail = "thumbnail"
         case passwordChangedDuration = "passwordChangedDuration"
-        case full_name = "full_name"
+        case full_Name = "full_name"
         case gender = "gender"
         case initials = "initials"
         case formattedAdmissionDate = "formattedAdmissionDate"
         case occupation = "occupation"
         case id = "id"
-        case v_first_name = "v_first_name"
-        case v_last_name = "v_last_name"
-        case v_room_no = "v_room_no"
-        case v_picture = "v_picture"
+        case firstName = "v_first_name"
+        case lastName = "v_last_name"
+        case roomNo = "v_room_no"
+        case picture = "v_picture"
     }
 
 }
@@ -46,20 +46,20 @@ extension AppointmentUser {
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         imageContent = try values.decodeIfPresent(String.self, forKey: .imageContent)
-        fullname = try values.decodeIfPresent(String.self, forKey: .fullname)
+        fullName = try values.decodeIfPresent(String.self, forKey: .fullName)
         profileImageRoute = try values.decodeIfPresent(String.self, forKey: .profileImageRoute)
         thumbnail = try values.decodeIfPresent(String.self, forKey: .thumbnail)
         passwordChangedDuration = try values.decodeIfPresent(String.self, forKey: .passwordChangedDuration)
-        full_name = try values.decodeIfPresent(String.self, forKey: .full_name)
+        full_Name = try values.decodeIfPresent(String.self, forKey: .full_Name)
         gender = try values.decodeIfPresent(String.self, forKey: .gender)
         initials = try values.decodeIfPresent(String.self, forKey: .initials)
         formattedAdmissionDate = try values.decodeIfPresent(String.self, forKey: .formattedAdmissionDate)
         occupation = try values.decodeIfPresent(String.self, forKey: .occupation)
         id = try values.decodeIfPresent(Int.self, forKey: .id)
-        v_first_name = try values.decodeIfPresent(String.self, forKey: .v_first_name)
-        v_last_name = try values.decodeIfPresent(String.self, forKey: .v_last_name)
-        v_room_no = try values.decodeIfPresent(String.self, forKey: .v_room_no)
-        v_picture = try values.decodeIfPresent(String.self, forKey: .v_picture)
+        firstName = try values.decodeIfPresent(String.self, forKey: .firstName)
+        lastName = try values.decodeIfPresent(String.self, forKey: .lastName)
+        roomNo = try values.decodeIfPresent(String.self, forKey: .roomNo)
+        picture = try values.decodeIfPresent(String.self, forKey: .picture)
     }
 
 }

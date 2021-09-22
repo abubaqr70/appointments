@@ -127,7 +127,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
                 self.loadingSubject.onNext(false)
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'"
-                return appointments.sorted(by: {dateFormatter.date(from: $0.start_date?.m ?? "")?.compare(dateFormatter.date(from: $1.start_date?.m ?? "") ?? Date()) == ComparisonResult.orderedDescending})
+                return appointments.sorted(by: {dateFormatter.date(from: $0.startDate?.date ?? "")?.compare(dateFormatter.date(from: $1.startDate?.date ?? "") ?? Date()) == ComparisonResult.orderedAscending})
             })
             .bind(to: appointmentsSubject.asObserver())
             .disposed(by: disposeBag)
@@ -156,7 +156,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             .map { appointments -> [(title: String, rows: [ReuseableCellViewModelType])] in
                 appointments.map { appointment -> (title: String, rows: [ReuseableCellViewModelType]) in
                     let cellViewModel = AppointmentTVCellViewModel(appointment: appointment)
-                    let headerTitle = "\(appointment.start_date?.time ?? "") - \(appointment.end_date?.time ?? "")"
+                    let headerTitle = "\(appointment.startDate?.timeString ?? "") - \(appointment.endDate?.timeString ?? "")"
                     return (headerTitle, [cellViewModel])
                 }
             }
