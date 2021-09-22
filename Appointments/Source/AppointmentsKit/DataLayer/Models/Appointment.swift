@@ -5,39 +5,39 @@ import Foundation
 struct Appointment: Codable {
     
     let id : Int?
-    let v_title : String?
-    let v_location : String?
-    let t_description : String?
-    let i_occurrence_id : Int?
-    let i_started_date : Int?
-    let i_ended_date : Int?
-    let i_is_reminder : Bool?
-    let i_is_clinical : Int?
-    let i_created : Int?
-    let i_last_updated : Int?
-    let i_is_critical : Bool?
-    let i_is_therapy : Bool?
-    let fk_therapy_id : Int?
-    let fk_therapist_id : Int?
-    let fk_group_id : Int?
-    let fk_patient_id : Int?
-    let fk_wing_id : Int?
-    let v_note_to_staff : String?
-    let event_length : Int?
-    let rec_type : String?
-    let rec_pattern : String?
-    let is_rec : Bool?
-    let fk_parent_event_id : Int?
-    let fk_facility_id : Int?
-    let fk_created_by_id : Int?
-    let fk_updated_by_id : Int?
-    let fk_resident_id : Int?
-    let v_video_link : String?
-    let event_pid : Int?
+    let title : String?
+    let location : String?
+    let description : String?
+    let occurrenceId : Int?
+    let startedDate : Int?
+    let endedDate : Int?
+    let isReminder : Bool?
+    let isClinical : Int?
+    let created : Int?
+    let lastUpdated : Int?
+    let isCritical : Bool?
+    let isTherapy : Bool?
+    let therapyId : Int?
+    let therapistId : Int?
+    let groupId : Int?
+    let patientId : Int?
+    let wingId : Int?
+    let noteToStaff : String?
+    let eventLength : Int?
+    let recType : String?
+    let recPattern : String?
+    let isRec : Bool?
+    let parentEventId : Int?
+    let facilityId : Int?
+    let createdById : Int?
+    let updatedById : Int?
+    let residentId : Int?
+    let videoLink : String?
+    let eventPid : Int?
     let seriesStartDate : Int?
     let seriesEndDate : Int?
-    let start_date : StartDate?
-    let end_date : EndDate?
+    let startDate : StartDate?
+    let endDate : EndDate?
     let appointmentTags : [AppointmentTag]?
     let appointmentAttendance : [AppointmentAttendance]?
     let user : AppointmentUser?
@@ -47,39 +47,39 @@ struct Appointment: Codable {
     enum CodingKeys: String, CodingKey {
 
         case id = "id"
-        case v_title = "v_title"
-        case v_location = "v_location"
-        case t_description = "t_description"
-        case i_occurrence_id = "i_occurrence_id"
-        case i_started_date = "i_started_date"
-        case i_ended_date = "i_ended_date"
-        case i_is_reminder = "i_is_reminder"
-        case i_is_clinical = "i_is_clinical"
-        case i_created = "i_created"
-        case i_last_updated = "i_last_updated"
-        case i_is_critical = "i_is_critical"
-        case i_is_therapy = "i_is_therapy"
-        case fk_therapy_id = "fk_therapy_id"
-        case fk_therapist_id = "fk_therapist_id"
-        case fk_group_id = "fk_group_id"
-        case fk_patient_id = "fk_patient_id"
-        case fk_wing_id = "fk_wing_id"
-        case v_note_to_staff = "v_note_to_staff"
-        case event_length = "event_length"
-        case rec_type = "rec_type"
-        case rec_pattern = "rec_pattern"
-        case is_rec = "is_rec"
-        case fk_parent_event_id = "fk_parent_event_id"
-        case fk_facility_id = "fk_facility_id"
-        case fk_created_by_id = "fk_created_by_id"
-        case fk_updated_by_id = "fk_updated_by_id"
-        case fk_resident_id = "fk_resident_id"
-        case v_video_link = "v_video_link"
-        case event_pid = "event_pid"
+        case title = "v_title"
+        case location = "v_location"
+        case description = "t_description"
+        case occurrenceId = "i_occurrence_id"
+        case startedDate = "i_started_date"
+        case endedDate = "i_ended_date"
+        case isReminder = "i_is_reminder"
+        case isClinical = "i_is_clinical"
+        case created = "i_created"
+        case lastUpdated = "i_last_updated"
+        case isCritical = "i_is_critical"
+        case isTherapy = "i_is_therapy"
+        case therapyId = "fk_therapy_id"
+        case therapistId = "fk_therapist_id"
+        case groupId = "fk_group_id"
+        case patientId = "fk_patient_id"
+        case wingId = "fk_wing_id"
+        case noteToStaff = "v_note_to_staff"
+        case eventLength = "event_length"
+        case recType = "rec_type"
+        case recPattern = "rec_pattern"
+        case isRec = "is_rec"
+        case parentEventId = "fk_parent_event_id"
+        case facilityId = "fk_facility_id"
+        case createdById = "fk_created_by_id"
+        case updatedById = "fk_updated_by_id"
+        case residentId = "fk_resident_id"
+        case videoLink = "v_video_link"
+        case eventPid = "event_pid"
         case seriesStartDate = "seriesStartDate"
         case seriesEndDate = "seriesEndDate"
-        case start_date = "start_date"
-        case end_date = "end_date"
+        case startDate = "start_date"
+        case endDate = "end_date"
         case appointmentTags = "appointmentTags"
         case appointmentAttendance = "appointmentAttendance"
         case user = "user"
@@ -94,39 +94,39 @@ extension Appointment {
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         id = try values.decodeIfPresent(Int.self, forKey: .id)
-        v_title = try values.decodeIfPresent(String.self, forKey: .v_title)
-        v_location = try values.decodeIfPresent(String.self, forKey: .v_location)
-        t_description = try values.decodeIfPresent(String.self, forKey: .t_description)
-        i_occurrence_id = try values.decodeIfPresent(Int.self, forKey: .i_occurrence_id)
-        i_started_date = try values.decodeIfPresent(Int.self, forKey: .i_started_date)
-        i_ended_date = try values.decodeIfPresent(Int.self, forKey: .i_ended_date)
-        i_is_reminder = try values.decodeIfPresent(Bool.self, forKey: .i_is_reminder)
-        i_is_clinical = try values.decodeIfPresent(Int.self, forKey: .i_is_clinical)
-        i_created = try values.decodeIfPresent(Int.self, forKey: .i_created)
-        i_last_updated = try values.decodeIfPresent(Int.self, forKey: .i_last_updated)
-        i_is_critical = try values.decodeIfPresent(Bool.self, forKey: .i_is_critical)
-        i_is_therapy = try values.decodeIfPresent(Bool.self, forKey: .i_is_therapy)
-        fk_therapy_id = try values.decodeIfPresent(Int.self, forKey: .fk_therapy_id)
-        fk_therapist_id = try values.decodeIfPresent(Int.self, forKey: .fk_therapist_id)
-        fk_group_id = try values.decodeIfPresent(Int.self, forKey: .fk_group_id)
-        fk_patient_id = try values.decodeIfPresent(Int.self, forKey: .fk_patient_id)
-        fk_wing_id = try values.decodeIfPresent(Int.self, forKey: .fk_wing_id)
-        v_note_to_staff = try values.decodeIfPresent(String.self, forKey: .v_note_to_staff)
-        event_length = try values.decodeIfPresent(Int.self, forKey: .event_length)
-        rec_type = try values.decodeIfPresent(String.self, forKey: .rec_type)
-        rec_pattern = try values.decodeIfPresent(String.self, forKey: .rec_pattern)
-        is_rec = try values.decodeIfPresent(Bool.self, forKey: .is_rec)
-        fk_parent_event_id = try values.decodeIfPresent(Int.self, forKey: .fk_parent_event_id)
-        fk_facility_id = try values.decodeIfPresent(Int.self, forKey: .fk_facility_id)
-        fk_created_by_id = try values.decodeIfPresent(Int.self, forKey: .fk_created_by_id)
-        fk_updated_by_id = try values.decodeIfPresent(Int.self, forKey: .fk_updated_by_id)
-        fk_resident_id = try values.decodeIfPresent(Int.self, forKey: .fk_resident_id)
-        v_video_link = try values.decodeIfPresent(String.self, forKey: .v_video_link)
-        event_pid = try values.decodeIfPresent(Int.self, forKey: .event_pid)
+        title = try values.decodeIfPresent(String.self, forKey: .title)
+        location = try values.decodeIfPresent(String.self, forKey: .location)
+        description = try values.decodeIfPresent(String.self, forKey: .description)
+        occurrenceId = try values.decodeIfPresent(Int.self, forKey: .occurrenceId)
+        startedDate = try values.decodeIfPresent(Int.self, forKey: .startedDate)
+        endedDate = try values.decodeIfPresent(Int.self, forKey: .endedDate)
+        isReminder = try values.decodeIfPresent(Bool.self, forKey: .isReminder)
+        isClinical = try values.decodeIfPresent(Int.self, forKey: .isClinical)
+        created = try values.decodeIfPresent(Int.self, forKey: .created)
+        lastUpdated = try values.decodeIfPresent(Int.self, forKey: .lastUpdated)
+        isCritical = try values.decodeIfPresent(Bool.self, forKey: .isCritical)
+        isTherapy = try values.decodeIfPresent(Bool.self, forKey: .isTherapy)
+        therapyId = try values.decodeIfPresent(Int.self, forKey: .therapyId)
+        therapistId = try values.decodeIfPresent(Int.self, forKey: .therapistId)
+        groupId = try values.decodeIfPresent(Int.self, forKey: .groupId)
+        patientId = try values.decodeIfPresent(Int.self, forKey: .patientId)
+        wingId = try values.decodeIfPresent(Int.self, forKey: .wingId)
+        noteToStaff = try values.decodeIfPresent(String.self, forKey: .noteToStaff)
+        eventLength = try values.decodeIfPresent(Int.self, forKey: .eventLength)
+        recType = try values.decodeIfPresent(String.self, forKey: .recType)
+        recPattern = try values.decodeIfPresent(String.self, forKey: .recPattern)
+        isRec = try values.decodeIfPresent(Bool.self, forKey: .isRec)
+        parentEventId = try values.decodeIfPresent(Int.self, forKey: .parentEventId)
+        facilityId = try values.decodeIfPresent(Int.self, forKey: .facilityId)
+        createdById = try values.decodeIfPresent(Int.self, forKey: .createdById)
+        updatedById = try values.decodeIfPresent(Int.self, forKey: .updatedById)
+        residentId = try values.decodeIfPresent(Int.self, forKey: .residentId)
+        videoLink = try values.decodeIfPresent(String.self, forKey: .videoLink)
+        eventPid = try values.decodeIfPresent(Int.self, forKey: .eventPid)
         seriesStartDate = try values.decodeIfPresent(Int.self, forKey: .seriesStartDate)
         seriesEndDate = try values.decodeIfPresent(Int.self, forKey: .seriesEndDate)
-        start_date = try values.decodeIfPresent(StartDate.self, forKey: .start_date)
-        end_date = try values.decodeIfPresent(EndDate.self, forKey: .end_date)
+        startDate = try values.decodeIfPresent(StartDate.self, forKey: .startDate)
+        endDate = try values.decodeIfPresent(EndDate.self, forKey: .endDate)
         appointmentTags = try values.decodeIfPresent([AppointmentTag].self, forKey: .appointmentTags)
         appointmentAttendance = try values.decodeIfPresent([AppointmentAttendance].self, forKey: .appointmentAttendance)
         user = try values.decodeIfPresent(AppointmentUser.self, forKey: .user)

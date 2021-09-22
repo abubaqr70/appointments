@@ -4,20 +4,20 @@ import Foundation
 
 struct StartDate : Codable {
     
-	let m : String?
-	let t : String?
-	let d : String?
-	let s : String?
-	let time : String?
+    let date : String?
+    let timeFormat : String?
+    let dateFromat : String?
+    let dateString : String?
+    let timeString : String?
 
-	enum CodingKeys: String, CodingKey {
+    enum CodingKeys: String, CodingKey {
 
-		case m = "m"
-		case t = "t"
-		case d = "d"
-		case s = "s"
-		case time = "time"
-	}
+        case date = "m"
+        case timeFormat = "t"
+        case dateFromat = "d"
+        case dateString = "s"
+        case timeString = "time"
+    }
 
 }
 
@@ -25,11 +25,11 @@ extension StartDate {
     
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        m = try values.decodeIfPresent(String.self, forKey: .m)
-        t = try values.decodeIfPresent(String.self, forKey: .t)
-        d = try values.decodeIfPresent(String.self, forKey: .d)
-        s = try values.decodeIfPresent(String.self, forKey: .s)
-        time = try values.decodeIfPresent(String.self, forKey: .time)
+        date = try values.decodeIfPresent(String.self, forKey: .date)
+        timeFormat = try values.decodeIfPresent(String.self, forKey: .timeFormat)
+        dateFromat = try values.decodeIfPresent(String.self, forKey: .dateFromat)
+        dateString = try values.decodeIfPresent(String.self, forKey: .dateString)
+        timeString = try values.decodeIfPresent(String.self, forKey: .timeString)
     }
 
 }
