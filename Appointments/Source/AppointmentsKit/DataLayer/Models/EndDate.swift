@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct End_date : Codable {
+struct EndDate : Codable {
     
 	let m : String?
 	let t : String?

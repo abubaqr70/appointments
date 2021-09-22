@@ -36,9 +36,9 @@ struct Appointment: Codable {
     let event_pid : Int?
     let seriesStartDate : Int?
     let seriesEndDate : Int?
-    let start_date : Start_date?
-    let end_date : End_date?
-    let appointmentTags : [AppointmentTags]?
+    let start_date : StartDate?
+    let end_date : EndDate?
+    let appointmentTags : [AppointmentTag]?
     let appointmentAttendance : [AppointmentAttendance]?
     let user : AppointmentUser?
     let userGroup : UserGroup?
@@ -125,9 +125,9 @@ extension Appointment {
         event_pid = try values.decodeIfPresent(Int.self, forKey: .event_pid)
         seriesStartDate = try values.decodeIfPresent(Int.self, forKey: .seriesStartDate)
         seriesEndDate = try values.decodeIfPresent(Int.self, forKey: .seriesEndDate)
-        start_date = try values.decodeIfPresent(Start_date.self, forKey: .start_date)
-        end_date = try values.decodeIfPresent(End_date.self, forKey: .end_date)
-        appointmentTags = try values.decodeIfPresent([AppointmentTags].self, forKey: .appointmentTags)
+        start_date = try values.decodeIfPresent(StartDate.self, forKey: .start_date)
+        end_date = try values.decodeIfPresent(EndDate.self, forKey: .end_date)
+        appointmentTags = try values.decodeIfPresent([AppointmentTag].self, forKey: .appointmentTags)
         appointmentAttendance = try values.decodeIfPresent([AppointmentAttendance].self, forKey: .appointmentAttendance)
         user = try values.decodeIfPresent(AppointmentUser.self, forKey: .user)
         userGroup = try values.decodeIfPresent(UserGroup.self, forKey: .userGroup)

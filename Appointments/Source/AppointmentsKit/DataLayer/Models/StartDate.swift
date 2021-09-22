@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct Start_date : Codable {
+struct StartDate : Codable {
     
 	let m : String?
 	let t : String?
@@ -21,7 +21,7 @@ struct Start_date : Codable {
 
 }
 
-extension Start_date {
+extension StartDate {
     
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)

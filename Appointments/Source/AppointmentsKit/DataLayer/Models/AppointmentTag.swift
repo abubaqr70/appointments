@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct AppointmentTags : Codable {
+struct AppointmentTag : Codable {
     
 	let id : Int?
 	let fk_appointment_id : Int?
