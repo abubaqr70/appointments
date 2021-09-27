@@ -11,7 +11,7 @@ public class AppDependencyContainer {
     private let addActionProvider: AddActionProvider?
     private let filterActionProvider: FilterActionProvider?
     private let client: APIClient
-    
+
     public init(baseURL: String,
                 authentication: AuthenticationConvertible,
                 userDataStore: UserDataStore,
@@ -26,8 +26,8 @@ public class AppDependencyContainer {
         self.addActionProvider = addActionProvider
         self.filterActionProvider = filterActionProvider
         self.client = AlamofireClient()
+        self.appointment = nil
     }
-    
     
     public func makeAppointmentsCoordinator(root: UIViewController,
                                             navigationType: NavigationType) -> AppCoordinator {
@@ -49,7 +49,7 @@ public class AppDependencyContainer {
                                          client: self.client)
         
         let repository = AppointmentRepository(appointmentService: service)
-                
+        
         return AppointmentsViewModel(facilityDataStore: self.facilityDataStore,
                                      appointmentsRepository: repository )
     }

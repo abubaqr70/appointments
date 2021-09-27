@@ -13,7 +13,7 @@ public class AppointmentsViewController: UIViewController {
         }
     }
     
-    private var appointments: [Appointment] = [] {
+    private var appointments: [AppointmentsResultType] = [] {
         didSet {
             tableView.reloadData()
         }
@@ -175,6 +175,7 @@ extension AppointmentsViewController{
         self.navigationController?.navigationBar.tintColor = UIColor.appSkyBlue
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
     }
+    
 }
 
 extension AppointmentsViewController{
@@ -286,7 +287,6 @@ extension AppointmentsViewController: UITableViewDelegate,UITableViewDataSource 
     }
     
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
         let viewModel = AppointmentDetailViewModel(appointment: appointments[indexPath.section])
         let viewController = AppointmentDetailViewController(viewModel: viewModel)
         self.navigationController?.pushViewController(viewController, animated: true)

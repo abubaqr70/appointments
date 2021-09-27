@@ -42,6 +42,7 @@ public class AppCoordinator: Coordinator<ResultType<Void>> {
     private let navigationType: NavigationType
     private let factory: AppointmentsFactory
     private var rootNavigationController: UINavigationController?
+  
     
     init(root: UIViewController,
          navigationType: NavigationType,
@@ -50,6 +51,7 @@ public class AppCoordinator: Coordinator<ResultType<Void>> {
         self.navigationType = navigationType
         self.factory = factory
     }
+    
     
     public override func start() -> Observable<ResultType<Void>> {
         let viewModel = self.factory.makeAppointmentsViewModel()
@@ -65,6 +67,7 @@ public class AppCoordinator: Coordinator<ResultType<Void>> {
         
         return result
     }
+    
 }
 
 
@@ -73,4 +76,6 @@ protocol AppointmentsFactory {
     func makeAppointmentsViewModel() -> AppointmentsViewModelType
 }
 
-extension AppDependencyContainer: AppointmentsFactory { }
+extension AppDependencyContainer: AppointmentsFactory {
+
+}

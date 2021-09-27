@@ -54,40 +54,24 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
     private let appointmentDescriptionSubject: BehaviorSubject<String?>
     private let staffSubject: BehaviorSubject<String?>
     private let profileImageSubject: BehaviorSubject<String?>
-    private let appointmentsSubject: BehaviorSubject<Appointment>
+    private let appointmentsSubject: BehaviorSubject<AppointmentsResultType>
     private let markcheckboxSubject : BehaviorSubject<Void>
     private let markPresentSubject : BehaviorSubject<Bool>
     private let markPresentEnabledSubject : BehaviorSubject<Bool>
     
-    init(appointment: Appointment) {
+    init(appointment: AppointmentsResultType) {
         
         //Mark:- Setting User Names
         markcheckboxSubject = BehaviorSubject(value: ())
         markPresentEnabledSubject = BehaviorSubject(value: true)
         markPresentSubject = BehaviorSubject(value: true)
         appointmentsSubject = BehaviorSubject(value: appointment)
-        nameSubject = BehaviorSubject(value: "")
-        roomSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.roomNo)
+        roomSubject = BehaviorSubject(value: appointment.roomNo)
         appointmentDescriptionSubject = BehaviorSubject(value: appointment.title)
-        if appointment.user != nil {
-            staffSubject = BehaviorSubject(value: appointment.user?.fullName)
-        }else{
-            staffSubject = BehaviorSubject(value: appointment.userGroup?.name)
-        }
-       
-        profileImageSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.profileImageRoute)
-        
-        appointmentsSubject
-            .map { appointments -> String in
-                appointments.appointmentAttendance.map { appointmentAttendance -> [String] in
-                    appointmentAttendance.map{ user -> String in
-                        user.user?.fullName ?? ""
-                    }
-                }?.joined(separator: ", ") ?? ""
-            }
-            .bind(to: nameSubject)
-            .disposed(by: disposeBag)
-        
+        staffSubject = BehaviorSubject(value: appointment.staffName)
+        profileImageSubject = BehaviorSubject(value: appointment.profileImage)
+        nameSubject = BehaviorSubject(value: appointment.fullName)
+                
         bindActions(appointment: appointment)
     }
     
@@ -95,9 +79,9 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
 
 extension AppointmentTVCellViewModel {
     
-    func bindActions(appointment: Appointment) {
+    func bindActions(appointment: AppointmentsResultType) {
         
-        markPresentSubject.onNext( appointment.appointmentAttendance?.first?.present == "present" ? false : true )
+        markPresentSubject.onNext( appointment.present == "present" ? false : true )
 
         markcheckboxSubject
             .withLatestFrom(self.markPresentSubject)
