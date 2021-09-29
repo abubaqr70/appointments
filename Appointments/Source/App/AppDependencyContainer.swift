@@ -36,7 +36,6 @@ public class AppDependencyContainer {
         self.repository = AppointmentRepository(appointmentService: service,coreDataStore: coreDataStore)
     }
     
-    
     public func makeAppointmentsCoordinator(root: UIViewController,
                                             navigationType: NavigationType) -> AppCoordinator {
         
@@ -51,6 +50,12 @@ public class AppDependencyContainer {
     }
     
     func makeAppointmentsViewModel() -> AppointmentsViewModelType {
+        
+        let service = AppointmentService(baseURL: self.baseURL,
+                                         authHeaderProvider: self.authentication,
+                                         client: self.client)
+        
+        let repository = AppointmentRepository(appointmentService: service)
         
         return AppointmentsViewModel(facilityDataStore: self.facilityDataStore,
                                      appointmentsRepository: self.repository)

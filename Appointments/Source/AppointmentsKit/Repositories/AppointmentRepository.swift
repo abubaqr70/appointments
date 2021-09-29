@@ -14,8 +14,8 @@ class AppointmentRepository {
     }
     
     func getAppointments(for facilityID: Int,
-                        startDate: TimeInterval,
-                        endDate: TimeInterval) -> Observable<[Appointment]> {
+                         startDate: TimeInterval,
+                         endDate: TimeInterval) -> Observable<[AppointmentsResultType]> {
         
         return Observable.create { [weak self] observer in
             

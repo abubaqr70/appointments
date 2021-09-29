@@ -20,6 +20,7 @@ protocol AppointmentsViewModelOutputs {
     
     //Sections
     var sections: Observable<[(title: String, rows: [ReuseableCellViewModelType])]> { get }
+    var appointments: Observable<[AppointmentsResultType]> { get }
     
     // Actions:
     var lastUpdatedLabel: Observable<String?> { get }
@@ -52,6 +53,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     var sections: Observable<[(title: String, rows: [ReuseableCellViewModelType])]> { return sectionsSubject.asObservable() }
     var errorAlert: Observable<String>{ return errorAlertSubject.asObservable() }
     var isLoading: Observable<Bool>{ return loadingSubject.asObservable() }
+    var appointments: Observable<[AppointmentsResultType]>{ return appointmentsSubject.asObservable() }
     
     //Mark: Private Properties
     
@@ -62,7 +64,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     private let appointmentFilterSubject = PublishSubject<Void>()
     private let filterSubject = PublishSubject<Void>()
     
-    private let appointmentsSubject = BehaviorSubject<[Appointment]>(value: [])
+    private let appointmentsSubject = BehaviorSubject<[AppointmentsResultType]>(value: [])
     private let lastUpdatedLabelSubject = BehaviorSubject<String?>(value: "")
     private let dateNavigatorTitleSubject = BehaviorSubject<String?>(value: "")
     
@@ -175,7 +177,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             .map { appointments -> [(title: String, rows: [ReuseableCellViewModelType])] in
                 appointments.map { appointment -> (title: String, rows: [ReuseableCellViewModelType]) in
                     let cellViewModel = AppointmentTVCellViewModel(appointment: appointment)
-                    let headerTitle = "\(appointment.startDate?.timeString ?? "") - \(appointment.endDate?.timeString ?? "")"
+                    let headerTitle = "\(appointment.startTime ?? "") - \(appointment.endTime ?? "")"
                     return (headerTitle, [cellViewModel])
                 }
             }
