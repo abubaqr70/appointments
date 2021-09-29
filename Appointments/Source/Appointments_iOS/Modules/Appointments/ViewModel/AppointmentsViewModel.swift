@@ -118,18 +118,39 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             }
             .share()
         
-        fetchRequest.elements()
-            .map({ [weak self]
-                appointments -> [Appointment] in
-                guard let self = self else { return []}
-                self.loadingSubject.onNext(false)
+        Observable.combineLatest(segmentControlSubject, fetchRequest.elements(), resultSelector: { [weak self]
+            segment, appointments -> [Appointment] in
+            guard let self = self else { return [] }
+            self.loadingSubject.onNext(false)
+            
+            let appointmentsResult : [Appointment] = appointments
+                .map{
+                    appointment -> [Appointment] in
+                    appointment.appointmentAttendance?
+                        .map{
+                            attendance -> Appointment in
+                            return appointment
+                        } ?? []}
+                .flatMap{
+                    appointmentsResultType -> [Appointment] in
+                    appointmentsResultType
+                        .map{
+                            appointmentResult -> Appointment in
+                            return appointmentResult
+                        }
+                }
+            
+            if segment == 0 {
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'"
-                return appointments.sorted(by: {dateFormatter.date(from: $0.startDate?.date ?? "")?.compare(dateFormatter.date(from: $1.startDate?.date ?? "") ?? Date()) == ComparisonResult.orderedAscending})
-            })
-            .bind(to: appointmentsSubject.asObserver())
-            .disposed(by: disposeBag)
-        
+                return appointmentsResult.sorted(by: {dateFormatter.date(from: $0.startDate?.date ?? "")?.compare(dateFormatter.date(from: $1.startDate?.date ?? "") ?? Date()) == ComparisonResult.orderedAscending})
+            }else{
+                return appointmentsResult.sorted(by: {($0.appointmentAttendance?.first?.user?.roomNo ?? "")?.compare($1.appointmentAttendance?.first?.user?.roomNo ?? "",options: [.numeric]) == ComparisonResult.orderedAscending})
+            }
+            
+        })
+        .bind(to: appointmentsSubject)
+        .disposed(by: disposeBag)
         
         fetchRequest.errors()
             .debug("Errors")
