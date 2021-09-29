@@ -19,11 +19,15 @@ struct FacilityCategory : Codable {
 
 extension FacilityCategory {
     
-    init(){
-        self.id = nil
-        self.name = nil
-        self.facilityId = nil
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        id = try values.decodeIfPresent(Int.self, forKey: .id)
+        name = try values.decodeIfPresent(String.self, forKey: .name)
+        facilityId = try values.decodeIfPresent(Int.self, forKey: .facilityId)
     }
+}
+
+extension FacilityCategory {
     
     init(managedObject : CDFacilityCategory){
         self.id = Int(managedObject.id)
@@ -31,10 +35,14 @@ extension FacilityCategory {
         self.facilityId = Int(managedObject.facilityId)
     }
     
-    init(from decoder: Decoder) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
-        id = try values.decodeIfPresent(Int.self, forKey: .id)
-        name = try values.decodeIfPresent(String.self, forKey: .name)
-        facilityId = try values.decodeIfPresent(Int.self, forKey: .facilityId)
+}
+
+extension FacilityCategory {
+    
+    init(facilityCategory : FacilityCategory){
+        self.id = facilityCategory.id
+        self.name = facilityCategory.name
+        self.facilityId = facilityCategory.facilityId
     }
+    
 }

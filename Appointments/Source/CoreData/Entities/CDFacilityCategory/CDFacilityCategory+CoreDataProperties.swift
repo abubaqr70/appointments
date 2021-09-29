@@ -1,4 +1,10 @@
-// Copyright © 2021 Caremerge. All rights reserved.
+//
+//  CDFacilityCategory+CoreDataProperties.swift
+//  Alamofire
+//
+//  Created by Muhammad Abubaqr on 29/09/2021.
+//
+//
 
 import Foundation
 import CoreData
@@ -12,7 +18,7 @@ extension CDFacilityCategory {
 
     @NSManaged public var facilityId: Int64
     @NSManaged public var id: Int64
-    @NSManaged public var isSynced: Bool
     @NSManaged public var name: String?
+    @NSManaged public var ofUserGroup: CDUserGroup?
 
 }

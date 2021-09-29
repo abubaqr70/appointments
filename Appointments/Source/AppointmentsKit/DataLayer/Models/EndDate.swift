@@ -17,20 +17,28 @@ struct EndDate : Codable {
 
 extension EndDate {
     
-    init(){
-        self.date = nil
-        self.timeString = nil
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        date = try values.decodeIfPresent(String.self, forKey: .date)
+        timeString = try values.decodeIfPresent(String.self, forKey: .timeString)
     }
+
+}
+
+extension EndDate {
     
     init(managedObject: CDEndDate){
         self.date = managedObject.date
         self.timeString = managedObject.timeString
     }
+
+}
+
+extension EndDate {
     
-    init(from decoder: Decoder) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
-        date = try values.decodeIfPresent(String.self, forKey: .date)
-        timeString = try values.decodeIfPresent(String.self, forKey: .timeString)
+    init(endDate: EndDate){
+        self.date = endDate.date
+        self.timeString = endDate.timeString
     }
 
 }

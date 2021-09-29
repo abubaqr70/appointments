@@ -20,21 +20,7 @@ struct AppointmentTag : Codable {
 }
 
 extension AppointmentTag {
-    
-    init(){
-        self.id = nil
-        self.appointmentId = nil
-        self.tagId = nil
-        self.tagActualText = nil
-    }
-    
-    init(managedObject: CDAppointmentTags){
-        self.id = Int(managedObject.id)
-        self.appointmentId = Int(managedObject.appointmentId)
-        self.tagId = Int(managedObject.tagId)
-        self.tagActualText = managedObject.tagActualText
-    }
-    
+
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         id = try values.decodeIfPresent(Int.self, forKey: .id)
@@ -43,4 +29,26 @@ extension AppointmentTag {
         tagActualText = try values.decodeIfPresent(String.self, forKey: .tagActualText)
     }
 
+}
+
+extension AppointmentTag {
+
+    init(managedObject: CDAppointmentTags){
+        self.id = Int(managedObject.id)
+        self.appointmentId = Int(managedObject.appointmentId)
+        self.tagId = Int(managedObject.tagId)
+        self.tagActualText = managedObject.tagActualText
+    }
+    
+}
+
+extension AppointmentTag {
+    
+    init(appointmentTag: AppointmentTag){
+        self.id = appointmentTag.id
+        self.appointmentId = appointmentTag.appointmentId
+        self.tagId = appointmentTag.tagId
+        self.tagActualText = appointmentTag.tagActualText
+    }
+    
 }

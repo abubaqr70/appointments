@@ -13,7 +13,7 @@ public class AppointmentsViewController: UIViewController {
         }
     }
     
-    private var appointments: [AppointmentsResultType] = [] {
+    private var appointments: [Appointment] = [] {
         didSet {
             tableView.reloadData()
         }
@@ -243,6 +243,11 @@ extension AppointmentsViewController{
             .bind(to: viewModel.inputs.datePickerObserver)
             .disposed(by: disposeBag)
         
+        tableView.rx.itemSelected.subscribe(onNext: {
+            index in
+            viewModel.inputs.selectAppointment.onNext(index.section)
+        }).disposed(by: disposeBag)
+        
         
     }
     
@@ -287,8 +292,6 @@ extension AppointmentsViewController: UITableViewDelegate,UITableViewDataSource 
     }
     
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let viewModel = AppointmentDetailViewModel(appointment: appointments[indexPath.section])
-        let viewController = AppointmentDetailViewController(viewModel: viewModel)
-        self.navigationController?.pushViewController(viewController, animated: true)
+        
     }
 }

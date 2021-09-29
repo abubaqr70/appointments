@@ -49,16 +49,20 @@ public class AppDependencyContainer {
         return AppointmentsViewController(viewModel: viewModel)
     }
     
+    func makeAppointmentDetailViewController(viewModel: AppointmentDetailViewModelType) -> AppointmentDetailViewController {
+        
+        return AppointmentDetailViewController(viewModel: viewModel)
+    }
+    
     func makeAppointmentsViewModel() -> AppointmentsViewModelType {
-        
-        let service = AppointmentService(baseURL: self.baseURL,
-                                         authHeaderProvider: self.authentication,
-                                         client: self.client)
-        
-        let repository = AppointmentRepository(appointmentService: service)
         
         return AppointmentsViewModel(facilityDataStore: self.facilityDataStore,
                                      appointmentsRepository: self.repository)
+    }
+    
+    func makeAppointmentDetailViewModel(appointment: Appointment) -> AppointmentDetailViewModelType {
+        
+        return AppointmentDetailViewModel(appointment: appointment, repository: self.repository)
     }
     
 }

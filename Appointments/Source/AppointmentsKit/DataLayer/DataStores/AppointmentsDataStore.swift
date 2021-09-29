@@ -8,14 +8,6 @@ protocol AppointmentsDataStore {
     func saveAppointment(_ appointment: Appointment)
 }
 
-
-extension Appointment {
-    
-//    init(with cdAppointment: CDAppointment) {
-//        self.title = cdAppointment.title ?? ""
-//    }
-}
-
 extension AppointmentsCoreDataStore: AppointmentsDataStore {
     
     func fetchAppointments() -> [Appointment] {
@@ -45,10 +37,10 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         entity.parentEventId = Int64(appointment.parentEventId ?? 0)
         entity.facilityId = Int64(appointment.facilityId ?? 0)
         entity.residentId = Int64(appointment.residentId ?? 0)
-        entity.startDate = saveStartDate(appointment.startDate ?? StartDate())
-        entity.endDate = saveEndDate(appointment.endDate ?? EndDate())
-        entity.user = saveAppointmentUser(appointment.user ?? AppointmentUser())
-        entity.userGroup = saveUserGroup(appointment.userGroup ?? UserGroup())
+        entity.startDate = appointment.startDate != nil ? saveStartDate(appointment.startDate!) : nil
+        entity.endDate = appointment.endDate != nil ? saveEndDate(appointment.endDate!) : nil
+        entity.user = appointment.user != nil ? saveAppointmentUser(appointment.user!) : nil
+        entity.userGroup = appointment.userGroup != nil ? saveUserGroup(appointment.userGroup!) : nil
         for appointmentAttandance in appointment.appointmentAttendance ?? []{
             entity.addToAppointmentAttendance(saveAppointmentAttendance(appointmentAttandance)) 
         }
@@ -82,13 +74,7 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         entity.reminderSent = appointmentAttendance.reminderSent
         entity.cancelReminder = appointmentAttendance.cancelReminder
         entity.reminderSentTime = Int64(appointmentAttendance.reminderSentTime ?? 0)
-        entity.users?.fullName = appointmentAttendance.user?.fullName
-        entity.users?.profileImageRoute = appointmentAttendance.user?.profileImageRoute
-        entity.users?.gender = appointmentAttendance.user?.gender
-        entity.users?.id = Int64(appointmentAttendance.user?.id ?? 0)
-        entity.users?.firstName = appointmentAttendance.user?.firstName
-        entity.users?.lastName = appointmentAttendance.user?.lastName
-        entity.users?.roomNo = appointmentAttendance.user?.roomNo
+        entity.users = appointmentAttendance.user != nil ? saveAppointmentUser(appointmentAttendance.user!) : nil
         return entity
     }
     
@@ -136,7 +122,7 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         entity.id = Int64(userGroup.id ?? 0)
         entity.facilityId = Int64(userGroup.facilityId ?? 0)
         entity.name = userGroup.name
-        entity.facilityCategory = saveFacilityCategory(userGroup.facilityCategory ?? FacilityCategory())
+        entity.facilityCategory = userGroup.facilityCategory != nil ? saveFacilityCategory(userGroup.facilityCategory!) : nil
         for facilityGroupMemeber in userGroup.facilityGroupMembers ?? [] {
             entity.addToFacilityGroupMembers(saveFacilityGroupMember(facilityGroupMemeber))
         }

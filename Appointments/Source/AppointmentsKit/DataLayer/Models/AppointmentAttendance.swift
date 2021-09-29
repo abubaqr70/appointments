@@ -29,16 +29,21 @@ struct AppointmentAttendance : Codable {
 
 extension AppointmentAttendance {
     
-    init(){
-        self.id = nil
-        self.appointmentId = nil
-        self.residentId = nil
-        self.reminderSent = nil
-        self.cancelReminder = nil
-        self.reminderSentTime = nil
-        self.user = nil
-        self.present = nil
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        id = try values.decodeIfPresent(Int.self, forKey: .id)
+        appointmentId = try values.decodeIfPresent(Int.self, forKey: .appointmentId)
+        residentId = try values.decodeIfPresent(Int.self, forKey: .residentId)
+        present = try values.decodeIfPresent(String.self, forKey: .present)
+        reminderSent = try values.decodeIfPresent(String.self, forKey: .reminderSent)
+        cancelReminder = try values.decodeIfPresent(String.self, forKey: .cancelReminder)
+        reminderSentTime = try values.decodeIfPresent(Int.self, forKey: .reminderSentTime)
+        user = try values.decodeIfPresent(AppointmentUser.self, forKey: .user)
     }
+
+}
+
+extension AppointmentAttendance {
     
     init(managedObject: CDAppointmentAttendance) {
         
@@ -52,16 +57,20 @@ extension AppointmentAttendance {
         self.user = AppointmentUser(managedObject: managedObject.users ?? CDAppointmentUser())
     }
     
-    init(from decoder: Decoder) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
-        id = try values.decodeIfPresent(Int.self, forKey: .id)
-        appointmentId = try values.decodeIfPresent(Int.self, forKey: .appointmentId)
-        residentId = try values.decodeIfPresent(Int.self, forKey: .residentId)
-        present = try values.decodeIfPresent(String.self, forKey: .present)
-        reminderSent = try values.decodeIfPresent(String.self, forKey: .reminderSent)
-        cancelReminder = try values.decodeIfPresent(String.self, forKey: .cancelReminder)
-        reminderSentTime = try values.decodeIfPresent(Int.self, forKey: .reminderSentTime)
-        user = try values.decodeIfPresent(AppointmentUser.self, forKey: .user)
-    }
+}
 
+extension AppointmentAttendance {
+    
+    init(appointmentAttendance: AppointmentAttendance) {
+        
+        self.id = appointmentAttendance.id
+        self.appointmentId = appointmentAttendance.appointmentId
+        self.residentId = appointmentAttendance.residentId
+        self.reminderSent = appointmentAttendance.reminderSent
+        self.cancelReminder = appointmentAttendance.cancelReminder
+        self.present = appointmentAttendance.present
+        self.reminderSentTime = appointmentAttendance.reminderSentTime
+        self.user = appointmentAttendance.user != nil ? AppointmentUser(appointmentUser: appointmentAttendance.user!) : nil
+    }
+    
 }

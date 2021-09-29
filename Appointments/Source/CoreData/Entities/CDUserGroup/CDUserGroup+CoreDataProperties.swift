@@ -1,4 +1,10 @@
-// Copyright © 2021 Caremerge. All rights reserved.
+//
+//  CDUserGroup+CoreDataProperties.swift
+//  Alamofire
+//
+//  Created by Muhammad Abubaqr on 29/09/2021.
+//
+//
 
 import Foundation
 import CoreData
@@ -13,10 +19,10 @@ extension CDUserGroup {
     @NSManaged public var categoryId: Int64
     @NSManaged public var facilityId: Int64
     @NSManaged public var id: Int64
-    @NSManaged public var isSynced: Bool
     @NSManaged public var name: String?
     @NSManaged public var facilityCategory: CDFacilityCategory?
     @NSManaged public var facilityGroupMembers: NSSet?
+    @NSManaged public var ofAppointments: CDAppointment?
 
 }
 

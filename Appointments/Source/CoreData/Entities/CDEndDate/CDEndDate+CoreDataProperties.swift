@@ -1,4 +1,10 @@
-// Copyright © 2021 Caremerge. All rights reserved.
+//
+//  CDEndDate+CoreDataProperties.swift
+//  Alamofire
+//
+//  Created by Muhammad Abubaqr on 29/09/2021.
+//
+//
 
 import Foundation
 import CoreData
@@ -11,7 +17,7 @@ extension CDEndDate {
     }
 
     @NSManaged public var date: String?
-    @NSManaged public var isSynced: Bool
     @NSManaged public var timeString: String?
+    @NSManaged public var ofAppointments: CDAppointment?
 
 }

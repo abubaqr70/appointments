@@ -71,6 +71,10 @@ extension Appointment {
         userGroup = try values.decodeIfPresent(UserGroup.self, forKey: .userGroup)
     }
     
+}
+
+extension Appointment {
+    
     init(managedObject: CDAppointment) {
         
         self.id = Int(managedObject.id)
@@ -85,10 +89,10 @@ extension Appointment {
         self.therapyId = Int(managedObject.therapyId)
         self.groupId = Int(managedObject.groupId)
         self.parentEventId = Int(managedObject.parentEventId)
-        self.startDate = StartDate(managedObject: managedObject.startDate ?? CDStartDate())
-        self.endDate = EndDate(managedObject: managedObject.endDate ?? CDEndDate())
-        self.user = AppointmentUser(managedObject: managedObject.user ?? CDAppointmentUser())
-        self.userGroup = UserGroup(managedObject: managedObject.userGroup ?? CDUserGroup())
+        self.startDate = managedObject.startDate != nil ? StartDate(managedObject: managedObject.startDate!) : nil
+        self.endDate = managedObject.endDate != nil ? EndDate(managedObject: managedObject.endDate!) : nil
+        self.user = managedObject.user != nil ? AppointmentUser(managedObject: managedObject.user!) : nil
+        self.userGroup = managedObject.userGroup != nil ? UserGroup(managedObject: managedObject.userGroup!) : nil
         self.appointmentTags = []
         for appointmentTag in managedObject.appointmentTag?.allObjects as? [CDAppointmentTags] ?? []{
             self.appointmentTags?.append(AppointmentTag(managedObject: appointmentTag))
@@ -98,4 +102,34 @@ extension Appointment {
             self.appointmentAttendance?.append(AppointmentAttendance(managedObject: appointmentAttendance))
         }
     }
+    
+}
+
+extension Appointment {
+    
+    init(appointment: Appointment, appointmentAttendance: AppointmentAttendance) {
+        self.id = appointment.id
+        self.title = appointment.title
+        self.location = appointment.location
+        self.description = appointment.description
+        self.occurrenceId = appointment.occurrenceId
+        self.isTherapy = appointment.isTherapy
+        self.therapistId = appointment.therapistId
+        self.facilityId = appointment.facilityId
+        self.residentId = appointment.residentId
+        self.therapyId = appointment.therapyId
+        self.groupId = appointment.groupId
+        self.parentEventId = appointment.parentEventId
+        self.startDate = appointment.startDate != nil ? StartDate(startDate:appointment.startDate!) : nil
+        self.endDate = appointment.endDate != nil ? EndDate(endDate: appointment.endDate!) : nil
+        self.user = appointment.user != nil ? AppointmentUser(appointmentUser: appointment.user!) : nil
+        self.userGroup = appointment.userGroup != nil ? UserGroup(userGroup: appointment.userGroup!) : nil
+        self.appointmentTags = []
+        for appointmentTag in appointment.appointmentTags ?? []{
+            self.appointmentTags?.append(AppointmentTag(appointmentTag: appointmentTag))
+        }
+        self.appointmentAttendance = []
+        self.appointmentAttendance?.append(AppointmentAttendance(appointmentAttendance: appointmentAttendance))
+    }
+    
 }

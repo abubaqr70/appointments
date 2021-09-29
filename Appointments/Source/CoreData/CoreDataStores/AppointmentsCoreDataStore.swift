@@ -56,38 +56,6 @@ public class AppointmentsCoreDataStore {
         self.coreDataStack.saveContext()
     }
     
-    public func saveCDAppointmentAttendance(_ appointmentAttendance: CDAppointmentAttendance) {
-        self.coreDataStack.saveContext()
-    }
-    
-    public func saveCDAppointmentTags(_ appointmentTags: CDAppointmentTags) {
-        self.coreDataStack.saveContext()
-    }
-    
-    public func saveCDFacilityGroupMember(_ facilityGroup: CDFacilityGroupMembers) {
-        self.coreDataStack.saveContext()
-    }
-    
-    public func saveCDFacilityCategory(_ facilityCategory: CDFacilityCategory) {
-        self.coreDataStack.saveContext()
-    }
-    
-    public func saveCDStartDate(_ startDate: CDStartDate) {
-        self.coreDataStack.saveContext()
-    }
-    
-    public func saveCDEndDate(_ endDate: CDEndDate) {
-        self.coreDataStack.saveContext()
-    }
-    
-    public func saveCDAppointmentUser(_ appointmentUser: CDAppointmentUser) {
-        self.coreDataStack.saveContext()
-    }
-    
-    public func saveCDUserGroup(_ userGroup: CDUserGroup) {
-        self.coreDataStack.saveContext()
-    }
-    
     public func fetchCDAppointment(with id: UUID) throws -> CDAppointment? {
         let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", id.uuidString)
@@ -107,9 +75,14 @@ public class AppointmentsCoreDataStore {
         }
     }
     
-    public func deleteALLCDAppointment() throws {
-            self.coreDataStack.manageObjectContext.reset()
-            self.coreDataStack.saveContext()
+    public func deleteAllData() throws {
+        let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
+        let objects = try? self.coreDataStack.manageObjectContext.fetch(fetchRequest)
+        for object in objects ?? []{
+            self.coreDataStack.manageObjectContext.delete(object)
+        }
+        self.coreDataStack.saveContext()
+        return
     }
     
     public func observeChanges() {

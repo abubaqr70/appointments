@@ -20,7 +20,7 @@ protocol AppointmentTVCellViewModelOutputs {
     var profileImage: Observable<String?> { get }
     var markPresent : Observable<Bool> { get }
     var markPresentEnabled : Observable<Bool> { get }
-    
+    var selectedAppointment: Observable<Appointment> { get }
 }
 
 protocol AppointmentTVCellViewModelType {
@@ -46,6 +46,7 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
     var profileImage: Observable<String?> { return profileImageSubject.asObservable() }
     var markPresent: Observable<Bool> { return markPresentSubject.asObservable()}
     var markPresentEnabled: Observable<Bool> { return markPresentEnabledSubject.asObservable()}
+    var selectedAppointment: Observable<Appointment> {return selectedAppointmentSubject.asObservable() }
     
     //Mark: Init
     private let disposeBag = DisposeBag()
@@ -54,24 +55,25 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
     private let appointmentDescriptionSubject: BehaviorSubject<String?>
     private let staffSubject: BehaviorSubject<String?>
     private let profileImageSubject: BehaviorSubject<String?>
-    private let appointmentsSubject: BehaviorSubject<AppointmentsResultType>
+    private let appointmentsSubject: BehaviorSubject<Appointment>
     private let markcheckboxSubject : BehaviorSubject<Void>
     private let markPresentSubject : BehaviorSubject<Bool>
     private let markPresentEnabledSubject : BehaviorSubject<Bool>
+    private let selectedAppointmentSubject : BehaviorSubject<Appointment>
     
-    init(appointment: AppointmentsResultType) {
+    init(appointment: Appointment) {
         
         //Mark:- Setting User Names
         markcheckboxSubject = BehaviorSubject(value: ())
         markPresentEnabledSubject = BehaviorSubject(value: true)
         markPresentSubject = BehaviorSubject(value: true)
         appointmentsSubject = BehaviorSubject(value: appointment)
-        roomSubject = BehaviorSubject(value: appointment.roomNo)
+        roomSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.roomNo)
         appointmentDescriptionSubject = BehaviorSubject(value: appointment.title)
-        staffSubject = BehaviorSubject(value: appointment.staffName)
-        profileImageSubject = BehaviorSubject(value: appointment.profileImage)
-        nameSubject = BehaviorSubject(value: appointment.fullName)
-                
+        staffSubject = BehaviorSubject(value: appointment.user?.fullName)
+        profileImageSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.profileImageRoute)
+        nameSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.fullName)
+        selectedAppointmentSubject = BehaviorSubject(value: appointment)
         bindActions(appointment: appointment)
     }
     
@@ -79,10 +81,10 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
 
 extension AppointmentTVCellViewModel {
     
-    func bindActions(appointment: AppointmentsResultType) {
+    func bindActions(appointment: Appointment) {
         
-        markPresentSubject.onNext( appointment.present == "present" ? false : true )
-
+        markPresentSubject.onNext( appointment.appointmentAttendance?.first?.present == "present" ? false : true )
+        
         markcheckboxSubject
             .withLatestFrom(self.markPresentSubject)
             .map { isPresent -> Bool in

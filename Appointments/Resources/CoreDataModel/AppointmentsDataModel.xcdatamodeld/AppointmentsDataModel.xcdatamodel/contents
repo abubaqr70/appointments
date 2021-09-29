@@ -16,78 +16,79 @@
         <attribute name="therapyId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="updatedById" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="appointmentAttendance" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CDAppointmentAttendance"/>
-        <relationship name="appointmentTag" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CDAppointmentTags"/>
-        <relationship name="endDate" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="CDEndDate"/>
-        <relationship name="startDate" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="CDStartDate"/>
-        <relationship name="user" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="CDAppointmentUser"/>
-        <relationship name="userGroup" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="CDUserGroup"/>
+        <relationship name="appointmentAttendance" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CDAppointmentAttendance" inverseName="ofAppointments" inverseEntity="CDAppointmentAttendance"/>
+        <relationship name="appointmentTag" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CDAppointmentTags" inverseName="ofAppointments" inverseEntity="CDAppointmentTags"/>
+        <relationship name="endDate" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="CDEndDate" inverseName="ofAppointments" inverseEntity="CDEndDate"/>
+        <relationship name="startDate" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="CDStartDate" inverseName="ofAppointments" inverseEntity="CDStartDate"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="CDAppointmentUser" inverseName="ofAppointments" inverseEntity="CDAppointmentUser"/>
+        <relationship name="userGroup" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="CDUserGroup" inverseName="ofAppointments" inverseEntity="CDUserGroup"/>
     </entity>
     <entity name="CDAppointmentAttendance" representedClassName="CDAppointmentAttendance" syncable="YES">
         <attribute name="appointmentId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="cancelReminder" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="isSynced" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="present" optional="YES" attributeType="String"/>
         <attribute name="reminderSent" optional="YES" attributeType="String"/>
         <attribute name="reminderSentTime" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="residentId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="users" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="CDAppointmentUser"/>
+        <relationship name="ofAppointments" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDAppointment" inverseName="appointmentAttendance" inverseEntity="CDAppointment"/>
+        <relationship name="users" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="CDAppointmentUser" inverseName="ofAppointmentAttendance" inverseEntity="CDAppointmentUser"/>
     </entity>
     <entity name="CDAppointmentTags" representedClassName="CDAppointmentTags" syncable="YES">
         <attribute name="appointmentId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="isSynced" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="tagActualText" optional="YES" attributeType="String"/>
         <attribute name="tagId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="ofAppointments" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDAppointment" inverseName="appointmentTag" inverseEntity="CDAppointment"/>
     </entity>
     <entity name="CDAppointmentUser" representedClassName="CDAppointmentUser" syncable="YES">
         <attribute name="firstName" optional="YES" attributeType="String"/>
         <attribute name="fullName" optional="YES" attributeType="String"/>
         <attribute name="gender" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="isSynced" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="lastName" optional="YES" attributeType="String"/>
         <attribute name="profileImageRoute" optional="YES" attributeType="String"/>
         <attribute name="roomNo" optional="YES" attributeType="String"/>
+        <relationship name="ofAppointmentAttendance" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDAppointmentAttendance" inverseName="users" inverseEntity="CDAppointmentAttendance"/>
+        <relationship name="ofAppointments" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDAppointment" inverseName="user" inverseEntity="CDAppointment"/>
     </entity>
     <entity name="CDEndDate" representedClassName="CDEndDate" syncable="YES">
         <attribute name="date" optional="YES" attributeType="String"/>
-        <attribute name="isSynced" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="timeString" optional="YES" attributeType="String"/>
+        <relationship name="ofAppointments" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDAppointment" inverseName="endDate" inverseEntity="CDAppointment"/>
     </entity>
     <entity name="CDFacilityCategory" representedClassName="CDFacilityCategory" syncable="YES">
         <attribute name="facilityId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="isSynced" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="ofUserGroup" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDUserGroup" inverseName="facilityCategory" inverseEntity="CDUserGroup"/>
     </entity>
     <entity name="CDFacilityGroupMembers" representedClassName="CDFacilityGroupMembers" syncable="YES">
         <attribute name="groupId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="isSynced" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="memberType" optional="YES" attributeType="String"/>
         <attribute name="userId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="ofUserGroup" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDUserGroup" inverseName="facilityGroupMembers" inverseEntity="CDUserGroup"/>
     </entity>
     <entity name="CDStartDate" representedClassName="CDStartDate" syncable="YES">
         <attribute name="date" optional="YES" attributeType="String"/>
-        <attribute name="isSynced" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="timeString" optional="YES" attributeType="String"/>
+        <relationship name="ofAppointments" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDAppointment" inverseName="startDate" inverseEntity="CDAppointment"/>
     </entity>
     <entity name="CDUserGroup" representedClassName="CDUserGroup" syncable="YES">
         <attribute name="categoryId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="facilityId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="isSynced" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
-        <relationship name="facilityCategory" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="CDFacilityCategory"/>
-        <relationship name="facilityGroupMembers" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CDFacilityGroupMembers"/>
+        <relationship name="facilityCategory" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="CDFacilityCategory" inverseName="ofUserGroup" inverseEntity="CDFacilityCategory"/>
+        <relationship name="facilityGroupMembers" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CDFacilityGroupMembers" inverseName="ofUserGroup" inverseEntity="CDFacilityGroupMembers"/>
+        <relationship name="ofAppointments" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDAppointment" inverseName="userGroup" inverseEntity="CDAppointment"/>
     </entity>
     <elements>
         <element name="CDAppointment" positionX="-63" positionY="-18" width="128" height="344"/>
         <element name="CDAppointmentAttendance" positionX="-63" positionY="144" width="128" height="164"/>
         <element name="CDAppointmentTags" positionX="-63" positionY="144" width="128" height="104"/>
-        <element name="CDAppointmentUser" positionX="-54" positionY="153" width="128" height="149"/>
+        <element name="CDAppointmentUser" positionX="-54" positionY="153" width="128" height="164"/>
         <element name="CDEndDate" positionX="-36" positionY="162" width="128" height="74"/>
         <element name="CDFacilityCategory" positionX="18" positionY="189" width="128" height="89"/>
         <element name="CDFacilityGroupMembers" positionX="36" positionY="198" width="128" height="104"/>

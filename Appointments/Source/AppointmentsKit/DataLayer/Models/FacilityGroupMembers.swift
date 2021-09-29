@@ -19,13 +19,17 @@ struct FacilityGroupMembers : Codable {
 }
 
 extension FacilityGroupMembers {
-    
-    init(){
-        self.id = nil
-        self.userId = nil
-        self.groupId = nil
-        self.memberType = nil
+        
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        id = try values.decodeIfPresent(Int.self, forKey: .id)
+        userId = try values.decodeIfPresent(Int.self, forKey: .userId)
+        groupId = try values.decodeIfPresent(Int.self, forKey: .groupId)
+        memberType = try values.decodeIfPresent(String.self, forKey: .memberType)
     }
+}
+
+extension FacilityGroupMembers {
     
     init(managedObject : CDFacilityGroupMembers){
         self.id = Int(managedObject.id)
@@ -34,11 +38,15 @@ extension FacilityGroupMembers {
         self.memberType = managedObject.memberType
     }
     
-    init(from decoder: Decoder) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
-        id = try values.decodeIfPresent(Int.self, forKey: .id)
-        userId = try values.decodeIfPresent(Int.self, forKey: .userId)
-        groupId = try values.decodeIfPresent(Int.self, forKey: .groupId)
-        memberType = try values.decodeIfPresent(String.self, forKey: .memberType)
+}
+
+extension FacilityGroupMembers {
+    
+    init(facilityGroupMembers : FacilityGroupMembers){
+        self.id = facilityGroupMembers.id
+        self.userId = facilityGroupMembers.userId
+        self.groupId = facilityGroupMembers.groupId
+        self.memberType = facilityGroupMembers.memberType
     }
+    
 }

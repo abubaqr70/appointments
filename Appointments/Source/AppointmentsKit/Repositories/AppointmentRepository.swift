@@ -15,7 +15,7 @@ class AppointmentRepository {
     
     func getAppointments(for facilityID: Int,
                          startDate: TimeInterval,
-                         endDate: TimeInterval) -> Observable<[AppointmentsResultType]> {
+                         endDate: TimeInterval) -> Observable<[Appointment]> {
         
         return Observable.create { [weak self] observer in
             
@@ -29,14 +29,12 @@ class AppointmentRepository {
                 case .failure(let error):
                     observer.onError(error)
                 case .success(let appointments):
-//                    self.whereIsMySQLite()
-//                    try? self.coreDataStore.deleteALLCDAppointment()
-//                    for appointment in appointments{
-//                        self.coreDataStore.saveAppointment(appointment)
-//                    }
-//                    let newAppointments = self.coreDataStore.fetchAppointments()
-//                    print("Core Data Appointments \(newAppointments)")
-                    observer.onNext(appointments)
+                    self.whereIsMySQLite()
+                    try? self.coreDataStore.deleteAllData()
+                    for appointment in appointments{
+                        self.coreDataStore.saveAppointment(appointment)
+                    }
+                    observer.onNext(self.coreDataStore.fetchAppointments())
                     observer.onCompleted()
                 }
             }
