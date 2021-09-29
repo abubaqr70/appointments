@@ -8,8 +8,6 @@ struct FacilityGroupMembers : Codable {
 	let userId : Int?
 	let groupId : Int?
 	let memberType : String?
-	let createdAt : Int?
-	let updatedAt : Int?
 
 	enum CodingKeys: String, CodingKey {
 
@@ -17,12 +15,24 @@ struct FacilityGroupMembers : Codable {
 		case userId = "userId"
 		case groupId = "fk_group_id"
 		case memberType = "v_member_type"
-		case createdAt = "i_created_at"
-		case updatedAt = "i_updated_at"
 	}
 }
 
 extension FacilityGroupMembers {
+    
+    init(){
+        self.id = nil
+        self.userId = nil
+        self.groupId = nil
+        self.memberType = nil
+    }
+    
+    init(managedObject : CDFacilityGroupMembers){
+        self.id = Int(managedObject.id)
+        self.userId = Int(managedObject.userId)
+        self.groupId = Int(managedObject.groupId)
+        self.memberType = managedObject.memberType
+    }
     
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
@@ -30,7 +40,5 @@ extension FacilityGroupMembers {
         userId = try values.decodeIfPresent(Int.self, forKey: .userId)
         groupId = try values.decodeIfPresent(Int.self, forKey: .groupId)
         memberType = try values.decodeIfPresent(String.self, forKey: .memberType)
-        createdAt = try values.decodeIfPresent(Int.self, forKey: .createdAt)
-        updatedAt = try values.decodeIfPresent(Int.self, forKey: .updatedAt)
     }
 }

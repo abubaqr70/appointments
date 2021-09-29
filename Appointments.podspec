@@ -24,8 +24,9 @@ Pod::Spec.new do |s|
     s.swift_version = '5'
     
     s.source_files = 'Appointments/Source/**/*.{h,m,swift}'
+    s.resource = 'Appointments/**/*.{xcdatamodeld}'
     s.resource_bundles = {
-        'Appointments' => ['Appointments/**/*.{xcdatamodeld,xcassets,otf}']
+        'Appointments' => ['Appointments/**/*.{xcassets}']
     }
     
     s.frameworks = 'UIKit'

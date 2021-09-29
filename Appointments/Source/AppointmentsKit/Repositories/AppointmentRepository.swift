@@ -6,9 +6,11 @@ import RxSwift
 class AppointmentRepository {
     
     let appointmentService: AppointmentService
+    let coreDataStore: AppointmentsCoreDataStore
     
-    init(appointmentService: AppointmentService) {
+    init(appointmentService: AppointmentService, coreDataStore: AppointmentsCoreDataStore) {
         self.appointmentService = appointmentService
+        self.coreDataStore = coreDataStore
     }
     
     func getAppointments(for facilityID: Int,
@@ -27,6 +29,13 @@ class AppointmentRepository {
                 case .failure(let error):
                     observer.onError(error)
                 case .success(let appointments):
+//                    self.whereIsMySQLite()
+//                    try? self.coreDataStore.deleteALLCDAppointment()
+//                    for appointment in appointments{
+//                        self.coreDataStore.saveAppointment(appointment)
+//                    }
+//                    let newAppointments = self.coreDataStore.fetchAppointments()
+//                    print("Core Data Appointments \(newAppointments)")
                     observer.onNext(appointments)
                     observer.onCompleted()
                 }
@@ -34,5 +43,19 @@ class AppointmentRepository {
             
             return Disposables.create()
         }
+    }
+}
+
+extension AppointmentRepository{
+    func whereIsMySQLite() {
+        let path = FileManager
+            .default
+            .urls(for: .applicationSupportDirectory, in: .userDomainMask)
+            .last?
+            .absoluteString
+            .replacingOccurrences(of: "file://", with: "")
+            .removingPercentEncoding
+        
+        print(path ?? "Not found")
     }
 }

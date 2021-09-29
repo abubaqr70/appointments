@@ -47,8 +47,8 @@ public class AppDependencyContainer {
         let service = AppointmentService(baseURL: self.baseURL,
                                          authHeaderProvider: self.authentication,
                                          client: self.client)
-        
-        let repository = AppointmentRepository(appointmentService: service)
+        let coreDataStore = AppointmentsCoreDataStore(coreDataStack: CoreDataStack())
+        let repository = AppointmentRepository(appointmentService: service,coreDataStore: coreDataStore)
                 
         return AppointmentsViewModel(facilityDataStore: self.facilityDataStore,
                                      appointmentsRepository: repository )
