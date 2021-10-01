@@ -13,12 +13,6 @@ public class AppointmentsViewController: UIViewController {
         }
     }
     
-    private var appointments: [Appointment] = [] {
-        didSet {
-            tableView.reloadData()
-        }
-    }
-    
     fileprivate lazy var titleButton : UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 200, height: 40))
         button.setTitle("APPOINTMENTS", for: .normal)
@@ -186,12 +180,7 @@ extension AppointmentsViewController{
             guard let `self` = self else { return }
             self.sections = (section.element ?? [])
         }).disposed(by: disposeBag)
-        
-        viewModel.outputs.appointments.subscribe({ [weak self] appointment in
-            guard let `self` = self else { return }
-            self.appointments = (appointment.element ?? [])
-        }).disposed(by: disposeBag)
-        
+   
         viewModel.outputs.isLoading
             .subscribe(onNext: { [weak self] loading in
                 guard let `self` = self else { return }
@@ -243,12 +232,6 @@ extension AppointmentsViewController{
             .bind(to: viewModel.inputs.datePickerObserver)
             .disposed(by: disposeBag)
         
-        tableView.rx.itemSelected.subscribe(onNext: {
-            index in
-            viewModel.inputs.selectAppointment.onNext(index.section)
-        }).disposed(by: disposeBag)
-        
-        
     }
     
     private func bindErrorAlert(viewModel: AppointmentsViewModelType) {
@@ -293,5 +276,10 @@ extension AppointmentsViewController: UITableViewDelegate,UITableViewDataSource 
     
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
+        if let cellViewModel = sections[indexPath.section].rows[indexPath.row] as? AppointmentTVCellViewModelType{
+            cellViewModel.outputs.appointment.subscribe(onNext: { appointment in
+                self.viewModel.inputs.selectAppointment.onNext(appointment)
+            }).dispose()
+        }
     }
 }

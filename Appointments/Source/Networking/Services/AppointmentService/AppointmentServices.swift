@@ -41,4 +41,25 @@ class AppointmentService: BaseService {
                          completion: completion)
         
     }
+    
+    public func syncAppointments<ResultType: Codable>(for facilityID: Int,
+                                                      params: [Appointment],
+                                                     completion: @escaping (Result<[ResultType], Error>) -> Void) {
+        
+        let pathVariables = ["facilities", String(facilityID)]
+        
+        let endpoint: Endpoint = AppointmentEndpoint(baseURL: self.baseURL,
+                                                     pathVariables: pathVariables, query: [:])
+        
+        let request: Request = Request<[Appointment]>(endpoint: endpoint,
+                                            httpMethod: .post,
+                                            type: .json,
+                                            body: params,
+                                            headers: self.authHeaderProvider.authenticationHeader)
+        self.dataRequest(with: self.client,
+                         request: request,
+                         completion: completion)
+        
+    }
+    
 }

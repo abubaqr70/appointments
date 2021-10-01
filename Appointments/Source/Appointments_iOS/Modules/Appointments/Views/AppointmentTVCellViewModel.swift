@@ -20,7 +20,7 @@ protocol AppointmentTVCellViewModelOutputs {
     var profileImage: Observable<String?> { get }
     var markPresent : Observable<Bool> { get }
     var markPresentEnabled : Observable<Bool> { get }
-    var selectedAppointment: Observable<Appointment> { get }
+    var appointment: Observable<Appointment> { get }
 }
 
 protocol AppointmentTVCellViewModelType {
@@ -46,7 +46,7 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
     var profileImage: Observable<String?> { return profileImageSubject.asObservable() }
     var markPresent: Observable<Bool> { return markPresentSubject.asObservable()}
     var markPresentEnabled: Observable<Bool> { return markPresentEnabledSubject.asObservable()}
-    var selectedAppointment: Observable<Appointment> {return selectedAppointmentSubject.asObservable() }
+    var appointment: Observable<Appointment> {return appointmentsSubject.asObservable() }
     
     //Mark: Init
     private let disposeBag = DisposeBag()
@@ -59,7 +59,7 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
     private let markcheckboxSubject : BehaviorSubject<Void>
     private let markPresentSubject : BehaviorSubject<Bool>
     private let markPresentEnabledSubject : BehaviorSubject<Bool>
-    private let selectedAppointmentSubject : BehaviorSubject<Appointment>
+
     
     init(appointment: Appointment) {
         
@@ -73,7 +73,6 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
         staffSubject = BehaviorSubject(value: appointment.user?.fullName)
         profileImageSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.profileImageRoute)
         nameSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.fullName)
-        selectedAppointmentSubject = BehaviorSubject(value: appointment)
         bindActions(appointment: appointment)
     }
     

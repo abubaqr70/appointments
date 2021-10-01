@@ -52,7 +52,6 @@ public class AppCoordinator: Coordinator<ResultType<Void>> {
 
     }
     
-    
     public override func start() -> Observable<ResultType<Void>> {
         let viewModel = self.factory.makeAppointmentsViewModel()
         let viewController = self.factory.makeAppointmentsViewController(viewModel: viewModel)
@@ -61,24 +60,22 @@ public class AppCoordinator: Coordinator<ResultType<Void>> {
         let navigationController = UINavigationController(rootViewController: viewController)
         navigationController.modalPresentationStyle = .fullScreen
         self.rootNavigationController = navigationController
-        
-        
+    
         self.navigationType.navigate(to: navigationController, root: self.root)
         
         return result
     }
     
     func bindAppointmentViewModel(viewModel : AppointmentsViewModelType) {
-        viewModel.outputs.selectedAppointment.subscribe({ [weak self] appointment in
-            guard let `self` = self else { return }
+        viewModel.outputs.selectedAppointment.subscribe({ appointment in
             guard let appointment = appointment.element else {return}
             self.navigateToDetail(appointment: appointment)
         }).disposed(by: disposeBag)
     }
     
     func navigateToDetail(appointment: Appointment) {
-        let viewModel = self.factory.makeAppointmentDetailViewModel(appointment: appointment)
-        let viewController = self.factory.makeAppointmentDetailViewController(viewModel: viewModel)
+        let viewModel = self.factory.makeAppointmentViewModel(appointment: appointment)
+        let viewController = self.factory.makeAppointmentViewController(viewModel: viewModel)
         self.rootNavigationController?.pushViewController(viewController, animated: true)
     }
     
@@ -88,8 +85,8 @@ public class AppCoordinator: Coordinator<ResultType<Void>> {
 protocol AppointmentsFactory {
     func makeAppointmentsViewController(viewModel: AppointmentsViewModelType) -> AppointmentsViewController
     func makeAppointmentsViewModel() -> AppointmentsViewModelType
-    func makeAppointmentDetailViewController(viewModel: AppointmentDetailViewModelType) -> AppointmentDetailViewController
-    func makeAppointmentDetailViewModel(appointment: Appointment) -> AppointmentDetailViewModelType
+    func makeAppointmentViewController(viewModel: AppointmentViewModelType) -> AppointmentViewController
+    func makeAppointmentViewModel(appointment: Appointment) -> AppointmentViewModelType
 }
 
 extension AppDependencyContainer: AppointmentsFactory {

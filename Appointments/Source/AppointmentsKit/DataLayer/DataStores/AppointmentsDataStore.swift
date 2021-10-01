@@ -5,7 +5,9 @@ import Foundation
 protocol AppointmentsDataStore {
     
     func fetchAppointments() -> [Appointment]
+    func fetchAppointmentsSyncedFalse() -> [Appointment]
     func saveAppointment(_ appointment: Appointment)
+    func deleteAllAppointment() throws
 }
 
 extension AppointmentsCoreDataStore: AppointmentsDataStore {
@@ -14,6 +16,18 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         
         do {
             let appointments = try self.fetchCDAppointments()
+            return appointments.map{
+                appointmentCoreData -> Appointment in
+                return Appointment(managedObject: appointmentCoreData)
+            }
+        } catch { }
+        
+        return []
+    }
+    
+    func fetchAppointmentsSyncedFalse() -> [Appointment] {
+        do {
+            let appointments = try self.fetchCDAppointmentsSyncedFalse()
             return appointments.map{
                 appointmentCoreData -> Appointment in
                 return Appointment(managedObject: appointmentCoreData)
@@ -37,6 +51,7 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         entity.parentEventId = Int64(appointment.parentEventId ?? 0)
         entity.facilityId = Int64(appointment.facilityId ?? 0)
         entity.residentId = Int64(appointment.residentId ?? 0)
+        entity.isSynced = true
         entity.startDate = appointment.startDate != nil ? saveStartDate(appointment.startDate!) : nil
         entity.endDate = appointment.endDate != nil ? saveEndDate(appointment.endDate!) : nil
         entity.user = appointment.user != nil ? saveAppointmentUser(appointment.user!) : nil
@@ -129,4 +144,12 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         return entity
     }
     
+    func deleteAllAppointment() throws {
+        do {
+            try self.deleteAllData()
+        }
+        catch let error as NSError {
+            print(error.localizedDescription)
+        }
+    }
 }

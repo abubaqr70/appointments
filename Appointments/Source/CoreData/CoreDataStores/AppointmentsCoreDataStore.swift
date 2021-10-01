@@ -68,6 +68,12 @@ public class AppointmentsCoreDataStore {
         return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
     }
     
+    public func fetchCDAppointmentsSyncedFalse() throws -> [CDAppointment] {
+        let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "isSynced == %@", false)
+        return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
+    }
+    
     public func deleteCDAppointment(with id: UUID) throws {
         if let appointment = try fetchCDAppointment(with: id) {
             self.coreDataStack.manageObjectContext.delete(appointment)
@@ -77,11 +83,17 @@ public class AppointmentsCoreDataStore {
     
     public func deleteAllData() throws {
         let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
-        let objects = try? self.coreDataStack.manageObjectContext.fetch(fetchRequest)
-        for object in objects ?? []{
-            self.coreDataStack.manageObjectContext.delete(object)
+        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
+        batchDeleteRequest.resultType = .resultTypeCount
+        do {
+            // Execute Batch Request
+            let batchDeleteResult = try self.coreDataStack.manageObjectContext.execute(batchDeleteRequest) as! NSBatchDeleteResult
+            print("The batch delete request has deleted \(batchDeleteResult.result!) records.")
+            self.coreDataStack.saveContext()
+        } catch {
+            let updateError = error as NSError
+            print("\(updateError), \(updateError.userInfo)")
         }
-        self.coreDataStack.saveContext()
         return
     }
     

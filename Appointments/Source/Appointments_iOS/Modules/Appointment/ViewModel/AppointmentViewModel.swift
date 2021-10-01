@@ -4,14 +4,14 @@ import Foundation
 import RxSwift
 import RxSwiftExt
 
-protocol AppointmentDetailViewModelInputs {
+protocol AppointmentViewModelInputs {
     
     // Actions:
     var markPresent: AnyObserver<Void> { get }
     
 }
 
-protocol AppointmentDetailViewModelOutputs {
+protocol AppointmentViewModelOutputs {
     
     // Actions:
     var name: Observable<String?> { get }
@@ -28,15 +28,15 @@ protocol AppointmentDetailViewModelOutputs {
     
 }
 
-protocol AppointmentDetailViewModelType {
-    var inputs: AppointmentDetailViewModelInputs { get }
-    var outputs: AppointmentDetailViewModelOutputs { get }
+protocol AppointmentViewModelType {
+    var inputs: AppointmentViewModelInputs { get }
+    var outputs: AppointmentViewModelOutputs { get }
 }
 
-class AppointmentDetailViewModel: AppointmentDetailViewModelType, AppointmentDetailViewModelInputs, AppointmentDetailViewModelOutputs {
+class AppointmentViewModel: AppointmentViewModelType, AppointmentViewModelInputs, AppointmentViewModelOutputs {
     
-    var inputs: AppointmentDetailViewModelInputs { return self }
-    var outputs: AppointmentDetailViewModelOutputs { return self }
+    var inputs: AppointmentViewModelInputs { return self }
+    var outputs: AppointmentViewModelOutputs { return self }
     
     //Mark: Inputs
     var markPresent: AnyObserver<Void> { return markPresentSubject.asObserver()}
@@ -152,7 +152,7 @@ class AppointmentDetailViewModel: AppointmentDetailViewModelType, AppointmentDet
     
 }
 
-extension AppointmentDetailViewModel {
+extension AppointmentViewModel {
     
     func bindActions(appointment: Appointment) {
         

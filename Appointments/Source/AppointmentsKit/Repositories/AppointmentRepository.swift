@@ -7,10 +7,12 @@ class AppointmentRepository {
     
     let appointmentService: AppointmentService
     let coreDataStore: AppointmentsCoreDataStore
+    let facilityDataStore: FacilityDataStore
     
-    init(appointmentService: AppointmentService, coreDataStore: AppointmentsCoreDataStore) {
+    init(appointmentService: AppointmentService, coreDataStore: AppointmentsCoreDataStore, facilityDataStore: FacilityDataStore) {
         self.appointmentService = appointmentService
         self.coreDataStore = coreDataStore
+        self.facilityDataStore = facilityDataStore
     }
     
     func getAppointments(for facilityID: Int,
@@ -29,9 +31,8 @@ class AppointmentRepository {
                 case .failure(let error):
                     observer.onError(error)
                 case .success(let appointments):
-                    self.whereIsMySQLite()
-                    try? self.coreDataStore.deleteAllData()
-                    for appointment in appointments{
+                    self.clearData()
+                    for appointment in appointments {
                         self.coreDataStore.saveAppointment(appointment)
                     }
                     observer.onNext(self.coreDataStore.fetchAppointments())
@@ -42,18 +43,18 @@ class AppointmentRepository {
             return Disposables.create()
         }
     }
-}
-
-extension AppointmentRepository{
-    func whereIsMySQLite() {
-        let path = FileManager
-            .default
-            .urls(for: .applicationSupportDirectory, in: .userDomainMask)
-            .last?
-            .absoluteString
-            .replacingOccurrences(of: "file://", with: "")
-            .removingPercentEncoding
-        
-        print(path ?? "Not found")
+    
+    func clearData(){
+        do {
+            try self.coreDataStore.deleteAllAppointment()
+        }
+        catch let error as NSError {
+            print(error.localizedDescription)
+        }
     }
+    
+    func syncData() {
+        print(self.coreDataStore.fetchAppointmentsSyncedFalse())
+    }
+    
 }

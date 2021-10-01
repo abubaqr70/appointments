@@ -12,8 +12,6 @@ enum HTTPMethod: String {
     case post = "POST"
 }
 
-
-
 struct Request<BodyType: Encodable> {
     
     let endpoint: Endpoint
@@ -55,7 +53,7 @@ extension Request: URLRequestConvertible {
             encoder.dateEncodingStrategy = .millisecondsSince1970
             urlRequest.httpBody = try encoder.encode(body)
         }
-        
+        print(urlRequest.httpBody)
         return urlRequest
     }
 }

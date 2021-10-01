@@ -4,7 +4,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-public class AppointmentDetailViewController: UIViewController {
+public class AppointmentViewController: UIViewController {
     
     fileprivate lazy var backButton : UIBarButtonItem = {
         let backImage    = UIImage.moduleImage(named: "icon_back_arrow")
@@ -165,9 +165,9 @@ public class AppointmentDetailViewController: UIViewController {
     }()
     
     private let disposeBag = DisposeBag()
-    private var viewModel: AppointmentDetailViewModelType
+    private var viewModel: AppointmentViewModelType
     
-    init(viewModel : AppointmentDetailViewModelType) {
+    init(viewModel : AppointmentViewModelType) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -182,8 +182,8 @@ public class AppointmentDetailViewController: UIViewController {
     }
     
 }
-extension AppointmentDetailViewController{
-    private func setup(viewModel : AppointmentDetailViewModelType) {
+extension AppointmentViewController{
+    private func setup(viewModel : AppointmentViewModelType) {
         setupViews()
         setupConstraints()
         bind(viewModel: viewModel)
@@ -320,9 +320,9 @@ extension AppointmentDetailViewController{
     }
     
 }
-extension AppointmentDetailViewController{
+extension AppointmentViewController{
     
-    private func bind(viewModel : AppointmentDetailViewModelType) {
+    private func bind(viewModel : AppointmentViewModelType) {
         
         //Mark:- Setting Name Label
         viewModel.outputs.name
@@ -475,7 +475,7 @@ extension AppointmentDetailViewController{
     }
     
 }
-extension AppointmentDetailViewController{
+extension AppointmentViewController{
     
     ///MARK:- Navigation Setup
     func setupNavigationBar(){

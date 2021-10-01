@@ -12,7 +12,7 @@ public class AppDependencyContainer {
     private let filterActionProvider: FilterActionProvider?
     private let client: APIClient
     private let repository: AppointmentRepository
-    
+    private let dataHandler: AppointmentDataHandler
     
     public init(baseURL: String,
                 authentication: AuthenticationConvertible,
@@ -33,7 +33,8 @@ public class AppDependencyContainer {
                                          authHeaderProvider: self.authentication,
                                          client: self.client)
         let coreDataStore = AppointmentsCoreDataStore(coreDataStack: CoreDataStack())
-        self.repository = AppointmentRepository(appointmentService: service,coreDataStore: coreDataStore)
+        self.repository = AppointmentRepository(appointmentService: service,coreDataStore: coreDataStore,facilityDataStore: self.facilityDataStore)
+        self.dataHandler = AppointmentDataHandler(repository: self.repository)
     }
     
     public func makeAppointmentsCoordinator(root: UIViewController,
@@ -44,14 +45,22 @@ public class AppDependencyContainer {
                               factory: self)
     }
     
+    public func clearData(){
+        self.dataHandler.clearData()
+    }
+    
+    public func syncData(){
+        self.dataHandler.syncData()
+    }
+    
     func makeAppointmentsViewController(viewModel: AppointmentsViewModelType) -> AppointmentsViewController {
         
         return AppointmentsViewController(viewModel: viewModel)
     }
     
-    func makeAppointmentDetailViewController(viewModel: AppointmentDetailViewModelType) -> AppointmentDetailViewController {
-        
-        return AppointmentDetailViewController(viewModel: viewModel)
+    func makeAppointmentViewController(viewModel: AppointmentViewModelType) -> AppointmentViewController {
+
+        return AppointmentViewController(viewModel: viewModel)
     }
     
     func makeAppointmentsViewModel() -> AppointmentsViewModelType {
@@ -60,9 +69,9 @@ public class AppDependencyContainer {
                                      appointmentsRepository: self.repository)
     }
     
-    func makeAppointmentDetailViewModel(appointment: Appointment) -> AppointmentDetailViewModelType {
-        
-        return AppointmentDetailViewModel(appointment: appointment, repository: self.repository)
+    func makeAppointmentViewModel(appointment: Appointment) -> AppointmentViewModelType {
+       
+        return AppointmentViewModel(appointment: appointment, repository: self.repository)
     }
     
 }
