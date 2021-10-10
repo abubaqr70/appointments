@@ -24,6 +24,7 @@ protocol AppointmentViewModelOutputs {
     var time: Observable<String?> { get }
     var staff: Observable<NSAttributedString?> { get }
     var profileImage: Observable<String?> { get }
+    var markPresentEnabled : Observable<Bool> { get }
     var isPresent : Observable<Bool> { get }
     
 }
@@ -53,6 +54,7 @@ class AppointmentViewModel: AppointmentViewModelType, AppointmentViewModelInputs
     var staff: Observable<NSAttributedString?> { return staffSubject.asObservable() }
     var profileImage: Observable<String?> { return profileImageSubject.asObservable() }
     var isPresent: Observable<Bool> { return isPresentSubject.asObservable()}
+    var markPresentEnabled: Observable<Bool> { return markPresentEnabledSubject.asObservable() }
     
     //Mark: Private Properties
     
@@ -69,36 +71,40 @@ class AppointmentViewModel: AppointmentViewModelType, AppointmentViewModelInputs
     private let staffSubject: BehaviorSubject<NSAttributedString?>
     private let profileImageSubject: BehaviorSubject<String?>
     private let appointmentsSubject: BehaviorSubject<Appointment>
-    private let markPresentSubject : BehaviorSubject<Void>
+    private let markPresentSubject : PublishSubject<Void>
     private let isPresentSubject : BehaviorSubject<Bool>
-    
+    private let markPresentEnabledSubject : BehaviorSubject<Bool>
+    private let appointmentsRepository: AppointmentRepository
     
     init(appointment: Appointment,repository: AppointmentRepository){
-       
+        
         //Mark:- Setting User Names
-        markPresentSubject = BehaviorSubject(value: ())
+        self.appointmentsRepository = repository
+        //        let appointment = self.appointmentsRepository.getAppointment(appointment) ?? appointment
+        markPresentSubject = PublishSubject()
         isPresentSubject = BehaviorSubject(value: true)
         appointmentsSubject = BehaviorSubject(value: appointment)
         nameSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.fullName)
         roomSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.roomNo)
         appointmentTitleSubject = BehaviorSubject(value: appointment.title)
         appointmentDescriptionSubject = BehaviorSubject(value: appointment.description?.htmlToAttributedString)
+        markPresentEnabledSubject = BehaviorSubject(value: true)
         appointmentTypeSubject = BehaviorSubject(value: NSAttributedString(string: ""))
         locationSubject = BehaviorSubject(value: NSAttributedString(string: ""))
         staffSubject = BehaviorSubject(value: NSAttributedString(string: ""))
         dateSubject = BehaviorSubject(value: "")
         timeSubject = BehaviorSubject(value: "")
         
-            appointmentsSubject
-                .map { appointments -> NSMutableAttributedString in
-                    let attributedString = NSMutableAttributedString(string: "Staff: \(appointments.startDate?.date ?? "")", attributes: [
-                        .font: UIFont.appFont(withStyle: .title3, size: 14)
-                    ])
-                    attributedString.addAttribute(.font, value: UIFont.appFont(withStyle: .largeTitle, size: 14), range: NSRange(location: 0, length: 6))
-                    return attributedString
-                }
-                .bind(to: staffSubject)
-                .disposed(by: disposeBag)
+        appointmentsSubject
+            .map { appointments -> NSMutableAttributedString in
+                let attributedString = NSMutableAttributedString(string: "Staff: \(appointments.startDate?.date ?? "")", attributes: [
+                    .font: UIFont.appFont(withStyle: .title3, size: 14)
+                ])
+                attributedString.addAttribute(.font, value: UIFont.appFont(withStyle: .largeTitle, size: 14), range: NSRange(location: 0, length: 6))
+                return attributedString
+            }
+            .bind(to: staffSubject)
+            .disposed(by: disposeBag)
         
         
         appointmentsSubject
@@ -125,7 +131,7 @@ class AppointmentViewModel: AppointmentViewModelType, AppointmentViewModelInputs
         
         profileImageSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.profileImageRoute)
         
-       
+        
         appointmentsSubject
             .map({
                 appointments -> String in
@@ -156,10 +162,10 @@ extension AppointmentViewModel {
     
     func bindActions(appointment: Appointment) {
         
-        isPresentSubject.onNext( appointment.appointmentAttendance?.first?.present == "present" ? false : true )
+        isPresentSubject.onNext( appointment.appointmentAttendance?.first?.present == "present" ? true : false )
         
         markPresentSubject
-            .withLatestFrom(self.isPresent)
+            .withLatestFrom(self.isPresentSubject)
             .map { isPresent -> Bool in
                 return !isPresent
             }
@@ -167,8 +173,15 @@ extension AppointmentViewModel {
             .subscribe(onNext: {
                 present in
                 self.isPresentSubject.onNext(present)
+                self.appointmentsRepository.updateAppointment(appointment)
             })
             .disposed(by: disposeBag)
+        
+        if TimeInterval(Float(appointment.startingDate ?? 0.0)) > Date().timeIntervalSince1970 {
+            markPresentEnabledSubject.onNext(false)
+        }else{
+            markPresentEnabledSubject.onNext(true)
+        }
         
     }
 }

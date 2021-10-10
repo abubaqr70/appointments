@@ -84,6 +84,11 @@ public class AppointmentsViewController: UIViewController {
         tableView.rx.setDataSource(self).disposed(by: disposeBag)
     }
     
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.viewModel.inputs.viewWillAppear.onNext(Void())
+    }
+    
 }
 
 extension AppointmentsViewController{
@@ -180,7 +185,7 @@ extension AppointmentsViewController{
             guard let `self` = self else { return }
             self.sections = (section.element ?? [])
         }).disposed(by: disposeBag)
-   
+        
         viewModel.outputs.isLoading
             .subscribe(onNext: { [weak self] loading in
                 guard let `self` = self else { return }
@@ -271,7 +276,13 @@ extension AppointmentsViewController: UITableViewDelegate,UITableViewDataSource 
         
         let element = sections[indexPath.section].rows[indexPath.row]
         cell.configure(viewModel: element)
+        if let cellViewModel = sections[indexPath.section].rows[indexPath.row] as? AppointmentTVCellViewModelType{
+            cellViewModel.outputs.refreshAppointments.subscribe(onNext: { refresh in
+                self.viewModel.inputs.viewWillAppear.onNext(Void())
+            }).dispose()
+        }
         return cell
+        
     }
     
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

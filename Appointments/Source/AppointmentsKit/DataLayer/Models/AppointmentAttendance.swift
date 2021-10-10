@@ -7,7 +7,7 @@ struct AppointmentAttendance : Codable {
     let id : Int?
     let appointmentId : Int?
     let residentId : Int?
-    let present : String?
+    var present : String?
     let reminderSent : String?
     let cancelReminder : String?
     let reminderSentTime : Int?

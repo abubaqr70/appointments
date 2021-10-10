@@ -2,6 +2,8 @@
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="18154" systemVersion="20G165" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="CDAppointment" representedClassName="CDAppointment" syncable="YES">
         <attribute name="descriptions" optional="YES" attributeType="String"/>
+        <attribute name="endingDate" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="eventLength" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="facilityId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="groupId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
@@ -12,6 +14,7 @@
         <attribute name="parentEventId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="residentId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="startedDate" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="startingDate" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="therapistId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="therapyId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="title" optional="YES" attributeType="String"/>
@@ -53,7 +56,7 @@
         <relationship name="ofAppointments" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDAppointment" inverseName="user" inverseEntity="CDAppointment"/>
     </entity>
     <entity name="CDEndDate" representedClassName="CDEndDate" syncable="YES">
-        <attribute name="date" optional="YES" attributeType="String"/>
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="timeString" optional="YES" attributeType="String"/>
         <relationship name="ofAppointments" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDAppointment" inverseName="endDate" inverseEntity="CDAppointment"/>
     </entity>
@@ -71,7 +74,7 @@
         <relationship name="ofUserGroup" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDUserGroup" inverseName="facilityGroupMembers" inverseEntity="CDUserGroup"/>
     </entity>
     <entity name="CDStartDate" representedClassName="CDStartDate" syncable="YES">
-        <attribute name="date" optional="YES" attributeType="String"/>
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="timeString" optional="YES" attributeType="String"/>
         <relationship name="ofAppointments" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDAppointment" inverseName="startDate" inverseEntity="CDAppointment"/>
     </entity>
@@ -85,7 +88,7 @@
         <relationship name="ofAppointments" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDAppointment" inverseName="userGroup" inverseEntity="CDAppointment"/>
     </entity>
     <elements>
-        <element name="CDAppointment" positionX="-63" positionY="-18" width="128" height="344"/>
+        <element name="CDAppointment" positionX="-63" positionY="-18" width="128" height="389"/>
         <element name="CDAppointmentAttendance" positionX="-63" positionY="144" width="128" height="164"/>
         <element name="CDAppointmentTags" positionX="-63" positionY="144" width="128" height="104"/>
         <element name="CDAppointmentUser" positionX="-54" positionY="153" width="128" height="164"/>

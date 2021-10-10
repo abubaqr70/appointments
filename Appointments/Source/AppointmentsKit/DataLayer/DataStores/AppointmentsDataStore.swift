@@ -4,18 +4,22 @@ import Foundation
 
 protocol AppointmentsDataStore {
     
-    func fetchAppointments() -> [Appointment]
+    func fetchAppointments(with startDate: Double ,with endDate: Double) -> [Appointment]
     func fetchAppointmentsSyncedFalse() -> [Appointment]
+    func markAppointmentsSyncedTrue(_ appointment: Appointment)
     func saveAppointment(_ appointment: Appointment)
+    func getAppointment(_ appointment: Appointment) -> Appointment?
+    func updateAppointment(_ appointment: Appointment)
+    func checkAppointmentsExist(with startDate: Double , with endDate: Double) -> Bool
+    func deleteAppointments(with startDate: Double , with endDate: Double) throws
     func deleteAllAppointment() throws
 }
 
 extension AppointmentsCoreDataStore: AppointmentsDataStore {
-    
-    func fetchAppointments() -> [Appointment] {
-        
+
+    func fetchAppointments(with startDate: Double , with endDate: Double) -> [Appointment] {
         do {
-            let appointments = try self.fetchCDAppointments()
+            let appointments = try self.fetchCDAppointments(with: startDate, with: endDate)
             return appointments.map{
                 appointmentCoreData -> Appointment in
                 return Appointment(managedObject: appointmentCoreData)
@@ -23,6 +27,14 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         } catch { }
         
         return []
+    }
+    
+    func checkAppointmentsExist(with startDate: Double , with endDate: Double) -> Bool {
+        do {
+            let isExist = try self.checkCDAppointmentsExist(with: startDate, with: endDate)
+            return isExist
+        } catch { }
+        return false
     }
     
     func fetchAppointmentsSyncedFalse() -> [Appointment] {
@@ -51,13 +63,20 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         entity.parentEventId = Int64(appointment.parentEventId ?? 0)
         entity.facilityId = Int64(appointment.facilityId ?? 0)
         entity.residentId = Int64(appointment.residentId ?? 0)
+        entity.startingDate = appointment.startingDate ?? 0.0
+        entity.endingDate = appointment.endingDate ?? 0.0
+        if appointment.eventLength == 0 {
+            entity.eventLength = Int64(appointment.occurrenceId ?? 0)
+        }else {
+            entity.eventLength = Int64(appointment.eventLength ?? 0)
+        }
         entity.isSynced = true
         entity.startDate = appointment.startDate != nil ? saveStartDate(appointment.startDate!) : nil
         entity.endDate = appointment.endDate != nil ? saveEndDate(appointment.endDate!) : nil
         entity.user = appointment.user != nil ? saveAppointmentUser(appointment.user!) : nil
         entity.userGroup = appointment.userGroup != nil ? saveUserGroup(appointment.userGroup!) : nil
-        for appointmentAttandance in appointment.appointmentAttendance ?? []{
-            entity.addToAppointmentAttendance(saveAppointmentAttendance(appointmentAttandance)) 
+        for appointmentAttendance in appointment.appointmentAttendance ?? []{
+            entity.addToAppointmentAttendance(saveAppointmentAttendance(appointmentAttendance))
         }
         for appointmentTag in appointment.appointmentTags ?? []{
             entity.addToAppointmentTag(saveAppointmentTags(appointmentTag))
@@ -66,20 +85,76 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         self.saveCDAppointment(entity)
     }
     
+    func updateAppointment (_ appointment : Appointment ) {
+        guard let objectUpdate = try? self.fetchCDAppointmentForUpdate(with: Int64(appointment.id ?? 0), with: Int64(appointment.occurrenceId ?? 0)) else { return }
+        print(objectUpdate)
+        objectUpdate.setValue(false, forKey: "isSynced")
+        for appointmentAttendance in objectUpdate.appointmentAttendance?.allObjects as? [CDAppointmentAttendance] ?? [] {
+            if appointmentAttendance.ofAppointments?.occurrenceId ?? 0 == appointment.occurrenceId ?? 0 && appointmentAttendance.id == appointment.appointmentAttendance?.first?.id ?? 0 && appointmentAttendance.residentId == appointment.appointmentAttendance?.first?.residentId ?? 0 && appointmentAttendance.users?.id ?? 0 == appointment.appointmentAttendance?.first?.user?.id ?? 0 {
+                if appointment.appointmentAttendance?.first?.present == "present" {
+                    appointmentAttendance.present = ""
+                } else {
+                    appointmentAttendance.present = "present"
+                }
+                let attendance = appointmentAttendance
+                objectUpdate.removeFromAppointmentAttendance(appointmentAttendance)
+                objectUpdate.addToAppointmentAttendance(attendance)
+            }
+        }
+        self.coreDataStack.saveContext()
+    }
+    
+    func markAppointmentsSyncedTrue (_ appointment : Appointment ) {
+        guard let objectUpdate = try? self.fetchCDAppointmentForUpdate(with: Int64(appointment.id ?? 0), with: Int64(appointment.occurrenceId ?? 0)) else { return }
+        print(objectUpdate)
+        objectUpdate.setValue(true, forKey: "isSynced")
+        self.coreDataStack.saveContext()
+    }
+    
+    func getAppointment(_ appointment : Appointment ) -> Appointment? {
+        guard let appointmentCoreData = try? self.fetchCDAppointmentForUpdate(with: Int64(appointment.id ?? 0), with: Int64(appointment.occurrenceId ?? 0)) else { return nil}
+        return Appointment(managedObject: appointmentCoreData)
+    }
+    
+    func deleteAllAppointment() throws {
+        do {
+            try self.deleteAllData()
+        }
+        catch let error as NSError {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func deleteAppointments(with startDate: Double , with endDate: Double) throws {
+        do {
+            try self.deleteCDAppointments(with: startDate, with: endDate)
+        }
+        catch let error as NSError {
+            print(error.localizedDescription)
+        }
+    }
+}
+
+extension AppointmentsCoreDataStore {
+    
     func saveStartDate(_ startDate: StartDate) -> CDStartDate{
         let entity = self.createCDStartDate()
-        entity.date = startDate.date
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'"
+        entity.date = dateFormatter.date(from: startDate.date ?? "")
         entity.timeString = startDate.timeString
         return entity
     }
     
     func saveEndDate(_ endDate: EndDate) -> CDEndDate{
         let entity = self.createCDEndDate()
-        entity.date = endDate.date
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'"
+        entity.date = dateFormatter.date(from: endDate.date ?? "")
         entity.timeString = endDate.timeString
         return entity
     }
-
+    
     func saveAppointmentAttendance(_ appointmentAttendance: AppointmentAttendance) -> CDAppointmentAttendance{
         let entity = self.createCDAppointmentAttendance()
         entity.appointmentId = Int64(appointmentAttendance.appointmentId ?? 0)
@@ -144,12 +219,4 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         return entity
     }
     
-    func deleteAllAppointment() throws {
-        do {
-            try self.deleteAllData()
-        }
-        catch let error as NSError {
-            print(error.localizedDescription)
-        }
-    }
 }

@@ -1,8 +1,6 @@
 // Copyright © 2021 Caremerge. All rights reserved.
 
-
 import Foundation
-
 
 class AppointmentService: BaseService {
     
@@ -44,12 +42,26 @@ class AppointmentService: BaseService {
     
     public func syncAppointments<ResultType: Codable>(for facilityID: Int,
                                                       params: [Appointment],
-                                                     completion: @escaping (Result<[ResultType], Error>) -> Void) {
+                                                     completion: @escaping (Result<ResultType, Error>) -> Void) {
         
         let pathVariables = ["facilities", String(facilityID)]
-        
-        let endpoint: Endpoint = AppointmentEndpoint(baseURL: self.baseURL,
+        let endpoint: Endpoint = AppointmentMarksEndpoint(baseURL: self.baseURL,
                                                      pathVariables: pathVariables, query: [:])
+        
+        do{
+            let data = try JSONEncoder().encode(params)
+            do {
+                let responseModel = try? JSONSerialization.jsonObject(with: data, options: [])
+                guard let dictionary = responseModel as? [[String : Any]] else {
+                    return
+                }
+                let jsonData = try JSONSerialization.data(withJSONObject: dictionary, options: [.prettyPrinted])
+                let decoded = try JSONSerialization.jsonObject(with: jsonData, options: [])
+                print(decoded)
+            }
+        }catch let error as NSError{
+            print(error.localizedDescription)
+        }
         
         let request: Request = Request<[Appointment]>(endpoint: endpoint,
                                             httpMethod: .post,

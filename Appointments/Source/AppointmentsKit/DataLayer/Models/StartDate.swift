@@ -28,7 +28,9 @@ extension StartDate {
 extension StartDate {
     
     init(managedObject: CDStartDate) {
-        self.date = managedObject.date ?? nil
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'"
+        self.date = dateFormatter.string(from: managedObject.date ?? Date())
         self.timeString = managedObject.timeString ?? nil
     }
     

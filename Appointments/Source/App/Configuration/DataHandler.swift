@@ -5,7 +5,7 @@ import Foundation
 public protocol DataHandler {
     
     func clearData()
-    func syncData()
+    func syncData(completion : @escaping (Result<Void,Error>) -> Void)
     
 }
 
@@ -18,10 +18,10 @@ class AppointmentDataHandler : DataHandler{
     }
     
     func clearData() {
-        self.repository.clearData()
+        self.repository.clearAllData()
     }
     
-    func syncData() {
-        self.repository.syncData()
+    func syncData(completion : @escaping (Result<Void,Error>) -> Void) {
+        self.repository.syncData(completion: completion)
     }
 }

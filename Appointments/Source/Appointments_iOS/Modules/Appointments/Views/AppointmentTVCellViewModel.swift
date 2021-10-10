@@ -21,6 +21,8 @@ protocol AppointmentTVCellViewModelOutputs {
     var markPresent : Observable<Bool> { get }
     var markPresentEnabled : Observable<Bool> { get }
     var appointment: Observable<Appointment> { get }
+    var refreshAppointments: Observable<Void> { get }
+    
 }
 
 protocol AppointmentTVCellViewModelType {
@@ -36,7 +38,7 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
     var outputs: AppointmentTVCellViewModelOutputs { return self }
     
     //Mark: Inputs
-    var markCheckbox: AnyObserver<Void> { return markcheckboxSubject.asObserver()}
+    var markCheckbox: AnyObserver<Void> { return markCheckboxSubject.asObserver() }
     
     //Mark: Outputs
     var name: Observable<String?> { return nameSubject.asObservable() }
@@ -44,9 +46,10 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
     var appointmentDescription: Observable<String?> { return appointmentDescriptionSubject.asObservable() }
     var staff: Observable<String?> { return staffSubject.asObservable() }
     var profileImage: Observable<String?> { return profileImageSubject.asObservable() }
-    var markPresent: Observable<Bool> { return markPresentSubject.asObservable()}
-    var markPresentEnabled: Observable<Bool> { return markPresentEnabledSubject.asObservable()}
-    var appointment: Observable<Appointment> {return appointmentsSubject.asObservable() }
+    var markPresent: Observable<Bool> { return markPresentSubject.asObservable() }
+    var markPresentEnabled: Observable<Bool> { return markPresentEnabledSubject.asObservable() }
+    var appointment: Observable<Appointment> { return appointmentsSubject.asObservable() }
+    var refreshAppointments: Observable<Void> { return refreshAppointmentsSubject.asObservable() }
     
     //Mark: Init
     private let disposeBag = DisposeBag()
@@ -56,15 +59,18 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
     private let staffSubject: BehaviorSubject<String?>
     private let profileImageSubject: BehaviorSubject<String?>
     private let appointmentsSubject: BehaviorSubject<Appointment>
-    private let markcheckboxSubject : BehaviorSubject<Void>
+    private let markCheckboxSubject : PublishSubject<Void>
     private let markPresentSubject : BehaviorSubject<Bool>
     private let markPresentEnabledSubject : BehaviorSubject<Bool>
-
+    private let refreshAppointmentsSubject : PublishSubject<Void>
+    private let appointmentsRepository: AppointmentRepository
     
-    init(appointment: Appointment) {
+    init(appointment: Appointment, appointmentsRepository: AppointmentRepository) {
         
         //Mark:- Setting User Names
-        markcheckboxSubject = BehaviorSubject(value: ())
+        self.appointmentsRepository = appointmentsRepository
+        markCheckboxSubject = PublishSubject()
+        refreshAppointmentsSubject = PublishSubject()
         markPresentEnabledSubject = BehaviorSubject(value: true)
         markPresentSubject = BehaviorSubject(value: true)
         appointmentsSubject = BehaviorSubject(value: appointment)
@@ -74,6 +80,7 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
         profileImageSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.profileImageRoute)
         nameSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.fullName)
         bindActions(appointment: appointment)
+        
     }
     
 }
@@ -82,9 +89,21 @@ extension AppointmentTVCellViewModel {
     
     func bindActions(appointment: Appointment) {
         
-        markPresentSubject.onNext( appointment.appointmentAttendance?.first?.present == "present" ? false : true )
+        markPresentSubject.onNext( appointment.appointmentAttendance?.first?.present == "present" ? true : false )
         
-        markcheckboxSubject
+        self.markPresentSubject.map { isPresent -> Bool in
+            if TimeInterval(Float(appointment.startingDate ?? 0.0)) > Date().timeIntervalSince1970 && !isPresent {
+                return false
+            }else if isPresent {
+                return false
+            }else {
+                return true
+            }
+        }
+        .bind(to: self.markPresentEnabledSubject)
+        .disposed(by: disposeBag)
+        
+        markCheckboxSubject
             .withLatestFrom(self.markPresentSubject)
             .map { isPresent -> Bool in
                 return !isPresent
@@ -93,7 +112,8 @@ extension AppointmentTVCellViewModel {
             .subscribe(onNext: {
                 present in
                 self.markPresentSubject.onNext(present)
-                self.markPresentEnabledSubject.onNext(!present)
+                self.appointmentsRepository.updateAppointment(appointment)
+                self.refreshAppointmentsSubject.onNext(Void())
             })
             .disposed(by: disposeBag)
         

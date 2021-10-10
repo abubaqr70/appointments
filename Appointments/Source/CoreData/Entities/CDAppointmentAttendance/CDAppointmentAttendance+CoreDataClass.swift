@@ -1,10 +1,4 @@
-//
-//  CDAppointmentAttendance+CoreDataClass.swift
-//  Alamofire
-//
-//  Created by Muhammad Abubaqr on 29/09/2021.
-//
-//
+// Copyright © 2021 Caremerge. All rights reserved.
 
 import Foundation
 import CoreData

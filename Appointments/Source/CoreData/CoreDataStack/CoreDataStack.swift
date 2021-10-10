@@ -6,7 +6,7 @@ import CoreData
 public protocol AnyCoreDataStack {
     // Context
     var manageObjectContext: NSManagedObjectContext { get }
-
+    
     //Operations
     func saveContext()
 }

@@ -28,7 +28,9 @@ extension EndDate {
 extension EndDate {
     
     init(managedObject: CDEndDate){
-        self.date = managedObject.date
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'"
+        self.date = dateFormatter.string(from: managedObject.date ?? Date())
         self.timeString = managedObject.timeString
     }
 

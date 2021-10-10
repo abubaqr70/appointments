@@ -4,6 +4,7 @@ import Foundation
 
 
 struct AppointmentEndpoint: Endpoint {
+    
     let baseURL: String
     let queryItems: [URLQueryItem]
     let pathVariables: [String]?
@@ -16,5 +17,23 @@ struct AppointmentEndpoint: Endpoint {
         self.baseURL = baseURL
         self.pathVariables = pathVariables
         self.queryItems = query.map { URLQueryItem(name: $0.key, value: $0.value) }
+    }
+}
+
+struct AppointmentMarksEndpoint: Endpoint {
+    
+    let baseURL: String
+    let queryItems: [URLQueryItem]
+    let pathVariables: [String]?
+    let path: String = "appointments/attendance"
+    
+    init(baseURL: String,
+         pathVariables: [String]? = nil,
+         query: [String: String]) {
+        
+        self.baseURL = baseURL
+        self.pathVariables = pathVariables
+        self.queryItems = query.map { URLQueryItem(name: $0.key, value: $0.value) }
+        
     }
 }

@@ -2,7 +2,7 @@
 //  CDAppointment+CoreDataProperties.swift
 //  Alamofire
 //
-//  Created by Muhammad Abubaqr on 29/09/2021.
+//  Created by Mohammad Abubaqr on 10/10/2021.
 //
 //
 
@@ -17,6 +17,8 @@ extension CDAppointment {
     }
 
     @NSManaged public var descriptions: String?
+    @NSManaged public var endingDate: Double
+    @NSManaged public var eventLength: Int64
     @NSManaged public var facilityId: Int64
     @NSManaged public var groupId: Int64
     @NSManaged public var id: Int64
@@ -27,6 +29,7 @@ extension CDAppointment {
     @NSManaged public var parentEventId: Int64
     @NSManaged public var residentId: Int64
     @NSManaged public var startedDate: Int64
+    @NSManaged public var startingDate: Double
     @NSManaged public var therapistId: Int64
     @NSManaged public var therapyId: Int64
     @NSManaged public var title: String?

@@ -49,8 +49,8 @@ public class AppDependencyContainer {
         self.dataHandler.clearData()
     }
     
-    public func syncData(){
-        self.dataHandler.syncData()
+    public func syncData(completion : @escaping (Result<Void,Error>) -> Void){
+        self.dataHandler.syncData(completion: completion)
     }
     
     func makeAppointmentsViewController(viewModel: AppointmentsViewModelType) -> AppointmentsViewController {

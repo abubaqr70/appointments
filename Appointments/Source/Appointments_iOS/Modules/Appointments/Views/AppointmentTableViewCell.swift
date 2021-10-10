@@ -321,7 +321,7 @@ class AppointmentTableViewCell: RxUITableViewCell {
                 self.checkboxButton.rx.isEnabled.onNext(selected)
             })
             .disposed(by: disposeBag)
-    
+        
     }
     
 }

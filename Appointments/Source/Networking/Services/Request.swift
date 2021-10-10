@@ -53,7 +53,6 @@ extension Request: URLRequestConvertible {
             encoder.dateEncodingStrategy = .millisecondsSince1970
             urlRequest.httpBody = try encoder.encode(body)
         }
-        print(urlRequest.httpBody)
         return urlRequest
     }
 }
@@ -72,3 +71,4 @@ extension RequestType {
         return headers
     }
 }
+

@@ -471,6 +471,12 @@ extension AppointmentViewController{
             })
             .disposed(by: disposeBag)
         
+        viewModel.outputs.markPresentEnabled
+            .subscribe(onNext: { [weak self] selected in
+                guard let self = self else { return }
+                self.markPresentButton.rx.isEnabled.onNext(selected)
+            })
+            .disposed(by: disposeBag)
         
     }
     
