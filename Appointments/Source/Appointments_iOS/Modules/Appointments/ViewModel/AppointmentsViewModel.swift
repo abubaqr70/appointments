@@ -152,7 +152,9 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
                     mappedAppointments.append(Appointment(appointment: appointment, appointmentAttendance: appointmentAttendance))
                 }
             }
-            return mappedAppointments
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'"
+            return mappedAppointments.sorted(by: {dateFormatter.date(from: $0.startDate?.date ?? "")?.compare(dateFormatter.date(from: $1.startDate?.date ?? "") ?? Date()) == ComparisonResult.orderedAscending})
         }
         .bind(to: mappedAppointmentsSubject)
         .disposed(by: disposeBag)
@@ -160,28 +162,12 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         Observable.combineLatest(mappedAppointmentsSubject, segmentControlSubject)
             .map{ appointment , segment -> [Appointment] in
                 if segment == 0 {
-                    let dateFormatter = DateFormatter()
-                    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'"
-                    return appointment.sorted(by: {dateFormatter.date(from: $0.startDate?.date ?? "")?.compare(dateFormatter.date(from: $1.startDate?.date ?? "") ?? Date()) == ComparisonResult.orderedAscending})
+                    return appointment
                 }else{
                     return appointment.sorted(by: {($0.appointmentAttendance?.first?.user?.roomNo ?? "")?.compare($1.appointmentAttendance?.first?.user?.roomNo ?? "",options: [.numeric]) == ComparisonResult.orderedAscending})
                 }
             }.bind(to: sortedAppointmentsSubject)
             .disposed(by: disposeBag)
-        
-        //        mappedAppointmentsSubject
-        //            .withLatestFrom(segmentControlSubject){ ($0,$1) }
-        //            .map{ appointment , segment -> [Appointment] in
-        //                if segment == 0 {
-        //                    let dateFormatter = DateFormatter()
-        //                    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'"
-        //                    return appointment.sorted(by: {dateFormatter.date(from: $0.startDate?.date ?? "")?.compare(dateFormatter.date(from: $1.startDate?.date ?? "") ?? Date()) == ComparisonResult.orderedAscending})
-        //                }else{
-        //                    return appointment.sorted(by: {($0.appointmentAttendance?.first?.user?.roomNo ?? "")?.compare($1.appointmentAttendance?.first?.user?.roomNo ?? "",options: [.numeric]) == ComparisonResult.orderedAscending})
-        //                }
-        //            }
-        //            .bind(to: sortedAppointmentsSubject)
-        //            .disposed(by: disposeBag)
         
     }
     
@@ -189,16 +175,25 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         
         self.sortedAppointmentsSubject
             .map { appointments -> [(title: String, rows: [ReuseableCellViewModelType])] in
-                appointments.map { appointment -> (title: String, rows: [ReuseableCellViewModelType]) in
-                    let cellViewModel = AppointmentTVCellViewModel(appointment: appointment, appointmentsRepository: self.appointmentsRepository)
-                    let headerTitle = "\(appointment.startDate?.timeString ?? "") - \(appointment.endDate?.timeString ?? "")"
-                    return (headerTitle, [cellViewModel])
-                }
+                return self.creatingSectionCellViewModel(appointments: appointments)
             }
             .bind(to: self.sectionsSubject)
             .disposed(by: disposeBag)
     }
     
+    
+    func creatingSectionCellViewModel(appointments: [Appointment] ) -> [(title: String, rows: [ReuseableCellViewModelType])] {
+        
+        appointments.map { appointment -> (title: String, rows: [ReuseableCellViewModelType]) in
+            let cellViewModel = AppointmentTVCellViewModel(appointment: appointment, appointmentsRepository: self.appointmentsRepository)
+            cellViewModel.outputs.refreshAppointments.subscribe(onNext: { refresh in
+                self.inputs.viewWillAppear.onNext(refresh)
+            }).disposed(by: disposeBag)
+            let headerTitle = "\(appointment.startDate?.timeString ?? "") - \(appointment.endDate?.timeString ?? "")"
+            return (headerTitle, [cellViewModel])
+        }
+        
+    }
 }
 
 extension AppointmentsViewModel {

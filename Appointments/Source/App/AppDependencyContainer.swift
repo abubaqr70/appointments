@@ -32,8 +32,8 @@ public class AppDependencyContainer {
         let service = AppointmentService(baseURL: self.baseURL,
                                          authHeaderProvider: self.authentication,
                                          client: self.client)
-        let coreDataStore = AppointmentsCoreDataStore(coreDataStack: CoreDataStack())
-        self.repository = AppointmentRepository(appointmentService: service,coreDataStore: coreDataStore,facilityDataStore: self.facilityDataStore)
+        let dataStore = AppointmentsCoreDataStore(coreDataStack: CoreDataStack())
+        self.repository = AppointmentRepository(appointmentService: service,dataStore: dataStore,facilityDataStore: self.facilityDataStore)
         self.dataHandler = AppointmentDataHandler(repository: self.repository)
     }
     

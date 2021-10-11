@@ -25,20 +25,23 @@ class ReachabilityService {
     private var monitor: NWPathMonitor
     private var queue = DispatchQueue.global()
     var reachabilityType :ReachabilityType
-    var connType: ReachabilityConnectionType
+    var connectionType: ReachabilityConnectionType
     
     init() {
         self.monitor = NWPathMonitor()
         self.queue = DispatchQueue.global(qos: .background)
         self.monitor.start(queue: queue)
         self.reachabilityType = .connected
-        self.connType = .wifi
+        self.connectionType = .wifi
+        self.reachabilityType = self.currentReachabilityType()
     }
     
-    func currentReachabilityType() -> ReachabilityType{
-        self.reachabilityType = self.checkReachability(self.monitor.currentPath)
-        self.connType = self.checkConnectionTypeForPath( self.monitor.currentPath)
-        return self.checkReachability(self.monitor.currentPath)
+    func currentReachabilityType() -> ReachabilityType {
+        self.monitor.pathUpdateHandler = { path in
+            self.connectionType =  self.checkConnectionTypeForPath(path)
+            self.reachabilityType = self.checkReachability(path)
+        }
+        return self.reachabilityType
     }
     
     func stopMonitoring() {

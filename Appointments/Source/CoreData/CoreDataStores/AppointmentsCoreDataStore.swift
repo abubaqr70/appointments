@@ -15,21 +15,21 @@ public class AppointmentsCoreDataStore {
         self.coreDataStack = coreDataStack
     }
     
-    public func fetchCDAppointmentForUpdate(with id: Int64, with occurrenceId: Int64) throws -> CDAppointment? {
+    public func fetchCDAppointmentForUpdate(id: Int64,occurrenceId: Int64) throws -> CDAppointment? {
         let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@ AND occurrenceId == %@", "\(id)", "\(occurrenceId)")
         let results = try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
         return results.first
     }
     
-    public func fetchCDAppointment(with id: UUID) throws -> CDAppointment? {
+    public func fetchCDAppointment(id: UUID) throws -> CDAppointment? {
         let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", id.uuidString)
         let results = try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
         return results.first
     }
     
-    public func fetchCDAppointments(with startDate: Double ,with endDate: Double) throws -> [CDAppointment] {
+    public func fetchCDAppointments(startDate: Double ,endDate: Double) throws -> [CDAppointment] {
         let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "startingDate >= %@ AND endingDate <= %@", argumentArray: [startDate,endDate])
         return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
@@ -41,14 +41,14 @@ public class AppointmentsCoreDataStore {
         return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
     }
     
-    public func deleteCDAppointment(with id: UUID) throws {
-        if let appointment = try fetchCDAppointment(with: id) {
+    public func deleteCDAppointment(id: UUID) throws {
+        if let appointment = try fetchCDAppointment(id: id) {
             self.coreDataStack.manageObjectContext.delete(appointment)
             self.coreDataStack.saveContext()
         }
     }
     
-    public func checkCDAppointmentsExist(with startOfMonth: Double, with endOfMonth: Double) throws -> Bool {
+    public func checkCDAppointmentsExist(startOfMonth: Double,endOfMonth: Double) throws -> Bool {
         let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "startingDate >= %@ AND endingDate <= %@", argumentArray: [startOfMonth,endOfMonth])
         let appointments = try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
@@ -75,7 +75,7 @@ public class AppointmentsCoreDataStore {
         return
     }
     
-    public func deleteCDAppointments(with startOfMonth: Double, with endOfMonth: Double) throws {
+    public func deleteCDAppointments(startOfMonth: Double,endOfMonth: Double) throws {
         let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "startingDate >= %@ AND endingDate <= %@", argumentArray: [startOfMonth,endOfMonth])
         let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
