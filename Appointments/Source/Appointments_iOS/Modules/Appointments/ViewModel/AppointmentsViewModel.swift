@@ -185,9 +185,10 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     func creatingSectionCellViewModel(appointments: [Appointment] ) -> [(title: String, rows: [ReuseableCellViewModelType])] {
         
         appointments.map { appointment -> (title: String, rows: [ReuseableCellViewModelType]) in
-            let cellViewModel = AppointmentTVCellViewModel(appointment: appointment, appointmentsRepository: self.appointmentsRepository)
-            cellViewModel.outputs.refreshAppointments.subscribe(onNext: { refresh in
-                self.inputs.viewWillAppear.onNext(refresh)
+            let cellViewModel = AppointmentTVCellViewModel(appointment: appointment)
+            cellViewModel.outputs.markAppointment.subscribe(onNext: { appointment in
+                self.appointmentsRepository.updateAppointment(appointment)
+                self.inputs.viewWillAppear.onNext(Void())
             }).disposed(by: disposeBag)
             let headerTitle = "\(appointment.startDate?.timeString ?? "") - \(appointment.endDate?.timeString ?? "")"
             return (headerTitle, [cellViewModel])

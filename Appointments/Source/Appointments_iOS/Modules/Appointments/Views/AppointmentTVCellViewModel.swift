@@ -21,7 +21,7 @@ protocol AppointmentTVCellViewModelOutputs {
     var markPresent : Observable<Bool> { get }
     var markPresentEnabled : Observable<Bool> { get }
     var appointment: Observable<Appointment> { get }
-    var refreshAppointments: Observable<Void> { get }
+    var markAppointment: Observable<Appointment> { get }
     
 }
 
@@ -49,7 +49,7 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
     var markPresent: Observable<Bool> { return markPresentSubject.asObservable() }
     var markPresentEnabled: Observable<Bool> { return markPresentEnabledSubject.asObservable() }
     var appointment: Observable<Appointment> { return appointmentsSubject.asObservable() }
-    var refreshAppointments: Observable<Void> { return refreshAppointmentsSubject.asObservable() }
+    var markAppointment: Observable<Appointment> { return markAppointmentSubject.asObservable() }
     
     //Mark: Init
     private let disposeBag = DisposeBag()
@@ -62,15 +62,13 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
     private let markCheckboxSubject : PublishSubject<Void>
     private let markPresentSubject : BehaviorSubject<Bool>
     private let markPresentEnabledSubject : BehaviorSubject<Bool>
-    private let refreshAppointmentsSubject : PublishSubject<Void>
-    private let appointmentsRepository: AppointmentRepository
-    
-    init(appointment: Appointment, appointmentsRepository: AppointmentRepository) {
+    private let markAppointmentSubject : PublishSubject<Appointment>
+   
+    init(appointment: Appointment) {
         
         //Mark:- Setting User Names
-        self.appointmentsRepository = appointmentsRepository
         markCheckboxSubject = PublishSubject()
-        refreshAppointmentsSubject = PublishSubject()
+        markAppointmentSubject = PublishSubject()
         markPresentEnabledSubject = BehaviorSubject(value: true)
         markPresentSubject = BehaviorSubject(value: true)
         appointmentsSubject = BehaviorSubject(value: appointment)
@@ -112,8 +110,7 @@ extension AppointmentTVCellViewModel {
             .subscribe(onNext: {
                 present in
                 self.markPresentSubject.onNext(present)
-                self.appointmentsRepository.updateAppointment(appointment)
-                self.refreshAppointmentsSubject.onNext(Void())
+                self.markAppointmentSubject.onNext(appointment)
             })
             .disposed(by: disposeBag)
         

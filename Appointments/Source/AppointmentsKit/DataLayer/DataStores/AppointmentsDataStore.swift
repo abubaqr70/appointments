@@ -65,11 +65,7 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         entity.residentId = Int64(appointment.residentId ?? 0)
         entity.startingDate = appointment.startingDate ?? 0.0
         entity.endingDate = appointment.endingDate ?? 0.0
-        if appointment.eventLength == 0 {
-            entity.eventLength = Int64(appointment.occurrenceId ?? 0)
-        }else {
-            entity.eventLength = Int64(appointment.eventLength ?? 0)
-        }
+        entity.eventLength = Int64(appointment.eventLength ?? 0)
         entity.isSynced = true
         entity.startDate = appointment.startDate != nil ? saveStartDate(appointment.startDate!) : nil
         entity.endDate = appointment.endDate != nil ? saveEndDate(appointment.endDate!) : nil
@@ -157,6 +153,7 @@ extension AppointmentsCoreDataStore {
         entity.id =  Int64(appointmentAttendance.id ?? 0)
         entity.residentId =  Int64(appointmentAttendance.residentId ?? 0)
         entity.present = appointmentAttendance.present
+        entity.registered = Int64(appointmentAttendance.registered ?? 0)
         entity.reminderSent = appointmentAttendance.reminderSent
         entity.cancelReminder = appointmentAttendance.cancelReminder
         entity.reminderSentTime = Int64(appointmentAttendance.reminderSentTime ?? 0)

@@ -85,7 +85,7 @@ class AppointmentRepository {
                     self.dataStore.saveAppointment(appointment)
                 }
                 
-                //Mark:- Returning appointments for that month
+                //Mark:- Returning appointments for that day
                 observer.onNext(self.dataStore.fetchAppointments(startDate: Double(Date.startOfDay(date: date).timeIntervalSince1970), endDate: Double(Date.endOfDay(date: date).timeIntervalSince1970)))
                 observer.onCompleted()
             }
@@ -98,16 +98,16 @@ class AppointmentRepository {
     func updateAppointment(_ appointment: Appointment) {
         self.dataStore.updateAppointment(appointment)
         
-        //Mark:- Syncing appointments after marking in dataStore
-        self.syncData() {
-            (result: Result<Void,Error> ) in
-            switch result {
-            case .success():
-                print("Updated Successfully")
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
-        }
+//        //Mark:- Syncing appointments after marking in dataStore
+//        self.syncData() {
+//            (result: Result<Void,Error> ) in
+//            switch result {
+//            case .success():
+//                print("Updated Successfully")
+//            case .failure(let error):
+//                print(error.localizedDescription)
+//            }
+//        }
     }
     
     //Mark:- Syncing appointments on Server
@@ -135,6 +135,7 @@ class AppointmentRepository {
                 
                 //Mark:- Marking appointments synced true in dataStore
                 if appointmentsResponse.success == true {
+                    
                     for appointment in appointments {
                         self.dataStore.markAppointmentsSyncedTrue(appointment)
                     }
@@ -184,18 +185,6 @@ class AppointmentRepository {
         catch let error as NSError {
             print(error.localizedDescription)
         }
-    }
-    
-    func whereIsMySQLite() {
-        let path = FileManager
-            .default
-            .urls(for: .applicationSupportDirectory, in: .userDomainMask)
-            .last?
-            .absoluteString
-            .replacingOccurrences(of: "file://", with: "")
-            .removingPercentEncoding
-        
-        print(path ?? "Not found")
     }
     
 }

@@ -25,9 +25,10 @@ struct Appointment: Codable {
     var appointmentAttendance : [AppointmentAttendance]?
     let user : AppointmentUser?
     let userGroup : UserGroup?
+   
 
     enum CodingKeys: String, CodingKey {
-
+        
         case id = "id"
         case title = "v_title"
         case location = "v_location"
@@ -49,8 +50,9 @@ struct Appointment: Codable {
         case appointmentAttendance = "appointmentAttendance"
         case user = "user"
         case userGroup = "userGroup"
+    
     }
-
+    
 }
 
 extension Appointment {
@@ -78,6 +80,7 @@ extension Appointment {
         appointmentAttendance = try values.decodeIfPresent([AppointmentAttendance].self, forKey: .appointmentAttendance)
         user = try values.decodeIfPresent(AppointmentUser.self, forKey: .user)
         userGroup = try values.decodeIfPresent(UserGroup.self, forKey: .userGroup)
+    
     }
     
 }

@@ -1,10 +1,4 @@
-//
-//  CDAppointment+CoreDataProperties.swift
-//  Alamofire
-//
-//  Created by Mohammad Abubaqr on 10/10/2021.
-//
-//
+// Copyright © 2021 Caremerge. All rights reserved.
 
 import Foundation
 import CoreData
@@ -28,12 +22,10 @@ extension CDAppointment {
     @NSManaged public var occurrenceId: Int64
     @NSManaged public var parentEventId: Int64
     @NSManaged public var residentId: Int64
-    @NSManaged public var startedDate: Int64
     @NSManaged public var startingDate: Double
     @NSManaged public var therapistId: Int64
     @NSManaged public var therapyId: Int64
     @NSManaged public var title: String?
-    @NSManaged public var updatedById: Int64
     @NSManaged public var appointmentAttendance: NSSet?
     @NSManaged public var appointmentTag: NSSet?
     @NSManaged public var endDate: CDEndDate?

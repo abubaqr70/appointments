@@ -43,7 +43,7 @@ extension UserGroup {
         self.name = managedObject.name
         self.facilityId = Int(managedObject.facilityId)
         self.categoryId = Int(managedObject.categoryId)
-        self.facilityCategory = FacilityCategory(managedObject: managedObject.facilityCategory ?? CDFacilityCategory())
+        self.facilityCategory = managedObject.facilityCategory != nil ? FacilityCategory(managedObject: managedObject.facilityCategory!) : nil
         self.facilityGroupMembers = []
         for members in managedObject.facilityGroupMembers?.allObjects as? [CDFacilityGroupMembers] ?? [] {
             self.facilityGroupMembers?.append(FacilityGroupMembers(managedObject: members))

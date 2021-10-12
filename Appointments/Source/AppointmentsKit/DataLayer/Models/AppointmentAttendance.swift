@@ -11,6 +11,7 @@ struct AppointmentAttendance : Codable {
     let reminderSent : String?
     let cancelReminder : String?
     let reminderSentTime : Int?
+    let registered : Int?
     let user : AppointmentUser?
 
     enum CodingKeys: String, CodingKey {
@@ -19,6 +20,7 @@ struct AppointmentAttendance : Codable {
         case appointmentId = "fk_appointment_id"
         case residentId = "fk_resident_id"
         case present = "i_present"
+        case registered = "i_registered"
         case reminderSent = "i_reminder_sent"
         case cancelReminder = "i_cancel_reminder"
         case reminderSentTime = "i_reminder_sent_time"
@@ -39,6 +41,7 @@ extension AppointmentAttendance {
         cancelReminder = try values.decodeIfPresent(String.self, forKey: .cancelReminder)
         reminderSentTime = try values.decodeIfPresent(Int.self, forKey: .reminderSentTime)
         user = try values.decodeIfPresent(AppointmentUser.self, forKey: .user)
+        registered = try values.decodeIfPresent(Int.self, forKey: .registered)
     }
 
 }
@@ -55,6 +58,7 @@ extension AppointmentAttendance {
         self.present = managedObject.present
         self.reminderSentTime = Int(managedObject.reminderSentTime)
         self.user = AppointmentUser(managedObject: managedObject.users ?? CDAppointmentUser())
+        self.registered = Int(managedObject.registered)
     }
     
 }
@@ -71,6 +75,7 @@ extension AppointmentAttendance {
         self.present = appointmentAttendance.present
         self.reminderSentTime = appointmentAttendance.reminderSentTime
         self.user = appointmentAttendance.user != nil ? AppointmentUser(appointmentUser: appointmentAttendance.user!) : nil
+        self.registered = appointmentAttendance.registered
     }
     
 }

@@ -17,7 +17,8 @@ extension CDAppointmentAttendance {
     @NSManaged public var reminderSent: String?
     @NSManaged public var reminderSentTime: Int64
     @NSManaged public var residentId: Int64
-    @NSManaged public var users: CDAppointmentUser?
+    @NSManaged public var registered: Int64
     @NSManaged public var ofAppointments: CDAppointment?
+    @NSManaged public var users: CDAppointmentUser?
 
 }

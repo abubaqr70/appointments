@@ -276,11 +276,6 @@ extension AppointmentsViewController: UITableViewDelegate,UITableViewDataSource 
         
         let element = sections[indexPath.section].rows[indexPath.row]
         cell.configure(viewModel: element)
-        if let cellViewModel = sections[indexPath.section].rows[indexPath.row] as? AppointmentTVCellViewModelType{
-            cellViewModel.outputs.refreshAppointments.subscribe(onNext: { refresh in
-                self.viewModel.inputs.viewWillAppear.onNext(Void())
-            }).dispose()
-        }
         return cell
         
     }
