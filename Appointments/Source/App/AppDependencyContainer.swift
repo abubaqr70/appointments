@@ -2,7 +2,7 @@
 
 import Foundation
 
-public class AppDependencyContainer : NSObject {
+@objc public class AppDependencyContainer : NSObject {
     
     private let baseURL: String
     private let authentication: AuthenticationConvertible
@@ -45,12 +45,20 @@ public class AppDependencyContainer : NSObject {
                               factory: self)
     }
     
-    public func clearData(){
+    @objc public func clearData(){
         self.dataHandler.clearData()
     }
     
-    public func syncData(completion : @escaping (Result<Void,Error>) -> Void){
-        self.dataHandler.syncData(completion: completion)
+    @objc public func syncData(){
+        self.dataHandler.syncData() {
+            result in
+            switch result {
+            case .success():
+                print("Data Synced Successfully")
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
     }
     
     func makeAppointmentsViewController(viewModel: AppointmentsViewModelType) -> AppointmentsViewController {
@@ -59,7 +67,7 @@ public class AppDependencyContainer : NSObject {
     }
     
     func makeAppointmentViewController(viewModel: AppointmentViewModelType) -> AppointmentViewController {
-
+        
         return AppointmentViewController(viewModel: viewModel)
     }
     
@@ -70,7 +78,7 @@ public class AppDependencyContainer : NSObject {
     }
     
     func makeAppointmentViewModel(appointment: Appointment) -> AppointmentViewModelType {
-       
+        
         return AppointmentViewModel(appointment: appointment, repository: self.repository)
     }
     
