@@ -112,7 +112,7 @@ class AppointmentRepository {
     func markAppointmentsOnServer(_ appointments: [Appointment],completion: @escaping (Result<AppointmentsResponse,Error>) -> Void) {
         
         //Mark:- Appointments Service syncing appointments
-        self.appointmentService.syncAppointments(for: self.facilityDataStore.currentFacility?["id"] as? Int ?? 0, params: appointments,completion: completion )
+        self.appointmentService.syncAppointments(for: self.facilityDataStore.currentFacility?["facility_id"] as? Int ?? 0, params: appointments,completion: completion )
         
     }
     
