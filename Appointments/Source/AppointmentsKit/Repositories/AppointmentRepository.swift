@@ -9,12 +9,14 @@ class AppointmentRepository {
     let dataStore: AppointmentsDataStore
     let facilityDataStore: FacilityDataStore
     let reachabilityService: ReachabilityService
+    var isSyncing: Bool
     
     init(appointmentService: AppointmentService, dataStore: AppointmentsDataStore, facilityDataStore: FacilityDataStore) {
         self.appointmentService = appointmentService
         self.dataStore = dataStore
         self.facilityDataStore = facilityDataStore
         self.reachabilityService = ReachabilityService()
+        self.isSyncing = false
     }
     
     //Mark:- Fetch Appointments with facilityID and date
@@ -36,15 +38,20 @@ class AppointmentRepository {
                 if appointments.count >= 1 {
                     
                     //Mark:- Sync Appointments from server
-                    self.syncData() {
-                        (result: Result<Void,Error>) in
-                        switch result {
-                        case .failure (let error) :
-                            print(error.localizedDescription)
-                        case .success (_):
-                            print("success")
-                            self.fetchAppointmentsFromServer(date: date, observer: observer, facilityID: facilityID)
+                    if self.isSyncing == false {
+                        self.syncData() {
+                            (result: Result<Void,Error>) in
+                            self.isSyncing = false
+                            switch result {
+                            case .failure (let error) :
+                                print(error.localizedDescription)
+                            case .success (_):
+                                print("success")
+                                self.fetchAppointmentsFromServer(date: date, observer: observer, facilityID: facilityID)
+                            }
                         }
+                    }else{
+                        observer.onNext(self.dataStore.fetchAppointments(startDate: Double(Date.startOfDay(date: date).timeIntervalSince1970), endDate: Double(Date.endOfDay(date: date).timeIntervalSince1970)))
                     }
                 }else {
                     self.fetchAppointmentsFromServer(date: date, observer: observer, facilityID: facilityID)
@@ -96,18 +103,9 @@ class AppointmentRepository {
     
     //Mark:- Marking appointments in dataStore
     func updateAppointment(_ appointment: Appointment) {
+        
         self.dataStore.updateAppointment(appointment)
         
-//        //Mark:- Syncing appointments after marking in dataStore
-//        self.syncData() {
-//            (result: Result<Void,Error> ) in
-//            switch result {
-//            case .success():
-//                print("Updated Successfully")
-//            case .failure(let error):
-//                print(error.localizedDescription)
-//            }
-//        }
     }
     
     //Mark:- Syncing appointments on Server
@@ -121,6 +119,9 @@ class AppointmentRepository {
     
     //Mark:- Syncing appointments on dataStore
     func syncData(completion: @escaping (Result<Void,Error>) -> Void) {
+        
+        //Mark:- Setting isSyncing True
+        self.isSyncing = true
         
         //Mark:- Fetch Appointments from dataStore which are not synced
         let appointments = self.dataStore.fetchAppointmentsSyncedFalse()
