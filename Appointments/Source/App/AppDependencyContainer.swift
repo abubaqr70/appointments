@@ -2,7 +2,7 @@
 
 import Foundation
 
-public class AppDependencyContainer {
+public class AppDependencyContainer : NSObject {
     
     private let baseURL: String
     private let authentication: AuthenticationConvertible
