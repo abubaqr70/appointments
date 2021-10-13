@@ -24,4 +24,12 @@ class AppointmentDataHandler : DataHandler{
     func syncData(completion : @escaping (Result<Void,Error>) -> Void) {
         self.repository.syncData(completion: completion)
     }
+    
+    func setIsSyncing(isSyncing: Bool) {
+        self.repository.setIsSyncing(isSyncing: isSyncing)
+    }
+    
+    func getIsSyncing() -> Bool {
+        return self.repository.getIsSyncing()
+    }
 }

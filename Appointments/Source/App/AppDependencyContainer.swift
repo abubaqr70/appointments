@@ -45,17 +45,32 @@ import Foundation
                               factory: self)
     }
     
-    @objc public func clearData(){
+    
+    @objc public func clearData() {
         self.dataHandler.clearData()
     }
     
-    @objc public func syncData(){
+    @objc public func setIsSyncingStarted() {
+        self.dataHandler.setIsSyncing(isSyncing: true)
+    }
+    
+    @objc public func setIsSyncingDone() {
+        self.dataHandler.setIsSyncing(isSyncing: false)
+    }
+    
+    @objc public func getIsSyncing() -> Bool {
+        return self.dataHandler.getIsSyncing()
+    }
+    
+    @objc public func syncData(completion : @escaping (Bool,Error?) -> Void){
         self.dataHandler.syncData() {
             result in
             switch result {
             case .success():
+                completion(true, nil)
                 print("Data Synced Successfully")
             case .failure(let error):
+                completion(false, error)
                 print(error.localizedDescription)
             }
         }

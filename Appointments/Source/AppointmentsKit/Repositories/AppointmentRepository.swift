@@ -117,6 +117,14 @@ class AppointmentRepository {
     }
     
     
+    func setIsSyncing(isSyncing: Bool) {
+        self.isSyncing = isSyncing
+    }
+    
+    func getIsSyncing() -> Bool {
+        return self.isSyncing
+    }
+    
     //Mark:- Syncing appointments on dataStore
     func syncData(completion: @escaping (Result<Void,Error>) -> Void) {
         
