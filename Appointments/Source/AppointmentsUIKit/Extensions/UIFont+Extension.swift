@@ -27,12 +27,12 @@ extension AppFontStyle {
             return "MuseoSansRounded-100Italic"
         case .title1,.title2:
             return "MuseoSansRounded-300"
-//        case .title2:
-//            return "MuseoSansRounded-300Italic"
+        //        case .title2:
+        //            return "MuseoSansRounded-300Italic"
         case .body,.callout,.title3:
             return "MuseoSansRounded-500"
-//        case .title3:
-//            return "MuseoSansRounded-500Italic"
+        //        case .title3:
+        //            return "MuseoSansRounded-500Italic"
         case .subhead:
             return "MuseoSansRounded-700"
         case .caption1:

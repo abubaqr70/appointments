@@ -56,10 +56,10 @@ public class AppointmentViewController: UIViewController {
         let textView = UITextView()
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.textColor = .black
-        textView.font = UIFont.appFont(withStyle: .largeTitle, size: 16)
         textView.isUserInteractionEnabled = false
         textView.sizeToFit()
         textView.isScrollEnabled = false
+        textView.isSelectable = true
         return textView
     }()
     
@@ -67,7 +67,7 @@ public class AppointmentViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .black
-        label.font = UIFont.appFont(withStyle: .largeTitle, size: 16)
+        label.font = UIFont.appFont(withStyle: .subhead, size: 16)
         label.numberOfLines = 4
         return label
     }()
@@ -142,7 +142,7 @@ public class AppointmentViewController: UIViewController {
     fileprivate lazy var timeView : UIView = {
         let view = UIView(frame: CGRect.zero)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor.appSkyBlue
+        view.backgroundColor = UIColor.appLightSkyBlue
         view.layer.cornerRadius = 3
         return view
     }()

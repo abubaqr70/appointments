@@ -80,14 +80,13 @@ class AppointmentViewModel: AppointmentViewModelType, AppointmentViewModelInputs
         
         //Mark:- Setting User Names
         self.appointmentsRepository = repository
-        //        let appointment = self.appointmentsRepository.getAppointment(appointment) ?? appointment
         markPresentSubject = PublishSubject()
         isPresentSubject = BehaviorSubject(value: true)
         appointmentsSubject = BehaviorSubject(value: appointment)
         nameSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.fullName)
         roomSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.roomNo)
         appointmentTitleSubject = BehaviorSubject(value: appointment.title)
-        appointmentDescriptionSubject = BehaviorSubject(value: appointment.description?.htmlToAttributedString)
+        appointmentDescriptionSubject = BehaviorSubject(value: appointment.description?.convertHtmlToAttributedStringWithFont(font: UIFont.appFont(withStyle: .title3, size: 12)))
         markPresentEnabledSubject = BehaviorSubject(value: true)
         appointmentTypeSubject = BehaviorSubject(value: NSAttributedString(string: ""))
         locationSubject = BehaviorSubject(value: NSAttributedString(string: ""))
@@ -97,10 +96,10 @@ class AppointmentViewModel: AppointmentViewModelType, AppointmentViewModelInputs
         
         appointmentsSubject
             .map { appointments -> NSMutableAttributedString in
-                let attributedString = NSMutableAttributedString(string: "Staff: \(appointments.startDate?.date ?? "")", attributes: [
+                let attributedString = NSMutableAttributedString(string: "Staff: \(appointments.user?.fullName ?? "")", attributes: [
                     .font: UIFont.appFont(withStyle: .title3, size: 14)
                 ])
-                attributedString.addAttribute(.font, value: UIFont.appFont(withStyle: .largeTitle, size: 14), range: NSRange(location: 0, length: 6))
+                attributedString.addAttribute(.font, value: UIFont.appFont(withStyle: .subhead, size: 14), range: NSRange(location: 0, length: 6))
                 return attributedString
             }
             .bind(to: staffSubject)
@@ -112,7 +111,7 @@ class AppointmentViewModel: AppointmentViewModelType, AppointmentViewModelInputs
                 let attributedString = NSMutableAttributedString(string: "Location: \(appointments.location ?? "")", attributes: [
                     .font: UIFont.appFont(withStyle: .title3, size: 14)
                 ])
-                attributedString.addAttribute(.font, value: UIFont.appFont(withStyle: .largeTitle, size: 14), range: NSRange(location: 0, length: 9))
+                attributedString.addAttribute(.font, value: UIFont.appFont(withStyle: .subhead, size: 14), range: NSRange(location: 0, length: 9))
                 return attributedString
             }
             .bind(to: locationSubject)
@@ -123,7 +122,7 @@ class AppointmentViewModel: AppointmentViewModelType, AppointmentViewModelInputs
                 let attributedString = NSMutableAttributedString(string: "Appointment Type: \(appointments.therapyId ?? 0)", attributes: [
                     .font: UIFont.appFont(withStyle: .title3, size: 14),
                 ])
-                attributedString.addAttribute(.font, value: UIFont.appFont(withStyle: .largeTitle, size: 14), range: NSRange(location: 0, length: 17))
+                attributedString.addAttribute(.font, value: UIFont.appFont(withStyle: .subhead, size: 14), range: NSRange(location: 0, length: 17))
                 return attributedString
             }
             .bind(to: appointmentTypeSubject)

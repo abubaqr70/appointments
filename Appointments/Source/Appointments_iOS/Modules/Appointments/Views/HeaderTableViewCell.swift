@@ -18,7 +18,7 @@ class HeaderTableViewCell: RxUITableViewCell {
     fileprivate lazy var cellView : UIView = {
         let view = UIView(frame: CGRect.zero)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor.appSkyBlue
+        view.backgroundColor = UIColor.appLightSkyBlue
         view.layer.cornerRadius = 3
         return view
     }()

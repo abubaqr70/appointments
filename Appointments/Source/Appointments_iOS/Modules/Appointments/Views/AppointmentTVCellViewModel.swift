@@ -63,7 +63,7 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
     private let markPresentSubject : BehaviorSubject<Bool>
     private let markPresentEnabledSubject : BehaviorSubject<Bool>
     private let markAppointmentSubject : PublishSubject<Appointment>
-   
+    
     init(appointment: Appointment) {
         
         //Mark:- Setting User Names

@@ -19,14 +19,15 @@ struct Appointment: Codable {
     let startingDate : Double?
     let endingDate : Double?
     let eventLength : Int?
+    let lastUpdatedTime : Date?
     let startDate : StartDate?
     let endDate : EndDate?
     var appointmentTags : [AppointmentTag]?
     var appointmentAttendance : [AppointmentAttendance]?
     let user : AppointmentUser?
     let userGroup : UserGroup?
-   
-
+    
+    
     enum CodingKeys: String, CodingKey {
         
         case id = "id"
@@ -50,7 +51,8 @@ struct Appointment: Codable {
         case appointmentAttendance = "appointmentAttendance"
         case user = "user"
         case userGroup = "userGroup"
-    
+        case lastUpdatedTime = "lastUpdatedTime"
+        
     }
     
 }
@@ -58,6 +60,7 @@ struct Appointment: Codable {
 extension Appointment {
     
     init(from decoder: Decoder) throws {
+        
         let values = try decoder.container(keyedBy: CodingKeys.self)
         id = try values.decodeIfPresent(Int.self, forKey: .id)
         title = try values.decodeIfPresent(String.self, forKey: .title)
@@ -76,11 +79,12 @@ extension Appointment {
         eventLength = try values.decodeIfPresent(Int.self, forKey: .eventLength)
         startDate = try values.decodeIfPresent(StartDate.self, forKey: .startDate)
         endDate = try values.decodeIfPresent(EndDate.self, forKey: .endDate)
+        lastUpdatedTime = try values.decodeIfPresent(Date.self, forKey: .lastUpdatedTime)
         appointmentTags = try values.decodeIfPresent([AppointmentTag].self, forKey: .appointmentTags)
         appointmentAttendance = try values.decodeIfPresent([AppointmentAttendance].self, forKey: .appointmentAttendance)
         user = try values.decodeIfPresent(AppointmentUser.self, forKey: .user)
         userGroup = try values.decodeIfPresent(UserGroup.self, forKey: .userGroup)
-    
+        
     }
     
 }
@@ -104,6 +108,7 @@ extension Appointment {
         self.startingDate = managedObject.startingDate
         self.endingDate = managedObject.endingDate
         self.eventLength = Int(managedObject.eventLength)
+        self.lastUpdatedTime = managedObject.lastUpdatedTime
         self.startDate = managedObject.startDate != nil ? StartDate(managedObject: managedObject.startDate!) : nil
         self.endDate = managedObject.endDate != nil ? EndDate(managedObject: managedObject.endDate!) : nil
         self.user = managedObject.user != nil ? AppointmentUser(managedObject: managedObject.user!) : nil
@@ -138,6 +143,7 @@ extension Appointment {
         self.startingDate = appointment.startingDate
         self.endingDate = appointment.endingDate
         self.eventLength = appointment.eventLength
+        self.lastUpdatedTime = appointment.lastUpdatedTime
         self.startDate = appointment.startDate != nil ? StartDate(startDate:appointment.startDate!) : nil
         self.endDate = appointment.endDate != nil ? EndDate(endDate: appointment.endDate!) : nil
         self.user = appointment.user != nil ? AppointmentUser(appointmentUser: appointment.user!) : nil

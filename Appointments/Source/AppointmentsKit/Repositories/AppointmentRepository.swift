@@ -33,7 +33,7 @@ class AppointmentRepository {
             
             //Mark:- Internet Connected
             case .connected:
-                observer.onNext(self.dataStore.fetchAppointments(startDate: Double(Date.startOfDay(date: date).timeIntervalSince1970), endDate: Double(Date.endOfDay(date: date).timeIntervalSince1970)))
+                observer.onNext(self.dataStore.fetchAppointments(startDate: Date.startOfDay(date: date)))
                 let appointments = self.dataStore.fetchAppointmentsSyncedFalse()
                 if appointments.count >= 1 {
                     
@@ -51,7 +51,7 @@ class AppointmentRepository {
                             }
                         }
                     }else{
-                        observer.onNext(self.dataStore.fetchAppointments(startDate: Double(Date.startOfDay(date: date).timeIntervalSince1970), endDate: Double(Date.endOfDay(date: date).timeIntervalSince1970)))
+                        observer.onNext(self.dataStore.fetchAppointments(startDate: Date.startOfDay(date: date)))
                     }
                 }else {
                     self.fetchAppointmentsFromServer(date: date, observer: observer, facilityID: facilityID)
@@ -59,7 +59,7 @@ class AppointmentRepository {
                 
             //Mark:- Internet Disconnected
             case .disconnected:
-                observer.onNext(self.dataStore.fetchAppointments(startDate: Double(Date.startOfDay(date: date).timeIntervalSince1970), endDate: Double(Date.endOfDay(date: date).timeIntervalSince1970)))
+                observer.onNext(self.dataStore.fetchAppointments(startDate: Date.startOfDay(date: date)))
             }
             
             return Disposables.create()
@@ -88,12 +88,13 @@ class AppointmentRepository {
                 }
                 
                 //Mark:- Saving appointments for that month
+                let updatedTime: Date = Date()
                 for appointment in appointments {
-                    self.dataStore.saveAppointment(appointment)
+                    self.dataStore.saveAppointment(appointment,updatedTime)
                 }
                 
                 //Mark:- Returning appointments for that day
-                observer.onNext(self.dataStore.fetchAppointments(startDate: Double(Date.startOfDay(date: date).timeIntervalSince1970), endDate: Double(Date.endOfDay(date: date).timeIntervalSince1970)))
+                observer.onNext(self.dataStore.fetchAppointments(startDate: Date.startOfDay(date: date)))
                 observer.onCompleted()
             }
         }
@@ -116,11 +117,12 @@ class AppointmentRepository {
         
     }
     
-    
+    //Mark:- Setting Syncing Status
     func setIsSyncing(isSyncing: Bool) {
         self.isSyncing = isSyncing
     }
     
+    //Mark:- Getting Syncing Status
     func getIsSyncing() -> Bool {
         return self.isSyncing
     }

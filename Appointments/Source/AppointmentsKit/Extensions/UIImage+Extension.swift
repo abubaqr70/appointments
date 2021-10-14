@@ -5,7 +5,7 @@ import Foundation
 extension UIImage {
     
     static func moduleImage(named: String,
-                      bundle: Bundle = Bundle.resource) -> UIImage? {
+                            bundle: Bundle = Bundle.resource) -> UIImage? {
         
         return UIImage(named: named,
                        in: bundle,

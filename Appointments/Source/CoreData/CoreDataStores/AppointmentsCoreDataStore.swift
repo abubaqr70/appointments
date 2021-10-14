@@ -29,9 +29,9 @@ public class AppointmentsCoreDataStore {
         return results.first
     }
     
-    public func fetchCDAppointments(startDate: Double ,endDate: Double) throws -> [CDAppointment] {
+    public func fetchCDAppointments(startDate: Date) throws -> [CDAppointment] {
         let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "startingDate >= %@ AND endingDate <= %@", argumentArray: [startDate,endDate])
+        fetchRequest.predicate = NSPredicate(format: "startedDate == %@", argumentArray: [startDate])
         return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
     }
     
@@ -55,7 +55,7 @@ public class AppointmentsCoreDataStore {
         if appointments.count > 0 {
             return true
         }else {
-           return false
+            return false
         }
     }
     

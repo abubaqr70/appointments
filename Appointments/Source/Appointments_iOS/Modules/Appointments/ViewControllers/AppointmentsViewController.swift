@@ -205,6 +205,10 @@ extension AppointmentsViewController{
             .bind(to: pageNavigator.rx.titleTextField)
             .disposed(by: disposeBag)
         
+        viewModel.outputs.lastUpdatedLabel
+            .bind(to: lastUpdatedLabel.rx.text)
+            .disposed(by: disposeBag)
+        
     }
     
     private func bindActions(viewModel : AppointmentsViewModelType){

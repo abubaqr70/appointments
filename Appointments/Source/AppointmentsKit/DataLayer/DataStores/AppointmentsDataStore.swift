@@ -4,10 +4,10 @@ import Foundation
 
 protocol AppointmentsDataStore {
     
-    func fetchAppointments(startDate: Double ,endDate: Double) -> [Appointment]
+    func fetchAppointments(startDate: Date) -> [Appointment]
     func fetchAppointmentsSyncedFalse() -> [Appointment]
     func markAppointmentsSyncedTrue(_ appointment: Appointment)
-    func saveAppointment(_ appointment: Appointment)
+    func saveAppointment(_ appointment: Appointment,_ lastUpdatedTime: Date)
     func updateAppointment(_ appointment: Appointment)
     func checkAppointmentsExist(tartDate: Double ,endDate: Double) -> Bool
     func deleteAppointments(startDate: Double ,endDate: Double) throws
@@ -16,10 +16,10 @@ protocol AppointmentsDataStore {
 }
 
 extension AppointmentsCoreDataStore: AppointmentsDataStore {
-
-    func fetchAppointments(startDate: Double , endDate: Double) -> [Appointment] {
+    
+    func fetchAppointments(startDate: Date) -> [Appointment] {
         do {
-            let appointments = try self.fetchCDAppointments(startDate: startDate, endDate: endDate)
+            let appointments = try self.fetchCDAppointments(startDate: startDate)
             return appointments.map{
                 appointmentCoreData -> Appointment in
                 return Appointment(managedObject: appointmentCoreData)
@@ -49,7 +49,7 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         return []
     }
     
-    func saveAppointment(_ appointment: Appointment) {
+    func saveAppointment(_ appointment: Appointment,_ lastUpdatedTime: Date) {
         let entity = self.createCDAppointment()
         entity.id = Int64(appointment.id ?? 0)
         entity.title = appointment.title
@@ -67,6 +67,11 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         entity.endingDate = appointment.endingDate ?? 0.0
         entity.eventLength = Int64(appointment.eventLength ?? 0)
         entity.isSynced = true
+        let dateFormatterFromString = DateFormatter()
+        dateFormatterFromString.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'"
+        let date = Date.init(timeIntervalSince1970: TimeInterval(Float(appointment.startingDate ?? 0.0)))
+        entity.startedDate = Date.startOfDay(date: date)
+        entity.lastUpdatedTime = lastUpdatedTime
         entity.startDate = appointment.startDate != nil ? saveStartDate(appointment.startDate!) : nil
         entity.endDate = appointment.endDate != nil ? saveEndDate(appointment.endDate!) : nil
         entity.user = appointment.user != nil ? saveAppointmentUser(appointment.user!) : nil

@@ -114,7 +114,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         let fetchRequest = self.refreshAppointmentsSubject
             .withLatestFrom(self.datePickerSubject)
             .flatMap { [weak self] date  -> Observable<Event<[Appointment]>> in
-                guard let self = self, let facilityID = self.facilityDataStore.currentFacility?["facility_id"] as? Int else { return .never() }
+                guard let self = self, let facilityID = self.facilityDataStore.currentFacility?["id"] as? Int else { return .never() }
                 
                 self.loadingSubject.onNext(true)
                 return self.appointmentsRepository.getAppointments(for: facilityID,
@@ -128,7 +128,13 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             })
         
         fetchRequest.elements()
-            .bind(to: self.appointmentsSubject)
+            .subscribe(onNext: {
+                appointments in
+                self.appointmentsSubject.onNext(appointments)
+                let dateFormatterFromDate = DateFormatter()
+                dateFormatterFromDate.dateFormat = "MMMM dd 'at' h:mm a"
+                self.lastUpdatedLabelSubject.onNext("Last Updated: " + dateFormatterFromDate.string(from: appointments.first?.lastUpdatedTime ?? Date()))
+            })
             .disposed(by: disposeBag)
         
         fetchRequest.errors()

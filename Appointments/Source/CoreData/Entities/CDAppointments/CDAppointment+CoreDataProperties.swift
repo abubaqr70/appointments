@@ -26,6 +26,8 @@ extension CDAppointment {
     @NSManaged public var therapistId: Int64
     @NSManaged public var therapyId: Int64
     @NSManaged public var title: String?
+    @NSManaged public var lastUpdatedTime: Date?
+    @NSManaged public var startedDate: Date?
     @NSManaged public var appointmentAttendance: NSSet?
     @NSManaged public var appointmentTag: NSSet?
     @NSManaged public var endDate: CDEndDate?

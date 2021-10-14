@@ -7,6 +7,7 @@ enum AppColorName {
     case appGrayLight
     case appGrayDark
     case appGreen
+    case appLightSkyBlue
 }
 
 extension UIColor {
@@ -16,6 +17,7 @@ extension UIColor {
         case .appGrayLight: return UIColor(named: "color_app_light_gray", in: Bundle.resource, compatibleWith: nil) ?? .lightGray
         case .appGrayDark: return UIColor(named: "color_app_dark_gray", in: Bundle.resource, compatibleWith: nil) ?? .darkGray
         case .appGreen: return UIColor(named: "color_app_green", in: Bundle.resource, compatibleWith: nil) ?? .green
+        case .appLightSkyBlue: return UIColor(named: "color_app_light_blue", in: Bundle.resource, compatibleWith: nil) ?? .green
         }
     }
 }
@@ -36,5 +38,9 @@ extension UIColor {
     
     static var appGreen: UIColor {
         return .appColor(ofName: .appGreen)
+    }
+    
+    static var appLightSkyBlue: UIColor {
+        return .appColor(ofName: .appLightSkyBlue)
     }
 }
