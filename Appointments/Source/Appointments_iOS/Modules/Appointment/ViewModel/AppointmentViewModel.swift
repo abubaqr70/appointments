@@ -86,7 +86,7 @@ class AppointmentViewModel: AppointmentViewModelType, AppointmentViewModelInputs
         nameSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.fullName)
         roomSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.roomNo)
         appointmentTitleSubject = BehaviorSubject(value: appointment.title)
-        appointmentDescriptionSubject = BehaviorSubject(value: appointment.description?.convertHtmlToAttributedStringWithFont(font: UIFont.appFont(withStyle: .title3, size: 12)))
+        appointmentDescriptionSubject = BehaviorSubject(value: appointment.description?.convertHtmlToAttributedStringWithFont(font: UIFont.appFont(withStyle: .title3, size: 10)))
         markPresentEnabledSubject = BehaviorSubject(value: true)
         appointmentTypeSubject = BehaviorSubject(value: NSAttributedString(string: ""))
         locationSubject = BehaviorSubject(value: NSAttributedString(string: ""))
