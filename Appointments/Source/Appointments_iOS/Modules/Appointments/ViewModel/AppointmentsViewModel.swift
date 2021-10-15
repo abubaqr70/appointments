@@ -15,7 +15,7 @@ protocol AppointmentsViewModelInputs {
     var filterObserver: AnyObserver<Void> { get }
     var selectAppointment: AnyObserver<Appointment> { get }
     var viewWillAppear: AnyObserver<Void> { get }
-    
+   
 }
 
 protocol AppointmentsViewModelOutputs {
@@ -29,6 +29,7 @@ protocol AppointmentsViewModelOutputs {
     var dateNavigatorTitle: Observable<String?> { get }
     var errorAlert: Observable<String> { get }
     var isLoading: Observable<Bool> { get }
+    var filterAppointments: Observable<Void> { get }
 }
 
 protocol AppointmentsViewModelType {
@@ -58,6 +59,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     var errorAlert: Observable<String> { return errorAlertSubject.asObservable() }
     var isLoading: Observable<Bool> { return loadingSubject.asObservable() }
     var selectedAppointment: Observable<Appointment> { return selectedAppointmentSubject.asObservable() }
+    var filterAppointments: Observable<Void> { return filterAppointmentsSubject.asObservable() }
     
     //Mark: Private Properties
     
@@ -77,6 +79,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     private let lastUpdatedLabelSubject = BehaviorSubject<String?>(value: "")
     private let dateNavigatorTitleSubject = BehaviorSubject<String?>(value: "")
     
+    private let filterAppointmentsSubject = PublishSubject<Void>()
     private let refreshAppointmentsSubject = PublishSubject<Void>()
     private let errorAlertSubject = PublishSubject<String>()
     private let sectionsSubject = BehaviorSubject<[(title: String, rows: [ReuseableCellViewModelType])]>(value: [])
@@ -236,6 +239,7 @@ extension AppointmentsViewModel {
         appointmentFilterSubject
             .subscribe(onNext: { _ in
                 print("Appointments Navigation Filter Tap ")
+                self.filterAppointmentsSubject.onNext(Void())
             })
             .disposed(by: disposeBag)
         

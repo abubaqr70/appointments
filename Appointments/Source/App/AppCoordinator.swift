@@ -71,12 +71,25 @@ public class AppCoordinator: Coordinator<ResultType<Void>> {
             guard let appointment = appointment.element else {return}
             self.navigateToDetail(appointment: appointment)
         }).disposed(by: disposeBag)
+    
+        viewModel.outputs.filterAppointments.subscribe(onNext: {
+            self.presentFilterAppointments()
+        }).disposed(by: disposeBag)
     }
     
     func navigateToDetail(appointment: Appointment) {
         let viewModel = self.factory.makeAppointmentViewModel(appointment: appointment)
         let viewController = self.factory.makeAppointmentViewController(viewModel: viewModel)
         self.rootNavigationController?.pushViewController(viewController, animated: true)
+    }
+    
+    func presentFilterAppointments() {
+        let viewModel = self.factory.makeFilterAppointmentsViewModel()
+        let viewController = self.factory.makeFilterAppointmentsViewController(viewModel: viewModel)
+        viewController.modalPresentationStyle = .fullScreen
+        let navigationController = UINavigationController(rootViewController: viewController)
+        navigationController.modalPresentationStyle = .fullScreen
+        self.rootNavigationController?.present(navigationController, animated: true, completion: nil)
     }
     
 }
@@ -87,6 +100,8 @@ protocol AppointmentsFactory {
     func makeAppointmentsViewModel() -> AppointmentsViewModelType
     func makeAppointmentViewController(viewModel: AppointmentViewModelType) -> AppointmentViewController
     func makeAppointmentViewModel(appointment: Appointment) -> AppointmentViewModelType
+    func makeFilterAppointmentsViewController(viewModel: FilterAppointmentsViewModelType) -> FilterAppointmentsViewController
+    func makeFilterAppointmentsViewModel() -> FilterAppointmentsViewModelType
 }
 
 extension AppDependencyContainer: AppointmentsFactory {

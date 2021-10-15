@@ -86,6 +86,11 @@ import Foundation
         return AppointmentViewController(viewModel: viewModel)
     }
     
+    func makeFilterAppointmentsViewController(viewModel: FilterAppointmentsViewModelType) -> FilterAppointmentsViewController {
+        
+        return FilterAppointmentsViewController(viewModel: viewModel)
+    }
+    
     func makeAppointmentsViewModel() -> AppointmentsViewModelType {
         
         return AppointmentsViewModel(facilityDataStore: self.facilityDataStore,
@@ -95,6 +100,11 @@ import Foundation
     func makeAppointmentViewModel(appointment: Appointment) -> AppointmentViewModelType {
         
         return AppointmentViewModel(appointment: appointment, repository: self.repository)
+    }
+    
+    func makeFilterAppointmentsViewModel() -> FilterAppointmentsViewModelType {
+        
+        return FilterAppointmentsViewModel(appointmentsRepository: self.repository)
     }
     
 }
