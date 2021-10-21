@@ -147,7 +147,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         let fetchRequest = self.refreshAppointmentsSubject
             .withLatestFrom(self.datePickerSubject)
             .flatMap { [weak self] date  -> Observable<Event<[Appointment]>> in
-                guard let self = self, let facilityID = self.facilityDataStore.currentFacility?["id"] as? Int else { return .never() }
+                guard let self = self, let facilityID = self.facilityDataStore.currentFacility?["facility_id"] as? Int else { return .never() }
                 let residentId = self.residentProvider?.currentResident?["resident_id"] as? Int
                 self.loadingSubject.onNext(true)
                 
