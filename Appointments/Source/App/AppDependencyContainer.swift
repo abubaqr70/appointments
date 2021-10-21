@@ -8,6 +8,7 @@ import Foundation
     private let authentication: AuthenticationConvertible
     private let userDataStore: UserDataStore
     private let facilityDataStore: FacilityDataStore
+    private let residentProvider: ResidentDataStore?
     private let addActionProvider: AddActionProvider?
     private let filterActionProvider: FilterActionProvider?
     private let client: APIClient
@@ -27,6 +28,32 @@ import Foundation
         self.facilityDataStore = facilityDataStore
         self.addActionProvider = addActionProvider
         self.filterActionProvider = filterActionProvider
+        self.residentProvider = nil
+        self.client = AlamofireClient()
+        
+        let service = AppointmentService(baseURL: self.baseURL,
+                                         authHeaderProvider: self.authentication,
+                                         client: self.client)
+        let dataStore = AppointmentsCoreDataStore(coreDataStack: CoreDataStack())
+        self.repository = AppointmentRepository(appointmentService: service,dataStore: dataStore,facilityDataStore: self.facilityDataStore)
+        self.dataHandler = AppointmentDataHandler(repository: self.repository)
+    }
+    
+    public init(baseURL: String,
+                authentication: AuthenticationConvertible,
+                userDataStore: UserDataStore,
+                facilityDataStore: FacilityDataStore,
+                addActionProvider: AddActionProvider?,
+                filterActionProvider: FilterActionProvider?,
+                residentProvider: ResidentDataStore?) {
+        
+        self.baseURL = baseURL
+        self.authentication = authentication
+        self.userDataStore = userDataStore
+        self.facilityDataStore = facilityDataStore
+        self.addActionProvider = addActionProvider
+        self.filterActionProvider = filterActionProvider
+        self.residentProvider = residentProvider
         self.client = AlamofireClient()
         
         let service = AppointmentService(baseURL: self.baseURL,
@@ -87,9 +114,15 @@ import Foundation
     }
     
     func makeAppointmentsViewModel() -> AppointmentsViewModelType {
+        if self.residentProvider != nil {
+            return AppointmentsViewModel(facilityDataStore: self.facilityDataStore,
+                                         appointmentsRepository: self.repository,
+                                         residentProvider: self.residentProvider)
+        }  else {
+            return AppointmentsViewModel(facilityDataStore: self.facilityDataStore,
+                                         appointmentsRepository: self.repository)
+        }
         
-        return AppointmentsViewModel(facilityDataStore: self.facilityDataStore,
-                                     appointmentsRepository: self.repository)
     }
     
     func makeAppointmentViewModel(appointment: Appointment) -> AppointmentViewModelType {

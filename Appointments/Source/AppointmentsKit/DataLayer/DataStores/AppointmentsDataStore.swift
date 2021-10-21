@@ -5,6 +5,7 @@ import Foundation
 protocol AppointmentsDataStore {
     
     func fetchAppointments(startDate: Date) -> [Appointment]
+    func fetchAppointmentsForResident(residentID: Int, startDate: Date) -> [Appointment]
     func fetchAppointmentsSyncedFalse() -> [Appointment]
     func markAppointmentsSyncedTrue(_ appointment: Appointment)
     func saveAppointment(_ appointment: Appointment,_ lastUpdatedTime: Date)
@@ -20,6 +21,19 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
     func fetchAppointments(startDate: Date) -> [Appointment] {
         do {
             let appointments = try self.fetchCDAppointments(startDate: startDate)
+            return appointments.map{
+                appointmentCoreData -> Appointment in
+                return Appointment(managedObject: appointmentCoreData)
+            }
+        } catch { }
+        
+        return []
+    }
+    
+    func fetchAppointmentsForResident(residentID: Int, startDate: Date) -> [Appointment] {
+        do {
+            let residentID = Int64(residentID ?? 0)
+            let appointments = try self.fetchCDAppointmentsForResident(residentID: residentID, startDate: startDate)
             return appointments.map{
                 appointmentCoreData -> Appointment in
                 return Appointment(managedObject: appointmentCoreData)

@@ -35,6 +35,12 @@ public class AppointmentsCoreDataStore {
         return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
     }
     
+    public func fetchCDAppointmentsForResident(residentID:Int64, startDate: Date) throws -> [CDAppointment] {
+        let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "startedDate == %@ && ANY appointmentAttendance.residentId == %@", argumentArray: [startDate, residentID])
+        return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
+    }
+    
     public func fetchCDAppointmentsSyncedFalse() throws -> [CDAppointment] {
         let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "isSynced == %@", "false")

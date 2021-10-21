@@ -57,12 +57,19 @@ public class AppCoordinator: Coordinator<ResultType<Void>> {
         let viewController = self.factory.makeAppointmentsViewController(viewModel: viewModel)
     
         self.bindAppointmentViewModel(viewModel: viewModel)
-        let navigationController = UINavigationController(rootViewController: viewController)
-        navigationController.modalPresentationStyle = .fullScreen
-        self.rootNavigationController = navigationController
-    
-        self.navigationType.navigate(to: navigationController, root: self.root)
+        if navigationType != .push {
+            
+            let navigationController = UINavigationController(rootViewController: viewController)
+            navigationController.modalPresentationStyle = .fullScreen
+            self.rootNavigationController = navigationController
         
+            self.navigationType.navigate(to: navigationController, root: self.root)
+            
+        } else {
+            
+            self.navigationType.navigate(to: viewController, root: self.root)
+        }
+       
         return result
     }
     

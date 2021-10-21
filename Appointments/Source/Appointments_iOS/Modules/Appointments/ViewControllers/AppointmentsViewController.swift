@@ -13,6 +13,25 @@ public class AppointmentsViewController: UIViewController {
         }
     }
     
+    fileprivate lazy var nameLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = UIColor.appSkyBlue
+        label.font = UIFont.appFont(withStyle: .body, size: 14)
+        label.numberOfLines = 4
+        return label
+    }()
+    
+    fileprivate lazy var profileImage : UIImageView = {
+        let view = UIImageView(frame: CGRect.zero)
+        view.image = UIImage.moduleImage(named: "image_profile_placeholder")
+        view.backgroundColor = UIColor.white
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.cornerRadius = 20
+        view.clipsToBounds = true
+        return view
+    }()
+    
     fileprivate lazy var titleButton : UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 200, height: 40))
         button.setTitle("APPOINTMENTS", for: .normal)
@@ -64,6 +83,22 @@ public class AppointmentsViewController: UIViewController {
         return tableView
     }()
     
+    fileprivate lazy var profileView : UIView = {
+       let view = UIView()
+        view.backgroundColor = .clear
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    fileprivate lazy var residentStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [segmentControl, profileView])
+        stackView.axis = .vertical
+        stackView.spacing = 0
+        stackView.alignment = .fill
+        stackView.distribution = .fillEqually
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
     
     private var viewModel: AppointmentsViewModelType
     private let disposeBag = DisposeBag()
@@ -104,7 +139,9 @@ extension AppointmentsViewController{
         setupNavigationBar()
         
         self.navigationItem.titleView = titleButton
-        self.view.addSubview(segmentControl)
+        self.profileView.addSubview(nameLabel)
+        self.profileView.addSubview(profileImage)
+        self.view.addSubview(residentStackView)
         self.view.addSubview(lastUpdatedLabel)
         self.view.addSubview(pageNavigator)
         self.view.addSubview(tableView)
@@ -129,12 +166,28 @@ extension AppointmentsViewController{
     private func setupConstraints() {
         
         let safeArea = view.safeAreaLayoutGuide
+                
+        NSLayoutConstraint.activate([
+            nameLabel.topAnchor.constraint(equalTo: profileView.topAnchor, constant: 10),
+            nameLabel.leadingAnchor.constraint(equalTo: profileImage.trailingAnchor, constant: 10),
+            nameLabel.trailingAnchor.constraint(equalTo: profileView.trailingAnchor, constant: -10),
+            segmentControl.heightAnchor.constraint(equalToConstant: 30),
+            segmentControl.topAnchor.constraint(equalTo: residentStackView.topAnchor, constant: 10)
+        ])
         
         NSLayoutConstraint.activate([
-            segmentControl.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 20),
-            segmentControl.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
-            segmentControl.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
-            segmentControl.heightAnchor.constraint(equalToConstant: 30)
+            profileImage.leadingAnchor.constraint(equalTo: profileView.leadingAnchor),
+            profileImage.centerYAnchor.constraint(equalTo: profileView.centerYAnchor),
+            profileImage.topAnchor.constraint(greaterThanOrEqualTo: profileView.topAnchor),
+            profileImage.bottomAnchor.constraint(greaterThanOrEqualTo: profileView.bottomAnchor, constant: -5),
+            profileImage.widthAnchor.constraint(equalToConstant: 40),
+            profileImage.heightAnchor.constraint(equalToConstant: 40)
+        ])
+        
+        NSLayoutConstraint.activate([
+            residentStackView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 10),
+            residentStackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
+            residentStackView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20)
         ])
         
         NSLayoutConstraint.activate([
@@ -208,6 +261,36 @@ extension AppointmentsViewController{
         viewModel.outputs.lastUpdatedLabel
             .bind(to: lastUpdatedLabel.rx.text)
             .disposed(by: disposeBag)
+        
+        viewModel.outputs.isResident.subscribe(onNext: {
+            isResident in
+            if isResident {
+                self.profileView.isHidden = false
+                self.segmentControl.isHidden = true
+                
+                self.viewModel.outputs.residentName
+                    .bind(to: self.nameLabel.rx.text)
+                    .disposed(by: self.disposeBag)
+                
+                self.viewModel.outputs.residentImage
+                    .subscribe(onNext: { [weak self] url in
+                        guard let self = self else { return }
+                        self.profileImage.kf.indicatorType = .activity
+                        self.profileImage.kf.setImage(
+                            with: URL(string: url),
+                            placeholder: UIImage.moduleImage(named: "image_profile_placeholder"),
+                            options: [
+                                .transition(.fade(1)),
+                                .cacheOriginalImage
+                            ])
+                    })
+                    .disposed(by: self.disposeBag)
+                
+            }else {
+                self.profileView.isHidden = true
+                self.segmentControl.isHidden = false
+            }
+        }).disposed(by: disposeBag)
         
     }
     

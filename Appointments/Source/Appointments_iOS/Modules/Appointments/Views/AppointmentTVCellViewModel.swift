@@ -74,7 +74,11 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
         appointmentsSubject = BehaviorSubject(value: appointment)
         roomSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.roomNo)
         appointmentDescriptionSubject = BehaviorSubject(value: appointment.title)
-        staffSubject = BehaviorSubject(value: appointment.user?.fullName)
+        if appointment.userGroup != nil {
+            staffSubject = BehaviorSubject(value: appointment.userGroup?.name)
+        } else {
+            staffSubject = BehaviorSubject(value: appointment.user?.fullName)
+        }
         profileImageSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.profileImageRoute)
         nameSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.fullName)
         bindActions(appointment: appointment)

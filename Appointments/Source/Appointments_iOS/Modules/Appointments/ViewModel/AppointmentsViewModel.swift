@@ -29,6 +29,9 @@ protocol AppointmentsViewModelOutputs {
     var dateNavigatorTitle: Observable<String?> { get }
     var errorAlert: Observable<String> { get }
     var isLoading: Observable<Bool> { get }
+    var isResident: Observable<Bool> { get }
+    var residentName: Observable<String> { get }
+    var residentImage: Observable<String> { get }
 }
 
 protocol AppointmentsViewModelType {
@@ -58,7 +61,9 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     var errorAlert: Observable<String> { return errorAlertSubject.asObservable() }
     var isLoading: Observable<Bool> { return loadingSubject.asObservable() }
     var selectedAppointment: Observable<Appointment> { return selectedAppointmentSubject.asObservable() }
-    
+    var isResident: Observable<Bool> { return isResidentSubject.asObservable() }
+    var residentName: Observable<String> { return residentNameSubject.asObservable() }
+    var residentImage: Observable<String> { return residentImageSubject.asObservable() }
     //Mark: Private Properties
     
     private let previousDateSubject = PublishSubject<Void>()
@@ -81,15 +86,43 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     private let errorAlertSubject = PublishSubject<String>()
     private let sectionsSubject = BehaviorSubject<[(title: String, rows: [ReuseableCellViewModelType])]>(value: [])
     private let loadingSubject = BehaviorSubject<Bool>(value: false)
+    private let isResidentSubject = BehaviorSubject<Bool>(value: false)
+    private let residentImageSubject = BehaviorSubject<String>(value: "")
+    private let residentNameSubject = BehaviorSubject<String>(value: "")
     
     private let disposeBag = DisposeBag()
     private let facilityDataStore: FacilityDataStore
+    private let residentProvider: ResidentDataStore?
     private let appointmentsRepository: AppointmentRepository
     
     
     init(facilityDataStore: FacilityDataStore,
          appointmentsRepository: AppointmentRepository){
         
+        self.facilityDataStore = facilityDataStore
+        self.appointmentsRepository = appointmentsRepository
+        self.residentProvider = nil
+        self.datePickerSubject
+            .map {
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "EEEE, MMM dd, yyyy"
+                return dateFormatter.string(from: $0)
+            }
+            .bind(to: dateNavigatorTitleSubject)
+            .disposed(by: disposeBag)
+        
+        self.bindFetchAppointmentRequest()
+        self.bindAppointmentsToCellViewModel()
+        self.bindAppointmentsSorted()
+        self.bindActions()
+        
+    }
+    
+    init(facilityDataStore: FacilityDataStore,
+         appointmentsRepository: AppointmentRepository,
+         residentProvider: ResidentDataStore?){
+        
+        self.residentProvider = residentProvider
         self.facilityDataStore = facilityDataStore
         self.appointmentsRepository = appointmentsRepository
         
@@ -114,12 +147,26 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         let fetchRequest = self.refreshAppointmentsSubject
             .withLatestFrom(self.datePickerSubject)
             .flatMap { [weak self] date  -> Observable<Event<[Appointment]>> in
-                guard let self = self, let facilityID = self.facilityDataStore.currentFacility?["facility_id"] as? Int else { return .never() }
-                
+                guard let self = self, let facilityID = self.facilityDataStore.currentFacility?["id"] as? Int else { return .never() }
+                let residentId = self.residentProvider?.currentResident?["resident_id"] as? Int
                 self.loadingSubject.onNext(true)
-                return self.appointmentsRepository.getAppointments(for: facilityID,
-                                                                   date: date)
-                    .materialize()
+                
+                if residentId != nil {
+                    self.isResidentSubject.onNext(true)
+                    let residentName =  "\(self.residentProvider?.currentResident?["first_name"] as? String ?? "") \(self.residentProvider?.currentResident?["last_name"] as? String ?? "")"
+                    self.residentNameSubject.onNext(residentName)
+                    self.residentImageSubject.onNext(self.residentProvider?.currentResident?["profileImageRoute"] as? String ?? "")
+                    return self.appointmentsRepository.getAppointmentsForResident(for: facilityID,
+                                                                       residentID: residentId!,
+                                                                       date: date)
+                        .materialize()
+                }else {
+                    self.isResidentSubject.onNext(false)
+                    return self.appointmentsRepository.getAppointments(for: facilityID,
+                                                                       date: date)
+                        .materialize()
+                }
+                
             }
             .share()
             .do(onNext: {
@@ -132,7 +179,8 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
                 appointments in
                 self.appointmentsSubject.onNext(appointments)
                 let dateFormatterFromDate = DateFormatter()
-                dateFormatterFromDate.dateFormat = "MMMM dd 'at' h:mm a"
+                
+                dateFormatterFromDate.dateFormat = "MMMM dd'\(Date.getSuffixDate(date: appointments.first?.lastUpdatedTime ?? Date()))' 'at' h:mm a"
                 self.lastUpdatedLabelSubject.onNext("Last Updated: " + dateFormatterFromDate.string(from: appointments.first?.lastUpdatedTime ?? Date()))
             })
             .disposed(by: disposeBag)
