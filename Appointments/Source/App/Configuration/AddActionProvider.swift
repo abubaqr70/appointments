@@ -4,4 +4,5 @@ import Foundation
 
 public protocol AddActionProvider {
     func addAction(for navigationController: UINavigationController) -> UIBarButtonItem
+    func addActionAndBackAction(for navigationController: UINavigationController) -> [UIBarButtonItem]
 }

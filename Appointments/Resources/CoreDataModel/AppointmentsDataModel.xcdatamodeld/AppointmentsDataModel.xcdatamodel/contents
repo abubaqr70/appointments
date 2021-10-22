@@ -74,6 +74,9 @@
         <attribute name="userId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="ofUserGroup" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDUserGroup" inverseName="facilityGroupMembers" inverseEntity="CDUserGroup"/>
     </entity>
+    <entity name="CDLastUpdated" representedClassName="CDLastUpdated" syncable="YES">
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+    </entity>
     <entity name="CDStartDate" representedClassName="CDStartDate" syncable="YES">
         <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="timeString" optional="YES" attributeType="String"/>
@@ -98,5 +101,6 @@
         <element name="CDFacilityGroupMembers" positionX="36" positionY="198" width="128" height="104"/>
         <element name="CDStartDate" positionX="-18" positionY="171" width="128" height="74"/>
         <element name="CDUserGroup" positionX="0" positionY="180" width="128" height="134"/>
+        <element name="CDLastUpdated" positionX="-18" positionY="144" width="128" height="44"/>
     </elements>
 </model>

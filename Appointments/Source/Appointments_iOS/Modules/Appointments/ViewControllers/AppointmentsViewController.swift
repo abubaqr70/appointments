@@ -13,6 +13,14 @@ public class AppointmentsViewController: UIViewController {
         }
     }
     
+    fileprivate lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.translatesAutoresizingMaskIntoConstraints = false
+        refreshControl.tintColor = UIColor.black
+        refreshControl.attributedTitle = NSAttributedString(string: "Syncing data, please wait.")
+        return refreshControl
+    }()
+    
     fileprivate lazy var nameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -36,13 +44,12 @@ public class AppointmentsViewController: UIViewController {
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 200, height: 40))
         button.setTitle("APPOINTMENTS", for: .normal)
         button.setTitleColor(UIColor.appSkyBlue, for: .normal)
-        button.titleLabel?.font = UIFont.appFont(withStyle: .title3, size: 12)
+        button.titleLabel?.font = UIFont.appFont(withStyle: .title3, size: 14)
         button.semanticContentAttribute = UIApplication.shared
             .userInterfaceLayoutDirection == .rightToLeft ? .forceLeftToRight : .forceRightToLeft
         button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 0)
         button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 5)
         button.setImage(UIImage.moduleImage(named: "icon_arrowdown"), for: .normal)
-        button.setImage(UIImage.moduleImage(named: "icon_arrowup"), for: .selected)
         return button
     }()
     
@@ -84,7 +91,7 @@ public class AppointmentsViewController: UIViewController {
     }()
     
     fileprivate lazy var profileView : UIView = {
-       let view = UIView()
+        let view = UIView()
         view.backgroundColor = .clear
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -145,6 +152,7 @@ extension AppointmentsViewController{
         self.view.addSubview(lastUpdatedLabel)
         self.view.addSubview(pageNavigator)
         self.view.addSubview(tableView)
+        self.tableView.addSubview(refreshControl)
         view.backgroundColor = .white
     }
     
@@ -166,7 +174,7 @@ extension AppointmentsViewController{
     private func setupConstraints() {
         
         let safeArea = view.safeAreaLayoutGuide
-                
+        
         NSLayoutConstraint.activate([
             nameLabel.topAnchor.constraint(equalTo: profileView.topAnchor, constant: 10),
             nameLabel.leadingAnchor.constraint(equalTo: profileImage.trailingAnchor, constant: 10),
@@ -228,6 +236,8 @@ extension AppointmentsViewController{
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
     }
     
+    
+    
 }
 
 extension AppointmentsViewController{
@@ -262,6 +272,10 @@ extension AppointmentsViewController{
             .bind(to: lastUpdatedLabel.rx.text)
             .disposed(by: disposeBag)
         
+        viewModel.outputs.isRefreshing
+            .bind(to: refreshControl.rx.isRefreshing)
+            .disposed(by: disposeBag)
+        
         viewModel.outputs.isResident.subscribe(onNext: {
             isResident in
             if isResident {
@@ -285,10 +299,13 @@ extension AppointmentsViewController{
                             ])
                     })
                     .disposed(by: self.disposeBag)
-                
+                self.titleButton.setTitleColor(UIColor.black, for: .normal)
+                self.titleButton.setImage(nil, for: .normal)
             }else {
                 self.profileView.isHidden = true
                 self.segmentControl.isHidden = false
+                self.titleButton.setTitleColor(UIColor.appSkyBlue, for: .normal)
+                self.titleButton.setImage(UIImage.moduleImage(named: "icon_arrowdown"), for: .normal)
             }
         }).disposed(by: disposeBag)
         
@@ -323,6 +340,11 @@ extension AppointmentsViewController{
         pageNavigator.dateSubject
             .bind(to: viewModel.inputs.datePickerObserver)
             .disposed(by: disposeBag)
+        
+        refreshControl.rx.controlEvent(.valueChanged)
+            .subscribe(onNext: {
+                viewModel.inputs.refreshControl.onNext(Void())
+            }).disposed(by: disposeBag)
         
     }
     

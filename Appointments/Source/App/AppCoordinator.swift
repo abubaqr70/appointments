@@ -42,32 +42,44 @@ public class AppCoordinator: Coordinator<ResultType<Void>> {
     private let navigationType: NavigationType
     private let factory: AppointmentsFactory
     private var rootNavigationController: UINavigationController?
-  
+    private let addActionProvider: AddActionProvider?
+    private let filterActionProvider: FilterActionProvider?
+    private let residentProvider: ResidentDataStore?
+    
     init(root: UIViewController,
          navigationType: NavigationType,
-         factory: AppointmentsFactory) {
+         factory: AppointmentsFactory,
+         addActionProvider: AddActionProvider?,
+         filterActionProvider: FilterActionProvider?,
+         residentProvider: ResidentDataStore?) {
         self.root = root
         self.navigationType = navigationType
         self.factory = factory
-
+        self.addActionProvider = addActionProvider
+        self.filterActionProvider = filterActionProvider
+        self.residentProvider = residentProvider
     }
     
     public override func start() -> Observable<ResultType<Void>> {
-        let viewModel = self.factory.makeAppointmentsViewModel()
+        let viewModel = self.factory.makeAppointmentsViewModel(residentProvider: residentProvider)
         let viewController = self.factory.makeAppointmentsViewController(viewModel: viewModel)
-    
         self.bindAppointmentViewModel(viewModel: viewModel)
         if navigationType != .push {
             
             let navigationController = UINavigationController(rootViewController: viewController)
             navigationController.modalPresentationStyle = .fullScreen
             self.rootNavigationController = navigationController
-        
+            viewController.navigationItem.rightBarButtonItem = filterActionProvider?.filterAction(for: self.rootNavigationController ?? UINavigationController())
+            viewController.navigationItem.leftBarButtonItem = addActionProvider?.addAction(for: self.rootNavigationController ?? UINavigationController())
             self.navigationType.navigate(to: navigationController, root: self.root)
             
         } else {
-            
-            self.navigationType.navigate(to: viewController, root: self.root)
+            if let root = root as? UINavigationController {
+                viewController.navigationItem.leftBarButtonItems = addActionProvider?.addActionAndBackAction(for: root)
+                self.navigationType.navigate(to: viewController, root: self.root)
+            } else {
+                fatalError("Pushing viewController on non navigation controller")
+            }
         }
        
         return result
@@ -91,7 +103,7 @@ public class AppCoordinator: Coordinator<ResultType<Void>> {
 
 protocol AppointmentsFactory {
     func makeAppointmentsViewController(viewModel: AppointmentsViewModelType) -> AppointmentsViewController
-    func makeAppointmentsViewModel() -> AppointmentsViewModelType
+    func makeAppointmentsViewModel(residentProvider: ResidentDataStore?) -> AppointmentsViewModelType
     func makeAppointmentViewController(viewModel: AppointmentViewModelType) -> AppointmentViewController
     func makeAppointmentViewModel(appointment: Appointment) -> AppointmentViewModelType
 }
