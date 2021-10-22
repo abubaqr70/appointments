@@ -95,7 +95,16 @@ public class AppCoordinator: Coordinator<ResultType<Void>> {
     func navigateToDetail(appointment: Appointment) {
         let viewModel = self.factory.makeAppointmentViewModel(appointment: appointment)
         let viewController = self.factory.makeAppointmentViewController(viewModel: viewModel)
-        self.rootNavigationController?.pushViewController(viewController, animated: true)
+        if navigationType != .push {
+            self.rootNavigationController?.pushViewController(viewController, animated: true)
+        } else {
+            if let root = root as? UINavigationController {
+                root.pushViewController(viewController, animated: true)
+            } else {
+                fatalError("Pushing viewController on non navigation controller")
+            }
+        }
+        
     }
     
 }
