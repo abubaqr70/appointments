@@ -3,7 +3,8 @@
 import Foundation
 
 public protocol FilterActionProvider {
-    func filterAction(for navigationController: UINavigationController) -> UIBarButtonItem
+    func addNavigation(for navigationController: UINavigationController)
     func isFiltersApplied() -> Bool
     func memberIDsForSelectedFilters() -> [Int]
+    func filterButtonAction()
 }

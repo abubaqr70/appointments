@@ -91,14 +91,16 @@ import Foundation
         return FilterAppointmentsViewController(viewModel: viewModel)
     }
     
-    func makeAppointmentsViewModel(residentProvider: ResidentDataStore?) -> AppointmentsViewModelType {
+    func makeAppointmentsViewModel(residentProvider: ResidentDataStore?,filterActionProvider: FilterActionProvider?) -> AppointmentsViewModelType {
         if residentProvider != nil {
             return AppointmentsViewModel(facilityDataStore: self.facilityDataStore,
                                          appointmentsRepository: self.repository,
-                                         residentProvider: residentProvider)
+                                         residentProvider: residentProvider,
+                                         filterActionProvider: filterActionProvider)
         }  else {
             return AppointmentsViewModel(facilityDataStore: self.facilityDataStore,
-                                         appointmentsRepository: self.repository)
+                                         appointmentsRepository: self.repository,
+                                         filterActionProvider: filterActionProvider)
         }
         
     }

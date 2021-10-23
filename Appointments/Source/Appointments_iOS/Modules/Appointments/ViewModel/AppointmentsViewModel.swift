@@ -35,6 +35,7 @@ protocol AppointmentsViewModelOutputs {
     var isResident: Observable<Bool> { get }
     var residentName: Observable<String> { get }
     var residentImage: Observable<String> { get }
+    var isFilterApplied: Observable<Bool> { get }
 }
 
 protocol AppointmentsViewModelType {
@@ -43,7 +44,7 @@ protocol AppointmentsViewModelType {
 }
 
 class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInputs, AppointmentsViewModelOutputs {
-    
+   
     var inputs: AppointmentsViewModelInputs { return self }
     var outputs: AppointmentsViewModelOutputs { return self }
     
@@ -65,11 +66,12 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     var errorAlert: Observable<String> { return errorAlertSubject.asObservable() }
     var isLoading: Observable<Bool> { return loadingSubject.asObservable() }
     var selectedAppointment: Observable<Appointment> { return selectedAppointmentSubject.asObservable() }
-    var filterAppointments: Observable<Void> { return filterAppointmentsSubject.asObservable() }
+    var sections: Observable<[(title: String, rows: [ReuseableCellViewModelType])]> { return sectionsSubject.asObservable() }
     var isResident: Observable<Bool> { return isResidentSubject.asObservable() }
     var isRefreshing: Observable<Bool> { return isRefreshingSubject.asObservable() }
     var residentName: Observable<String> { return residentNameSubject.asObservable() }
     var residentImage: Observable<String> { return residentImageSubject.asObservable() }
+    var isFilterApplied: Observable<Bool> { return isFilterAppliedSubject.asObservable() }
     
     //Mark: Private Properties
     
@@ -84,6 +86,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     
     private let sortedAppointmentsSubject = BehaviorSubject<[Appointment]>(value: [])
     private let mappedAppointmentsSubject = BehaviorSubject<[Appointment]>(value: [])
+    private let filteredAppointmentsSubject = BehaviorSubject<[Appointment]>(value: [])
     private let appointmentsSubject = BehaviorSubject<[Appointment]>(value: [])
     private let selectedAppointmentSubject = PublishSubject<Appointment>()
     private let lastUpdatedLabelSubject = BehaviorSubject<String?>(value: "")
@@ -100,18 +103,22 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     private let isRefreshingSubject = BehaviorSubject<Bool>(value: false)
     private let residentImageSubject = BehaviorSubject<String>(value: "")
     private let residentNameSubject = BehaviorSubject<String>(value: "")
+    private let isFilterAppliedSubject = BehaviorSubject<Bool>(value: false)
     
     private let disposeBag = DisposeBag()
     private let facilityDataStore: FacilityDataStore
     private let residentProvider: ResidentDataStore?
     private let appointmentsRepository: AppointmentRepository
+    private let filterActionProvider: FilterActionProvider?
     
     
     init(facilityDataStore: FacilityDataStore,
-         appointmentsRepository: AppointmentRepository){
+         appointmentsRepository: AppointmentRepository,
+         filterActionProvider: FilterActionProvider?){
         
         self.facilityDataStore = facilityDataStore
         self.appointmentsRepository = appointmentsRepository
+        self.filterActionProvider = filterActionProvider
         self.residentProvider = nil
         self.datePickerSubject
             .map {
@@ -131,11 +138,13 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     
     init(facilityDataStore: FacilityDataStore,
          appointmentsRepository: AppointmentRepository,
-         residentProvider: ResidentDataStore?){
+         residentProvider: ResidentDataStore?,
+         filterActionProvider: FilterActionProvider?){
         
-        self.residentProvider = residentProvider
         self.facilityDataStore = facilityDataStore
         self.appointmentsRepository = appointmentsRepository
+        self.filterActionProvider = filterActionProvider
+        self.residentProvider = nil
         
         self.datePickerSubject
             .map {
@@ -159,26 +168,15 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         let fetchRequest = self.refreshAppointmentsSubject
             .withLatestFrom(self.datePickerSubject)
             .flatMap { [weak self] date -> Observable<Event<([Appointment],Date?)>> in
-                guard let self = self, let facilityID = self.facilityDataStore.currentFacility?["facility_id"] as? Int else { return .never() }
+                guard let self = self, let facilityID = self.facilityDataStore.currentFacility?["id"] as? Int else { return .never() }
+                self.isFilterAppliedSubject.onNext(self.filterActionProvider?.isFiltersApplied() ?? false)
                 self.loadingSubject.onNext(true)
                 let residentId = self.residentProvider?.currentResident?["resident_id"] as? Int
                 if residentId != nil {
-                    self.isResidentSubject.onNext(true)
-                    let residentName =  "\(self.residentProvider?.currentResident?["first_name"] as? String ?? "") \(self.residentProvider?.currentResident?["last_name"] as? String ?? "")"
-                    self.residentNameSubject.onNext(residentName)
-                    self.residentImageSubject.onNext(self.residentProvider?.currentResident?["profileImageRoute"] as? String ?? "")
-                    return self.appointmentsRepository.getAppointmentsForResident(for: facilityID,
-                                                                                  residentID: residentId!,
-                                                                                  date: date)
-                        .materialize()
+                    return self.bindappointmentsForResident(date: date, facilityID: facilityID, residentId: residentId!)
                 }else {
-                    self.isResidentSubject.onNext(false)
-                    return self.appointmentsRepository.getAppointments(for: facilityID,
-                                                                       date: date)
-                        .materialize()
+                    return self.bindAppointmentsForTab(date: date, facilityID: facilityID)
                 }
-                
-                
             }
             .share()
             .do(onNext: {
@@ -222,6 +220,24 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         
     }
     
+    func bindAppointmentsForTab(date: Date, facilityID: Int) -> Observable<Event<([Appointment],Date?)>>{
+        self.isResidentSubject.onNext(false)
+        return self.appointmentsRepository.getAppointments(for: facilityID,
+                                                           date: date)
+            .materialize()
+    }
+    
+    func bindappointmentsForResident(date: Date, facilityID: Int, residentId: Int) -> Observable<Event<([Appointment],Date?)>>{
+        self.isResidentSubject.onNext(true)
+        let residentName =  "\(self.residentProvider?.currentResident?["first_name"] as? String ?? "") \(self.residentProvider?.currentResident?["last_name"] as? String ?? "")"
+        self.residentNameSubject.onNext(residentName)
+        self.residentImageSubject.onNext(self.residentProvider?.currentResident?["profileImageRoute"] as? String ?? "")
+        return self.appointmentsRepository.getAppointmentsForResident(for: facilityID,
+                                                                      residentID: residentId,
+                                                                      date: date)
+            .materialize()
+    }
+    
     func bindAppointmentsSorted(){
         
         self.appointmentsSubject.map{ appointments -> [Appointment] in
@@ -238,7 +254,19 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         .bind(to: mappedAppointmentsSubject)
         .disposed(by: disposeBag)
         
-        Observable.combineLatest(mappedAppointmentsSubject, segmentControlSubject)
+        self.mappedAppointmentsSubject.map{ appointments -> [Appointment] in
+            if self.filterActionProvider?.isFiltersApplied() ?? false {
+                return appointments.filter{
+                    appointment in
+                    self.filterActionProvider?.memberIDsForSelectedFilters().contains(appointment.appointmentAttendance?.first?.residentId ?? 0) ?? false
+                }
+            } else {
+                return appointments
+            }
+        }.bind(to: filteredAppointmentsSubject)
+        .disposed(by: disposeBag)
+        
+        Observable.combineLatest(filteredAppointmentsSubject, segmentControlSubject)
             .map{ appointment , segment -> [Appointment] in
                 if segment == 0 {
                     return appointment
@@ -303,6 +331,7 @@ extension AppointmentsViewModel {
         filterSubject
             .subscribe(onNext: { _ in
                 print("Filter Tap ")
+                self.filterActionProvider?.filterButtonAction()
             })
             .disposed(by: disposeBag)
         

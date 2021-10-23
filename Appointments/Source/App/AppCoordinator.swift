@@ -61,7 +61,8 @@ public class AppCoordinator: Coordinator<ResultType<Void>> {
     }
     
     public override func start() -> Observable<ResultType<Void>> {
-        let viewModel = self.factory.makeAppointmentsViewModel(residentProvider: residentProvider)
+        let viewModel = self.factory.makeAppointmentsViewModel(residentProvider: residentProvider,
+                                                               filterActionProvider: filterActionProvider)
         let viewController = self.factory.makeAppointmentsViewController(viewModel: viewModel)
         self.bindAppointmentViewModel(viewModel: viewModel)
         if navigationType != .push {
@@ -69,7 +70,7 @@ public class AppCoordinator: Coordinator<ResultType<Void>> {
             let navigationController = UINavigationController(rootViewController: viewController)
             navigationController.modalPresentationStyle = .fullScreen
             self.rootNavigationController = navigationController
-            viewController.navigationItem.rightBarButtonItem = filterActionProvider?.filterAction(for: self.rootNavigationController ?? UINavigationController())
+            self.filterActionProvider?.addNavigation(for: self.rootNavigationController ?? UINavigationController())
             viewController.navigationItem.leftBarButtonItem = addActionProvider?.addAction(for: self.rootNavigationController ?? UINavigationController())
             self.navigationType.navigate(to: navigationController, root: self.root)
             
@@ -81,7 +82,7 @@ public class AppCoordinator: Coordinator<ResultType<Void>> {
                 fatalError("Pushing viewController on non navigation controller")
             }
         }
-       
+        
         return result
     }
     
@@ -90,7 +91,7 @@ public class AppCoordinator: Coordinator<ResultType<Void>> {
             guard let appointment = appointment.element else {return}
             self.navigateToDetail(appointment: appointment)
         }).disposed(by: disposeBag)
-    
+        
         viewModel.outputs.filterAppointments.subscribe(onNext: {
             self.presentFilterAppointments()
         }).disposed(by: disposeBag)
@@ -118,6 +119,10 @@ public class AppCoordinator: Coordinator<ResultType<Void>> {
         let navigationController = UINavigationController(rootViewController: viewController)
         navigationController.modalPresentationStyle = .fullScreen
         self.rootNavigationController?.present(navigationController, animated: true, completion: nil)
+        
+        viewModel.outputs.filterAppointments.subscribe(onNext: {
+            self.rootNavigationController?.dismiss(animated: true, completion: nil)
+        }).disposed(by: disposeBag)
     }
     
 }
@@ -125,7 +130,7 @@ public class AppCoordinator: Coordinator<ResultType<Void>> {
 
 protocol AppointmentsFactory {
     func makeAppointmentsViewController(viewModel: AppointmentsViewModelType) -> AppointmentsViewController
-    func makeAppointmentsViewModel(residentProvider: ResidentDataStore?) -> AppointmentsViewModelType
+    func makeAppointmentsViewModel(residentProvider: ResidentDataStore?,filterActionProvider: FilterActionProvider?) -> AppointmentsViewModelType
     func makeAppointmentViewController(viewModel: AppointmentViewModelType) -> AppointmentViewController
     func makeAppointmentViewModel(appointment: Appointment) -> AppointmentViewModelType
     func makeFilterAppointmentsViewController(viewModel: FilterAppointmentsViewModelType) -> FilterAppointmentsViewController
@@ -133,5 +138,5 @@ protocol AppointmentsFactory {
 }
 
 extension AppDependencyContainer: AppointmentsFactory {
-
+    
 }

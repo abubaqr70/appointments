@@ -13,6 +13,24 @@ public class AppointmentsViewController: UIViewController {
         }
     }
     
+    fileprivate lazy var filterBarButtonItem: UIBarButtonItem = {
+        let item = UIBarButtonItem(title: "Filter",
+                                   style: .plain,
+                                   target: self,
+                                   action: #selector(filterButtonAction))
+        return item
+    }()
+    
+    fileprivate lazy var filteredBarButtonItem: UIBarButtonItem = {
+        let image = UIImage(named: "filtered")?.withRenderingMode(.alwaysOriginal)
+        let item = UIBarButtonItem(image: image,
+                                   style: .plain,
+                                   target: self,
+                                   action: #selector(filterButtonAction))
+        return item
+        
+    }()
+    
     fileprivate lazy var refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
         refreshControl.translatesAutoresizingMaskIntoConstraints = false
@@ -129,6 +147,10 @@ public class AppointmentsViewController: UIViewController {
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.viewModel.inputs.viewWillAppear.onNext(Void())
+    }
+    
+    @objc func filterButtonAction(){
+        self.viewModel.inputs.filterObserver.onNext(Void())
     }
     
 }
@@ -261,6 +283,16 @@ extension AppointmentsViewController{
         bindErrorAlert(viewModel: viewModel)
     }
     
+    private func bindLeftBarButton(viewModel : AppointmentsViewModelType){
+        viewModel.outputs.isFilterApplied.subscribe(onNext: { isFilterApplied in
+            if isFilterApplied {
+                self.navigationItem.rightBarButtonItem = self.filteredBarButtonItem
+            } else {
+                self.navigationItem.rightBarButtonItem = self.filterBarButtonItem
+            }
+        }).disposed(by: disposeBag)
+    }
+    
     private func bindtextField(viewModel : AppointmentsViewModelType){
         
         viewModel.outputs.dateNavigatorTitle
@@ -279,36 +311,44 @@ extension AppointmentsViewController{
         viewModel.outputs.isResident.subscribe(onNext: {
             isResident in
             if isResident {
-                self.profileView.isHidden = false
-                self.segmentControl.isHidden = true
-                
-                self.viewModel.outputs.residentName
-                    .bind(to: self.nameLabel.rx.text)
-                    .disposed(by: self.disposeBag)
-                
-                self.viewModel.outputs.residentImage
-                    .subscribe(onNext: { [weak self] url in
-                        guard let self = self else { return }
-                        self.profileImage.kf.indicatorType = .activity
-                        self.profileImage.kf.setImage(
-                            with: URL(string: url),
-                            placeholder: UIImage.moduleImage(named: "image_profile_placeholder"),
-                            options: [
-                                .transition(.fade(1)),
-                                .cacheOriginalImage
-                            ])
-                    })
-                    .disposed(by: self.disposeBag)
-                self.titleButton.setTitleColor(UIColor.black, for: .normal)
-                self.titleButton.setImage(nil, for: .normal)
+                self.isResident(viewModel: viewModel)
             }else {
-                self.profileView.isHidden = true
-                self.segmentControl.isHidden = false
-                self.titleButton.setTitleColor(UIColor.appSkyBlue, for: .normal)
-                self.titleButton.setImage(UIImage.moduleImage(named: "icon_arrowdown"), for: .normal)
+                self.ifNotResident(viewModel: viewModel)
             }
         }).disposed(by: disposeBag)
         
+    }
+    private func isResident(viewModel : AppointmentsViewModelType) {
+        self.profileView.isHidden = false
+        self.segmentControl.isHidden = true
+        
+        self.viewModel.outputs.residentName
+            .bind(to: self.nameLabel.rx.text)
+            .disposed(by: self.disposeBag)
+        
+        self.viewModel.outputs.residentImage
+            .subscribe(onNext: { [weak self] url in
+                guard let self = self else { return }
+                self.profileImage.kf.indicatorType = .activity
+                self.profileImage.kf.setImage(
+                    with: URL(string: url),
+                    placeholder: UIImage.moduleImage(named: "image_profile_placeholder"),
+                    options: [
+                        .transition(.fade(1)),
+                        .cacheOriginalImage
+                    ])
+            })
+            .disposed(by: self.disposeBag)
+        self.titleButton.setTitleColor(UIColor.black, for: .normal)
+        self.titleButton.setImage(nil, for: .normal)
+    }
+    
+    private func ifNotResident(viewModel : AppointmentsViewModelType){
+        self.profileView.isHidden = true
+        self.segmentControl.isHidden = false
+        self.titleButton.setTitleColor(UIColor.appSkyBlue, for: .normal)
+        self.titleButton.setImage(UIImage.moduleImage(named: "icon_arrowdown"), for: .normal)
+        self.bindLeftBarButton(viewModel: viewModel)
     }
     
     private func bindActions(viewModel : AppointmentsViewModelType){
@@ -324,15 +364,7 @@ extension AppointmentsViewController{
         titleButton.rx.tap
             .bind(to: viewModel.inputs.appointmentFilterObserver)
             .disposed(by: disposeBag)
-        
-        titleButton.rx.tap
-            .map { [weak self] _ in
-                guard let self = self else { return false }
-                return !self.titleButton.isSelected
-            }
-            .bind(to: titleButton.rx.isSelected)
-            .disposed(by: disposeBag)
-        
+    
         segmentControl.rx.selectedSegmentIndex
             .bind(to: viewModel.inputs.segmentControlObserver)
             .disposed(by: disposeBag)

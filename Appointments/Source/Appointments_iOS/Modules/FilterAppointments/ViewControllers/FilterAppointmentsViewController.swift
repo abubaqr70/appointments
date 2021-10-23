@@ -10,7 +10,7 @@ class FilterAppointmentsViewController: UIViewController {
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 200, height: 40))
         button.setTitle("APPOINTMENTS", for: .normal)
         button.setTitleColor(UIColor.appSkyBlue, for: .normal)
-        button.titleLabel?.font = UIFont.appFont(withStyle: .title3, size: 12)
+        button.titleLabel?.font = UIFont.appFont(withStyle: .title3, size: 14)
         button.semanticContentAttribute = UIApplication.shared
             .userInterfaceLayoutDirection == .rightToLeft ? .forceLeftToRight : .forceRightToLeft
         button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 0)
@@ -56,7 +56,7 @@ class FilterAppointmentsViewController: UIViewController {
         tableView.rx.setDelegate(self).disposed(by: disposeBag)
         tableView.rx.setDataSource(self).disposed(by: disposeBag)
     }
- 
+    
     
 }
 extension FilterAppointmentsViewController{
@@ -65,6 +65,7 @@ extension FilterAppointmentsViewController{
         setupViews()
         setupConstraints()
         registersCells()
+        bind(viewModel: viewModel)
     }
     
     private func setupViews() {
@@ -84,7 +85,7 @@ extension FilterAppointmentsViewController{
             clearButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
             clearButton.heightAnchor.constraint(equalToConstant: 40)
         ])
-                
+        
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: clearButton.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
@@ -111,6 +112,21 @@ extension FilterAppointmentsViewController{
     
 }
 
+extension FilterAppointmentsViewController{
+    
+    private func bind(viewModel : FilterAppointmentsViewModelType) {
+        bindActions(viewModel: viewModel)
+    }
+    
+    private func bindActions(viewModel : FilterAppointmentsViewModelType){
+        
+        titleButton.rx.tap
+            .bind(to: viewModel.inputs.appointmentFilterObserver)
+            .disposed(by: disposeBag)
+        
+    }
+    
+}
 extension FilterAppointmentsViewController: UITableViewDelegate,UITableViewDataSource {
     
     public func numberOfSections(in tableView: UITableView) -> Int {
@@ -123,7 +139,7 @@ extension FilterAppointmentsViewController: UITableViewDelegate,UITableViewDataS
         }else {
             return 3
         }
-       
+        
     }
     
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -141,7 +157,7 @@ extension FilterAppointmentsViewController: UITableViewDelegate,UITableViewDataS
         guard let cell = tableView.dequeueReusableCell(withIdentifier: FilterAppointmentsTableViewCell.reuseIdentifier, for: indexPath) as? FilterAppointmentsTableViewCell else {
             return UITableViewCell()
         }
-    
+        
         return cell
         
     }
