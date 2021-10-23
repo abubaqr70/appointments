@@ -26,6 +26,22 @@ extension Date {
         components.second = -1
         return Calendar.current.date(byAdding: components, to: Date.startOfDay(date: date)) ?? Date ()
     }
+  
+    static func getSuffixDate(date: Date) -> String{
+        let calendar = Calendar.current
+        let day = calendar.component(.day, from: date)
+   
+        switch day {
+        case 11...13: return "th"
+        default:
+            switch day % 10 {
+            case 1: return "st"
+            case 2: return "nd"
+            case 3: return "rd"
+            default: return "th"
+            }
+        }
+    }
     
 }
 

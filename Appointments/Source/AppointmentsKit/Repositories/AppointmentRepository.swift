@@ -18,10 +18,10 @@ class AppointmentRepository {
         self.reachabilityService = ReachabilityService()
         self.isSyncing = false
     }
-    
+        
     //Mark:- Fetch Appointments with facilityID and date
     func getAppointments(for facilityID: Int,
-                         date: Date) -> Observable<[Appointment]> {
+                         date: Date) ->  Observable<([Appointment],Date?)> {
         
         return Observable.create { [weak self] observer in
             
@@ -33,7 +33,7 @@ class AppointmentRepository {
             
             //Mark:- Internet Connected
             case .connected:
-                observer.onNext(self.dataStore.fetchAppointments(startDate: Date.startOfDay(date: date)))
+                observer.onNext((self.dataStore.fetchAppointments(startDate: Date.startOfDay(date: date)),self.dataStore.fetchLastUpdated()))
                 let appointments = self.dataStore.fetchAppointmentsSyncedFalse()
                 if appointments.count >= 1 {
                     
@@ -47,19 +47,73 @@ class AppointmentRepository {
                                 print(error.localizedDescription)
                             case .success (_):
                                 print("success")
-                                self.fetchAppointmentsFromServer(date: date, observer: observer, facilityID: facilityID)
+                                self.fetchAppointmentsFromServer(date: date, observer: observer, facilityID: facilityID, residentId: nil)
                             }
                         }
                     }else{
-                        observer.onNext(self.dataStore.fetchAppointments(startDate: Date.startOfDay(date: date)))
+                        
+                        observer.onNext((self.dataStore.fetchAppointments(startDate: Date.startOfDay(date: date)),self.dataStore.fetchLastUpdated()))
                     }
                 }else {
-                    self.fetchAppointmentsFromServer(date: date, observer: observer, facilityID: facilityID)
+                    self.fetchAppointmentsFromServer(date: date, observer: observer, facilityID: facilityID, residentId: nil)
                 }
                 
             //Mark:- Internet Disconnected
             case .disconnected:
-                observer.onNext(self.dataStore.fetchAppointments(startDate: Date.startOfDay(date: date)))
+                
+                observer.onNext((self.dataStore.fetchAppointments(startDate: Date.startOfDay(date: date)),self.dataStore.fetchLastUpdated()))
+            }
+            
+            return Disposables.create()
+        }
+    }
+    
+    //Mark:- Fetch Appointments with facilityID, residentId and date
+    func getAppointmentsForResident(for facilityID: Int,
+                                    residentID: Int,
+                                    date: Date) -> Observable<([Appointment],Date?)> {
+        
+        return Observable.create { [weak self] observer in
+            
+            guard let self = self else { return Disposables.create() }
+            
+            //Mark:- Checking Internet Connection
+            let reachability = self.reachabilityService.reachabilityType
+            switch reachability {
+            
+            //Mark:- Internet Connected
+            case .connected:
+              
+                observer.onNext((self.dataStore.fetchAppointmentsForResident(residentID: residentID, startDate: Date.startOfDay(date: date)),self.dataStore.fetchLastUpdated()))
+                let appointments = self.dataStore.fetchAppointmentsSyncedFalse()
+                if appointments.count >= 1 {
+                    
+                    //Mark:- Sync Appointments from server
+                    if self.isSyncing == false {
+                        self.syncData() {
+                            (result: Result<Void,Error>) in
+                            self.isSyncing = false
+                            switch result {
+                            case .failure (let error) :
+                                print(error.localizedDescription)
+                            case .success (_):
+                                print("success")
+                                self.fetchAppointmentsFromServer(date: date, observer: observer, facilityID: facilityID, residentId: residentID)
+                            }
+                        }
+                    }else{
+            
+                        observer.onNext((self.dataStore.fetchAppointmentsForResident(residentID: residentID, startDate: Date.startOfDay(date: date)),self.dataStore.fetchLastUpdated()))
+                    }
+                }else {
+                    self.fetchAppointmentsFromServer(date: date, observer: observer, facilityID: facilityID, residentId: residentID)
+                }
+                
+            //Mark:- Internet Disconnected
+            case .disconnected:
+                
+                observer.onNext((self.dataStore.fetchAppointmentsForResident(residentID: residentID, startDate: Date.startOfDay(date: date)),self.dataStore.fetchLastUpdated()))
+                
             }
             
             return Disposables.create()
@@ -67,7 +121,7 @@ class AppointmentRepository {
     }
     
     //Mark:- Fetch Appointments from server
-    func fetchAppointmentsFromServer(date : Date, observer : AnyObserver<[Appointment]>, facilityID: Int) {
+    func fetchAppointmentsFromServer(date : Date, observer : AnyObserver<([Appointment],Date?)>, facilityID: Int, residentId: Int?) {
         
         //Mark:- Appointments Service fetching appointments
         self.appointmentService.getAppointments(for: facilityID,
@@ -86,15 +140,24 @@ class AppointmentRepository {
                 if exist {
                     self.deleteAppointments(with: Date.startOfMonth(date: date), with: Date.endOfMonth(date: date))
                 }
+                try? self.dataStore.deleteLastUpdated()
                 
                 //Mark:- Saving appointments for that month
                 let updatedTime: Date = Date()
+                self.dataStore.saveLastUpdated(updatedTime)
+                
                 for appointment in appointments {
                     self.dataStore.saveAppointment(appointment,updatedTime)
                 }
                 
                 //Mark:- Returning appointments for that day
-                observer.onNext(self.dataStore.fetchAppointments(startDate: Date.startOfDay(date: date)))
+                if residentId != nil {
+
+                    observer.onNext((self.dataStore.fetchAppointmentsForResident(residentID: residentId ?? 0, startDate: Date.startOfDay(date: date)),self.dataStore.fetchLastUpdated()))
+                } else {
+                   
+                    observer.onNext((self.dataStore.fetchAppointments(startDate: Date.startOfDay(date: date)),self.dataStore.fetchLastUpdated()))
+                }
                 observer.onCompleted()
             }
         }

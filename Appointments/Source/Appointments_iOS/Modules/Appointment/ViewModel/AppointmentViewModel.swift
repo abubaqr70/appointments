@@ -96,9 +96,17 @@ class AppointmentViewModel: AppointmentViewModelType, AppointmentViewModelInputs
         
         appointmentsSubject
             .map { appointments -> NSMutableAttributedString in
-                let attributedString = NSMutableAttributedString(string: "Staff: \(appointments.user?.fullName ?? "")", attributes: [
-                    .font: UIFont.appFont(withStyle: .title3, size: 14)
-                ])
+                var attributedString = NSMutableAttributedString()
+                if appointments.userGroup != nil {
+                    attributedString = NSMutableAttributedString(string: "Staff: \(appointments.userGroup?.name ?? "")", attributes: [
+                        .font: UIFont.appFont(withStyle: .title3, size: 14)
+                    ])
+                } else {
+                    attributedString = NSMutableAttributedString(string: "Staff: \(appointments.user?.fullName ?? "")", attributes: [
+                        .font: UIFont.appFont(withStyle: .title3, size: 14)
+                    ])
+                }
+               
                 attributedString.addAttribute(.font, value: UIFont.appFont(withStyle: .subhead, size: 14), range: NSRange(location: 0, length: 6))
                 return attributedString
             }

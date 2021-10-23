@@ -15,7 +15,8 @@ protocol AppointmentsViewModelInputs {
     var filterObserver: AnyObserver<Void> { get }
     var selectAppointment: AnyObserver<Appointment> { get }
     var viewWillAppear: AnyObserver<Void> { get }
-   
+    var refreshControl: AnyObserver<Void> { get }
+    
 }
 
 protocol AppointmentsViewModelOutputs {
@@ -30,6 +31,10 @@ protocol AppointmentsViewModelOutputs {
     var errorAlert: Observable<String> { get }
     var isLoading: Observable<Bool> { get }
     var filterAppointments: Observable<Void> { get }
+    var isRefreshing: Observable<Bool> { get }
+    var isResident: Observable<Bool> { get }
+    var residentName: Observable<String> { get }
+    var residentImage: Observable<String> { get }
 }
 
 protocol AppointmentsViewModelType {
@@ -51,15 +56,20 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     var filterObserver: AnyObserver<Void> { return filterSubject.asObserver() }
     var selectAppointment: AnyObserver<Appointment> { return selectAppointmentSubject.asObserver() }
     var viewWillAppear: AnyObserver<Void> { return refreshAppointmentsSubject.asObserver() }
+    var refreshControl: AnyObserver<Void> { return refreshControlSubject.asObserver() }
     
     //Mark: Outputs
     var lastUpdatedLabel: Observable<String?> { return  lastUpdatedLabelSubject.asObservable() }
     var dateNavigatorTitle: Observable<String?> { return  dateNavigatorTitleSubject.asObservable() }
-    var sections: Observable<[(title: String, rows: [ReuseableCellViewModelType])]> { return sectionsSubject.asObservable() }
+    var filterAppointments: Observable<Void> { return filterAppointmentsSubject.asObservable() }
     var errorAlert: Observable<String> { return errorAlertSubject.asObservable() }
     var isLoading: Observable<Bool> { return loadingSubject.asObservable() }
     var selectedAppointment: Observable<Appointment> { return selectedAppointmentSubject.asObservable() }
     var filterAppointments: Observable<Void> { return filterAppointmentsSubject.asObservable() }
+    var isResident: Observable<Bool> { return isResidentSubject.asObservable() }
+    var isRefreshing: Observable<Bool> { return isRefreshingSubject.asObservable() }
+    var residentName: Observable<String> { return residentNameSubject.asObservable() }
+    var residentImage: Observable<String> { return residentImageSubject.asObservable() }
     
     //Mark: Private Properties
     
@@ -81,18 +91,49 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     
     private let filterAppointmentsSubject = PublishSubject<Void>()
     private let refreshAppointmentsSubject = PublishSubject<Void>()
+    private let refreshingSubject = PublishSubject<Void>()
+    private let refreshControlSubject = BehaviorSubject<Void>(value: Void())
     private let errorAlertSubject = PublishSubject<String>()
     private let sectionsSubject = BehaviorSubject<[(title: String, rows: [ReuseableCellViewModelType])]>(value: [])
     private let loadingSubject = BehaviorSubject<Bool>(value: false)
+    private let isResidentSubject = BehaviorSubject<Bool>(value: false)
+    private let isRefreshingSubject = BehaviorSubject<Bool>(value: false)
+    private let residentImageSubject = BehaviorSubject<String>(value: "")
+    private let residentNameSubject = BehaviorSubject<String>(value: "")
     
     private let disposeBag = DisposeBag()
     private let facilityDataStore: FacilityDataStore
+    private let residentProvider: ResidentDataStore?
     private let appointmentsRepository: AppointmentRepository
     
     
     init(facilityDataStore: FacilityDataStore,
          appointmentsRepository: AppointmentRepository){
         
+        self.facilityDataStore = facilityDataStore
+        self.appointmentsRepository = appointmentsRepository
+        self.residentProvider = nil
+        self.datePickerSubject
+            .map {
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "EEEE, MMM dd, yyyy"
+                return dateFormatter.string(from: $0)
+            }
+            .bind(to: dateNavigatorTitleSubject)
+            .disposed(by: disposeBag)
+        
+        self.bindFetchAppointmentRequest()
+        self.bindAppointmentsToCellViewModel()
+        self.bindAppointmentsSorted()
+        self.bindActions()
+        
+    }
+    
+    init(facilityDataStore: FacilityDataStore,
+         appointmentsRepository: AppointmentRepository,
+         residentProvider: ResidentDataStore?){
+        
+        self.residentProvider = residentProvider
         self.facilityDataStore = facilityDataStore
         self.appointmentsRepository = appointmentsRepository
         
@@ -114,29 +155,49 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     
     func bindFetchAppointmentRequest() {
         
+        
         let fetchRequest = self.refreshAppointmentsSubject
             .withLatestFrom(self.datePickerSubject)
-            .flatMap { [weak self] date  -> Observable<Event<[Appointment]>> in
+            .flatMap { [weak self] date -> Observable<Event<([Appointment],Date?)>> in
                 guard let self = self, let facilityID = self.facilityDataStore.currentFacility?["facility_id"] as? Int else { return .never() }
-                
                 self.loadingSubject.onNext(true)
-                return self.appointmentsRepository.getAppointments(for: facilityID,
-                                                                   date: date)
-                    .materialize()
+                let residentId = self.residentProvider?.currentResident?["resident_id"] as? Int
+                if residentId != nil {
+                    self.isResidentSubject.onNext(true)
+                    let residentName =  "\(self.residentProvider?.currentResident?["first_name"] as? String ?? "") \(self.residentProvider?.currentResident?["last_name"] as? String ?? "")"
+                    self.residentNameSubject.onNext(residentName)
+                    self.residentImageSubject.onNext(self.residentProvider?.currentResident?["profileImageRoute"] as? String ?? "")
+                    return self.appointmentsRepository.getAppointmentsForResident(for: facilityID,
+                                                                                  residentID: residentId!,
+                                                                                  date: date)
+                        .materialize()
+                }else {
+                    self.isResidentSubject.onNext(false)
+                    return self.appointmentsRepository.getAppointments(for: facilityID,
+                                                                       date: date)
+                        .materialize()
+                }
+                
+                
             }
             .share()
             .do(onNext: {
                 appointment in
                 self.loadingSubject.onNext(false)
+                self.isRefreshingSubject.onNext(false)
             })
         
         fetchRequest.elements()
             .subscribe(onNext: {
-                appointments in
+                appointments,date in
                 self.appointmentsSubject.onNext(appointments)
                 let dateFormatterFromDate = DateFormatter()
-                dateFormatterFromDate.dateFormat = "MMMM dd 'at' h:mm a"
-                self.lastUpdatedLabelSubject.onNext("Last Updated: " + dateFormatterFromDate.string(from: appointments.first?.lastUpdatedTime ?? Date()))
+                if date != nil {
+                    dateFormatterFromDate.dateFormat = "MMMM dd'\(Date.getSuffixDate(date: date!))' 'at' h:mm a"
+                    self.lastUpdatedLabelSubject.onNext("Last Updated: " + dateFormatterFromDate.string(from: date!))
+                } else {
+                    self.lastUpdatedLabelSubject.onNext("")
+                }
             })
             .disposed(by: disposeBag)
         
@@ -146,10 +207,19 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             .bind(to: errorAlertSubject)
             .disposed(by: disposeBag)
         
-        self.datePickerSubject
+        Observable.combineLatest(self.refreshingSubject, self.datePickerSubject)
             .map { _ in () }
             .bind(to: self.refreshAppointmentsSubject)
             .disposed(by: disposeBag)
+        
+        self.refreshControlSubject
+            .subscribe(onNext: {
+                refresh in
+                self.isRefreshingSubject.onNext(true)
+                self.refreshingSubject.onNext(Void())
+            })
+            .disposed(by: disposeBag)
+        
     }
     
     func bindAppointmentsSorted(){

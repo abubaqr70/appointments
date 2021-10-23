@@ -5,13 +5,17 @@ import Foundation
 protocol AppointmentsDataStore {
     
     func fetchAppointments(startDate: Date) -> [Appointment]
+    func fetchLastUpdated() -> Date?
+    func fetchAppointmentsForResident(residentID: Int, startDate: Date) -> [Appointment]
     func fetchAppointmentsSyncedFalse() -> [Appointment]
     func markAppointmentsSyncedTrue(_ appointment: Appointment)
     func saveAppointment(_ appointment: Appointment,_ lastUpdatedTime: Date)
+    func saveLastUpdated(_ date: Date)
     func updateAppointment(_ appointment: Appointment)
     func checkAppointmentsExist(tartDate: Double ,endDate: Double) -> Bool
     func deleteAppointments(startDate: Double ,endDate: Double) throws
     func deleteAllAppointment() throws
+    func deleteLastUpdated() throws
     
 }
 
@@ -27,6 +31,23 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         } catch { }
         
         return []
+    }
+    
+    func fetchAppointmentsForResident(residentID: Int, startDate: Date) -> [Appointment] {
+        do {
+            let residentID = Int64(residentID)
+            let appointments = try self.fetchCDAppointmentsForResident(residentID: residentID, startDate: startDate)
+            return appointments.map{
+                appointmentCoreData -> Appointment in
+                return Appointment(managedObject: appointmentCoreData)
+            }
+        } catch { }
+        
+        return []
+    }
+    
+    func fetchLastUpdated() -> Date? {
+        try? self.fetchCDLastUpdated()?.date
     }
     
     func checkAppointmentsExist(tartDate startDate: Double , endDate: Double) -> Bool {
@@ -47,6 +68,12 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         } catch { }
         
         return []
+    }
+    
+    func saveLastUpdated(_ date: Date) {
+        let entity = self.createCDLastUpdated()
+        entity.date = date
+        self.saveCDLastUpdated(entity)
     }
     
     func saveAppointment(_ appointment: Appointment,_ lastUpdatedTime: Date) {
@@ -115,6 +142,15 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
     func deleteAllAppointment() throws {
         do {
             try self.deleteAllData()
+        }
+        catch let error as NSError {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func deleteLastUpdated() throws {
+        do {
+            try self.deleteAllLastUpdated()
         }
         catch let error as NSError {
             print(error.localizedDescription)

@@ -29,9 +29,21 @@ public class AppointmentsCoreDataStore {
         return results.first
     }
     
+    public func fetchCDLastUpdated() throws -> CDLastUpdated? {
+        let fetchRequest: NSFetchRequest<CDLastUpdated> = CDLastUpdated.fetchRequest()
+        let results = try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
+        return results.first
+    }
+    
     public func fetchCDAppointments(startDate: Date) throws -> [CDAppointment] {
         let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "startedDate == %@", argumentArray: [startDate])
+        return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
+    }
+    
+    public func fetchCDAppointmentsForResident(residentID:Int64, startDate: Date) throws -> [CDAppointment] {
+        let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "startedDate == %@ && ANY appointmentAttendance.residentId == %@", argumentArray: [startDate, residentID])
         return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
     }
     
@@ -60,7 +72,29 @@ public class AppointmentsCoreDataStore {
     }
     
     public func deleteAllData() throws {
+        try? self.deleteAllAppointment()
+        try? self.deleteAllLastUpdated()
+        return
+    }
+    
+    public func deleteAllAppointments() throws {
         let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
+        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
+        batchDeleteRequest.resultType = .resultTypeCount
+        do {
+            // Execute Batch Request
+            let batchDeleteResult = try self.coreDataStack.manageObjectContext.execute(batchDeleteRequest) as! NSBatchDeleteResult
+            print("The batch delete request has deleted \(batchDeleteResult.result!) records.")
+            self.coreDataStack.saveContext()
+        } catch {
+            let updateError = error as NSError
+            print("\(updateError), \(updateError.userInfo)")
+        }
+        return
+    }
+    
+    public func deleteAllLastUpdated() throws {
+        let fetchRequest: NSFetchRequest<CDLastUpdated> = CDLastUpdated.fetchRequest()
         let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
         batchDeleteRequest.resultType = .resultTypeCount
         do {
@@ -163,6 +197,14 @@ extension AppointmentsCoreDataStore {
     }
     
     public func saveCDAppointmentAttendance(_ appointmentAttendance: CDAppointmentAttendance) {
+        self.coreDataStack.saveContext()
+    }
+    
+    public func createCDLastUpdated() -> CDLastUpdated{
+        return CDLastUpdated(context: self.coreDataStack.manageObjectContext)
+    }
+    
+    public func saveCDLastUpdated(_ date: CDLastUpdated) {
         self.coreDataStack.saveContext()
     }
     

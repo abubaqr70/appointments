@@ -8,8 +8,6 @@ import Foundation
     private let authentication: AuthenticationConvertible
     private let userDataStore: UserDataStore
     private let facilityDataStore: FacilityDataStore
-    private let addActionProvider: AddActionProvider?
-    private let filterActionProvider: FilterActionProvider?
     private let client: APIClient
     private let repository: AppointmentRepository
     private let dataHandler: AppointmentDataHandler
@@ -17,18 +15,13 @@ import Foundation
     public init(baseURL: String,
                 authentication: AuthenticationConvertible,
                 userDataStore: UserDataStore,
-                facilityDataStore: FacilityDataStore,
-                addActionProvider: AddActionProvider?,
-                filterActionProvider: FilterActionProvider?) {
+                facilityDataStore: FacilityDataStore) {
         
         self.baseURL = baseURL
         self.authentication = authentication
         self.userDataStore = userDataStore
         self.facilityDataStore = facilityDataStore
-        self.addActionProvider = addActionProvider
-        self.filterActionProvider = filterActionProvider
         self.client = AlamofireClient()
-        
         let service = AppointmentService(baseURL: self.baseURL,
                                          authHeaderProvider: self.authentication,
                                          client: self.client)
@@ -37,12 +30,19 @@ import Foundation
         self.dataHandler = AppointmentDataHandler(repository: self.repository)
     }
     
+    
     public func makeAppointmentsCoordinator(root: UIViewController,
-                                            navigationType: NavigationType) -> AppCoordinator {
+                                            navigationType: NavigationType,
+                                            addActionProvider: AddActionProvider?,
+                                            filterActionProvider: FilterActionProvider?,
+                                            residentProvider: ResidentDataStore?) -> AppCoordinator {
         
         return AppCoordinator(root: root,
                               navigationType: navigationType,
-                              factory: self)
+                              factory: self,
+                              addActionProvider: addActionProvider,
+                              filterActionProvider: filterActionProvider,
+                              residentProvider: residentProvider)
     }
     
     
@@ -91,10 +91,16 @@ import Foundation
         return FilterAppointmentsViewController(viewModel: viewModel)
     }
     
-    func makeAppointmentsViewModel() -> AppointmentsViewModelType {
+    func makeAppointmentsViewModel(residentProvider: ResidentDataStore?) -> AppointmentsViewModelType {
+        if residentProvider != nil {
+            return AppointmentsViewModel(facilityDataStore: self.facilityDataStore,
+                                         appointmentsRepository: self.repository,
+                                         residentProvider: residentProvider)
+        }  else {
+            return AppointmentsViewModel(facilityDataStore: self.facilityDataStore,
+                                         appointmentsRepository: self.repository)
+        }
         
-        return AppointmentsViewModel(facilityDataStore: self.facilityDataStore,
-                                     appointmentsRepository: self.repository)
     }
     
     func makeAppointmentViewModel(appointment: Appointment) -> AppointmentViewModelType {

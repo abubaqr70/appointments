@@ -20,3 +20,11 @@ public class FacilityProvider: FacilityDataStore {
         }
     }
 }
+
+public class ResidentProvider: ResidentDataStore {
+    
+    public var currentResident: [String : Any]? {
+        return nil
+    }
+    
+}

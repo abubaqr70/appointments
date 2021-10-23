@@ -71,12 +71,13 @@ class FacilityViewController: BaseViewController {
         let appDependency = AppDependencyContainer(baseURL: APPURL.Domain,
                                                    authentication: AuthenticationProvider.init(),
                                                    userDataStore: UserProvider.init(),
-                                                   facilityDataStore: FacilityProvider.init(facility: facility),
-                                                   addActionProvider: nil,
-                                                   filterActionProvider: nil)
+                                                   facilityDataStore: FacilityProvider.init(facility: facility))
         
         let appCoordinator = appDependency.makeAppointmentsCoordinator(root: self.navigationController ?? UINavigationController(),
-                                                                       navigationType: .present)
+                                                                       navigationType: .present,
+                                                                       addActionProvider: nil,
+                                                                       filterActionProvider: nil,
+                                                                       residentProvider: nil)
         appCoordinator
             .start()
             .subscribe()

@@ -68,7 +68,7 @@ public class AppointmentViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .black
         label.font = UIFont.appFont(withStyle: .subhead, size: 16)
-        label.numberOfLines = 4
+        label.numberOfLines = 0
         return label
     }()
     
