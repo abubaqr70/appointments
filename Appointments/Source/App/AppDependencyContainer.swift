@@ -112,7 +112,8 @@ import Foundation
     
     func makeFilterAppointmentsViewModel() -> FilterAppointmentsViewModelType {
         
-        return FilterAppointmentsViewModel(appointmentsRepository: self.repository)
+        return FilterAppointmentsViewModel(appointmentsRepository: self.repository,
+                                           facilityDataStore: self.facilityDataStore)
     }
     
 }

@@ -18,7 +18,7 @@ class AppointmentRepository {
         self.reachabilityService = ReachabilityService()
         self.isSyncing = false
     }
-        
+    
     //Mark:- Fetch Appointments with facilityID and date
     func getAppointments(for facilityID: Int,
                          date: Date) ->  Observable<([Appointment],Date?)> {
@@ -83,7 +83,7 @@ class AppointmentRepository {
             
             //Mark:- Internet Connected
             case .connected:
-              
+                
                 observer.onNext((self.dataStore.fetchAppointmentsForResident(residentID: residentID, startDate: Date.startOfDay(date: date)),self.dataStore.fetchLastUpdated()))
                 let appointments = self.dataStore.fetchAppointmentsSyncedFalse()
                 if appointments.count >= 1 {
@@ -102,7 +102,7 @@ class AppointmentRepository {
                             }
                         }
                     }else{
-            
+                        
                         observer.onNext((self.dataStore.fetchAppointmentsForResident(residentID: residentID, startDate: Date.startOfDay(date: date)),self.dataStore.fetchLastUpdated()))
                     }
                 }else {
@@ -152,10 +152,10 @@ class AppointmentRepository {
                 
                 //Mark:- Returning appointments for that day
                 if residentId != nil {
-
+                    
                     observer.onNext((self.dataStore.fetchAppointmentsForResident(residentID: residentId ?? 0, startDate: Date.startOfDay(date: date)),self.dataStore.fetchLastUpdated()))
                 } else {
-                   
+                    
                     observer.onNext((self.dataStore.fetchAppointments(startDate: Date.startOfDay(date: date)),self.dataStore.fetchLastUpdated()))
                 }
                 observer.onCompleted()
@@ -259,6 +259,95 @@ class AppointmentRepository {
         catch let error as NSError {
             print(error.localizedDescription)
         }
+    }
+    
+    
+    
+    //Mark:- Fetch Appointments Type with FacilityId
+    func getAppointmentsType(for facilityID: Int) ->  Observable<[AppointmentsType]> {
+        
+        
+        return Observable.create { [weak self] observer in
+            
+            guard let self = self else { return Disposables.create() }
+            
+            //Mark:- Checking Internet Connection
+            let reachability = self.reachabilityService.reachabilityType
+            switch reachability {
+            
+            //Mark:- Internet Connected
+            case .connected:
+                
+                observer.onNext(self.dataStore.fetchAppointmentsType())
+                self.appointmentService.getAppointmentsType(for: facilityID) { (result: Result<[AppointmentsType], Error>) in
+                    
+                    switch result {
+                    case .success(let appointmentsType):
+                        try? self.dataStore.deleteAppointmentsType()
+                        
+                        //Mark:- Saving appointments type
+                        
+                        for appointmentType in appointmentsType {
+                            self.dataStore.saveAppointmentsType(appointmentType)
+                        }
+                        
+                        observer.onNext(self.dataStore.fetchAppointmentsType())
+                        observer.onCompleted()
+                    case .failure(let error):
+                        observer.onError(error)
+                    }
+                }
+                
+            //Mark:- Internet Disconnected
+            case .disconnected:
+                
+                observer.onNext(self.dataStore.fetchAppointmentsType())
+                
+            }
+            
+            return Disposables.create()
+        }
+        
+    }
+    
+    //Mark:- Save Facility Staff
+    func getFacilityStaff(for facilityDataStore: FacilityDataStore) ->  Observable<[FacilityStaff]> {
+        
+        
+        return Observable.create { [weak self] observer in
+            
+            guard let self = self else { return Disposables.create() }
+            
+            observer.onNext(self.dataStore.fetchFacilityStaff())
+            
+            do {
+                guard let dictionary = self.facilityDataStore.currentFacility?["staff"] as? [[String : Any]] else {
+                    return Disposables.create() }
+                let jsonData = try JSONSerialization.data(withJSONObject: dictionary, options: [.prettyPrinted])
+                let facilityStaffs : [FacilityStaff] = try self.decode(data: jsonData)
+                try self.dataStore.deleteFacilityStaff()
+                
+                for facilityStaff in facilityStaffs {
+                    self.dataStore.saveFacilityStaff(facilityStaff)
+                }
+                
+                observer.onNext(self.dataStore.fetchFacilityStaff())
+                observer.onCompleted()
+            }catch let error as NSError{
+                print(error.localizedDescription)
+            }
+            
+            
+            return Disposables.create()
+        }
+        
+    }
+    
+    
+    func decode<T: Codable>(data: Data) throws -> T {
+        
+        let decoder = JSONDecoder()
+        return try decoder.decode(T.self, from: data)
     }
     
 }

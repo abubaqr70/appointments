@@ -38,6 +38,17 @@
         <relationship name="ofAppointments" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDAppointment" inverseName="appointmentAttendance" inverseEntity="CDAppointment"/>
         <relationship name="users" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="CDAppointmentUser" inverseName="ofAppointmentAttendance" inverseEntity="CDAppointmentUser"/>
     </entity>
+    <entity name="CDAppointmentsType" representedClassName="CDAppointmentsType" syncable="YES">
+        <attribute name="active" optional="YES" attributeType="Boolean" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="created" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="createdById" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="facilityId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="isSelected" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="modified" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="rank" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+    </entity>
     <entity name="CDAppointmentTags" representedClassName="CDAppointmentTags" syncable="YES">
         <attribute name="appointmentId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
@@ -74,8 +85,29 @@
         <attribute name="userId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="ofUserGroup" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDUserGroup" inverseName="facilityGroupMembers" inverseEntity="CDUserGroup"/>
     </entity>
+    <entity name="CDFacilityStaff" representedClassName="CDFacilityStaff" syncable="YES">
+        <attribute name="codeStatus" optional="YES" attributeType="String"/>
+        <attribute name="email" optional="YES" attributeType="String"/>
+        <attribute name="facilities" optional="YES" attributeType="String"/>
+        <attribute name="facilityId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="firstName" optional="YES" attributeType="String"/>
+        <attribute name="isSelected" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="lastName" optional="YES" attributeType="String"/>
+        <attribute name="profileImageRoute" optional="YES" attributeType="String"/>
+        <attribute name="roomNo" optional="YES" attributeType="String"/>
+        <attribute name="staffId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="staff" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CDStaffRole" inverseName="ofFacilityStaff" inverseEntity="CDStaffRole"/>
+    </entity>
     <entity name="CDLastUpdated" representedClassName="CDLastUpdated" syncable="YES">
         <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+    </entity>
+    <entity name="CDStaffRole" representedClassName="CDStaffRole" syncable="YES">
+        <attribute name="isEmployee" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="isProfile" optional="YES" attributeType="Integer 64" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="roleId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="roleName" optional="YES" attributeType="String"/>
+        <attribute name="staffId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="ofFacilityStaff" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDFacilityStaff" inverseName="staff" inverseEntity="CDFacilityStaff"/>
     </entity>
     <entity name="CDStartDate" representedClassName="CDStartDate" syncable="YES">
         <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -99,8 +131,11 @@
         <element name="CDEndDate" positionX="-36" positionY="162" width="128" height="74"/>
         <element name="CDFacilityCategory" positionX="18" positionY="189" width="128" height="89"/>
         <element name="CDFacilityGroupMembers" positionX="36" positionY="198" width="128" height="104"/>
+        <element name="CDLastUpdated" positionX="-18" positionY="144" width="128" height="44"/>
         <element name="CDStartDate" positionX="-18" positionY="171" width="128" height="74"/>
         <element name="CDUserGroup" positionX="0" positionY="180" width="128" height="134"/>
-        <element name="CDLastUpdated" positionX="-18" positionY="144" width="128" height="44"/>
+        <element name="CDAppointmentsType" positionX="-18" positionY="144" width="128" height="164"/>
+        <element name="CDFacilityStaff" positionX="-9" positionY="153" width="128" height="194"/>
+        <element name="CDStaffRole" positionX="0" positionY="162" width="128" height="119"/>
     </elements>
 </model>

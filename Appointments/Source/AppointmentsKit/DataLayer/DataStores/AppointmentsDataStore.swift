@@ -8,14 +8,20 @@ protocol AppointmentsDataStore {
     func fetchLastUpdated() -> Date?
     func fetchAppointmentsForResident(residentID: Int, startDate: Date) -> [Appointment]
     func fetchAppointmentsSyncedFalse() -> [Appointment]
+    func fetchAppointmentsType() -> [AppointmentsType]
+    func fetchFacilityStaff() -> [FacilityStaff]
     func markAppointmentsSyncedTrue(_ appointment: Appointment)
     func saveAppointment(_ appointment: Appointment,_ lastUpdatedTime: Date)
     func saveLastUpdated(_ date: Date)
+    func saveAppointmentsType(_ appointmentsType: AppointmentsType)
+    func saveFacilityStaff(_ facilityStaff: FacilityStaff)
     func updateAppointment(_ appointment: Appointment)
     func checkAppointmentsExist(tartDate: Double ,endDate: Double) -> Bool
     func deleteAppointments(startDate: Double ,endDate: Double) throws
     func deleteAllAppointment() throws
     func deleteLastUpdated() throws
+    func deleteFacilityStaff() throws
+    func deleteAppointmentsType() throws
     
 }
 
@@ -40,6 +46,30 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
             return appointments.map{
                 appointmentCoreData -> Appointment in
                 return Appointment(managedObject: appointmentCoreData)
+            }
+        } catch { }
+        
+        return []
+    }
+    
+    func fetchAppointmentsType() -> [AppointmentsType] {
+        do {
+            let appointmentsType = try self.fetchCDAppointmentsType()
+            return appointmentsType.map{
+                appointmentsTypeCoreData -> AppointmentsType in
+                return AppointmentsType(managedObject: appointmentsTypeCoreData)
+            }
+        } catch { }
+        
+        return []
+    }
+    
+    func fetchFacilityStaff() -> [FacilityStaff] {
+        do {
+            let facilityStaff = try self.fetchCDFacilityStaff()
+            return facilityStaff.map{
+                facilityStaffCoreData -> FacilityStaff in
+                return FacilityStaff(managedObject: facilityStaffCoreData)
             }
         } catch { }
         
@@ -113,6 +143,39 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         self.saveCDAppointment(entity)
     }
     
+    
+    func saveAppointmentsType(_ appointmentsType: AppointmentsType) {
+        let entity = self.createCDAppointmentsType()
+        entity.id = Int64(appointmentsType.id ?? 0)
+        entity.name = appointmentsType.name
+        entity.active = appointmentsType.active ?? false
+        entity.created = Int64(appointmentsType.created ?? 0)
+        entity.modified = Int64(appointmentsType.modified ?? 0)
+        entity.createdById = Int64(appointmentsType.createdById ?? 0)
+        entity.facilityId = Int64(appointmentsType.facilityId ?? 0)
+        entity.isSelected = appointmentsType.isSelected ?? false
+        entity.rank = Int64(appointmentsType.rank ?? 0)
+        self.saveCDAppointmentsType(entity)
+    }
+    
+    func saveFacilityStaff(_ facilityStaff: FacilityStaff) {
+        let entity = self.createCDFacilityStaff()
+        entity.codeStatus = facilityStaff.codeStatus
+        entity.email = facilityStaff.email
+        entity.facilities = facilityStaff.facilities
+        entity.facilityId = Int64(facilityStaff.facilityId ?? 0)
+        entity.firstName = facilityStaff.firstName
+        entity.lastName = facilityStaff.lastName
+        entity.isSelected = facilityStaff.isSelected ??  false
+        entity.profileImageRoute = facilityStaff.profileImageRoute
+        entity.roomNo = facilityStaff.roomNo
+        entity.staffId = Int64(facilityStaff.staffId ?? 0)
+        for staffRole in facilityStaff.roles ?? []{
+            entity.addToStaff(saveStaffRole(staffRole))
+        }
+        self.saveCDFacilityStaff(entity)
+    }
+    
     func updateAppointment (_ appointment : Appointment ) {
         guard let objectUpdate = try? self.fetchCDAppointmentForUpdate(id: Int64(appointment.id ?? 0), occurrenceId: Int64(appointment.occurrenceId ?? 0)) else { return }
         print(objectUpdate)
@@ -142,6 +205,24 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
     func deleteAllAppointment() throws {
         do {
             try self.deleteAllData()
+        }
+        catch let error as NSError {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func deleteFacilityStaff() throws {
+        do {
+            try self.deleteAllCDFacilityStaff()
+        }
+        catch let error as NSError {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func deleteAppointmentsType() throws {
+        do {
+            try self.deleteAllCDAppointmentsType()
         }
         catch let error as NSError {
             print(error.localizedDescription)
@@ -250,6 +331,16 @@ extension AppointmentsCoreDataStore {
         for facilityGroupMember in userGroup.facilityGroupMembers ?? [] {
             entity.addToFacilityGroupMembers(saveFacilityGroupMember(facilityGroupMember))
         }
+        return entity
+    }
+    
+    func saveStaffRole(_ staffRole: StaffRole) -> CDStaffRole{
+        let entity = self.createCDStaffRole()
+        entity.isEmployee = Int64(staffRole.isEmployee ?? 0)
+        entity.isProfile = Int64(staffRole.isProfile ?? 0)
+        entity.roleId = Int64(staffRole.roleId ?? 0)
+        entity.roleName = staffRole.roleName
+        entity.staffId = Int64(staffRole.staffId ?? 0)
         return entity
     }
     

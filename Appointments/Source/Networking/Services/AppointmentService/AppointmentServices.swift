@@ -29,7 +29,8 @@ class AppointmentService: BaseService {
         
         let endpoint: Endpoint = AppointmentEndpoint(baseURL: self.baseURL,
                                                      pathVariables: pathVariables,
-                                                     query: query)
+                                                     query: query,
+                                                     path: "appointments")
         
         let request: Request = Request<Int>(endpoint: endpoint,
                                             httpMethod: .get,
@@ -45,8 +46,10 @@ class AppointmentService: BaseService {
                                                      completion: @escaping (Result<ResultType, Error>) -> Void) {
         
         let pathVariables = ["facilities", String(facilityID)]
-        let endpoint: Endpoint = AppointmentMarksEndpoint(baseURL: self.baseURL,
-                                                     pathVariables: pathVariables, query: [:])
+        let endpoint: Endpoint = AppointmentEndpoint(baseURL: self.baseURL,
+                                                     pathVariables: pathVariables,
+                                                     query: [:],
+                                                     path: "appointments/attendance")
         
         do{
             let data = try JSONEncoder().encode(params)
@@ -67,6 +70,26 @@ class AppointmentService: BaseService {
                                             httpMethod: .post,
                                             type: .json,
                                             body: params,
+                                            headers: self.authHeaderProvider.authenticationHeader)
+        self.dataRequest(with: self.client,
+                         request: request,
+                         completion: completion)
+        
+    }
+    
+    
+    public func getAppointmentsType<ResultType: Codable>(for facilityID: Int,
+                                                     completion: @escaping (Result<[ResultType], Error>) -> Void) {
+        
+        let pathVariables = ["facilities", String(facilityID)]
+        
+        let endpoint: Endpoint = AppointmentEndpoint(baseURL: self.baseURL,
+                                                     pathVariables: pathVariables,
+                                                     query: [:],
+                                                     path: "therapies")
+        
+        let request: Request = Request<Int>(endpoint: endpoint,
+                                            httpMethod: .get,
                                             headers: self.authHeaderProvider.authenticationHeader)
         self.dataRequest(with: self.client,
                          request: request,

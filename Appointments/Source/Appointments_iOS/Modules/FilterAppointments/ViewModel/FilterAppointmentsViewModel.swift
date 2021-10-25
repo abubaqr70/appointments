@@ -22,7 +22,7 @@ protocol FilterAppointmentsViewModelType {
 }
 
 class FilterAppointmentsViewModel : FilterAppointmentsViewModelType, FilterAppointmentsViewModelInputs, FilterAppointmentsViewModelOutputs {
-  
+    
     var inputs: FilterAppointmentsViewModelInputs { return self }
     var outputs: FilterAppointmentsViewModelOutputs { return self }
     
@@ -32,10 +32,32 @@ class FilterAppointmentsViewModel : FilterAppointmentsViewModelType, FilterAppoi
     
     private let appointmentFilterSubject = PublishSubject<Void>()
     private let filterAppointmentsSubject = PublishSubject<Void>()
+    
+    
+    private let facilityDataStore: FacilityDataStore
+    private let appointmentsRepository: AppointmentRepository
     private let disposeBag = DisposeBag()
     
-    init(appointmentsRepository: AppointmentRepository) {
+    init(appointmentsRepository: AppointmentRepository,
+         facilityDataStore: FacilityDataStore) {
+        
+        self.appointmentsRepository = appointmentsRepository
+        self.facilityDataStore = facilityDataStore
+        
+        self.appointmentsRepository.getFacilityStaff(for: self.facilityDataStore)
+            .subscribe(onNext: {
+                facilityStaff in
+                print("Facility staff = \(facilityStaff)")
+            }).disposed(by: disposeBag)
+        
+        self.appointmentsRepository.getAppointmentsType(for: self.facilityDataStore.currentFacility?["id"] as? Int ?? 0)
+            .subscribe(onNext: {
+                facilityStaff in
+                print("Appointments Type = \(facilityStaff)")
+            }).disposed(by: disposeBag)
+        
         bindActions()
+        
     }
     
 }

@@ -53,6 +53,16 @@ public class AppointmentsCoreDataStore {
         return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
     }
     
+    public func fetchCDAppointmentsType() throws -> [CDAppointmentsType] {
+        let fetchRequest: NSFetchRequest<CDAppointmentsType> = CDAppointmentsType.fetchRequest()
+        return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
+    }
+    
+    public func fetchCDFacilityStaff() throws -> [CDFacilityStaff] {
+        let fetchRequest: NSFetchRequest<CDFacilityStaff> = CDFacilityStaff.fetchRequest()
+        return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
+    }
+    
     public func deleteCDAppointment(id: UUID) throws {
         if let appointment = try fetchCDAppointment(id: id) {
             self.coreDataStack.manageObjectContext.delete(appointment)
@@ -74,6 +84,8 @@ public class AppointmentsCoreDataStore {
     public func deleteAllData() throws {
         try? self.deleteAllAppointment()
         try? self.deleteAllLastUpdated()
+        try? self.deleteAllCDFacilityStaff()
+        try? self.deleteAllCDAppointmentsType()
         return
     }
     
@@ -95,6 +107,38 @@ public class AppointmentsCoreDataStore {
     
     public func deleteAllLastUpdated() throws {
         let fetchRequest: NSFetchRequest<CDLastUpdated> = CDLastUpdated.fetchRequest()
+        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
+        batchDeleteRequest.resultType = .resultTypeCount
+        do {
+            // Execute Batch Request
+            let batchDeleteResult = try self.coreDataStack.manageObjectContext.execute(batchDeleteRequest) as! NSBatchDeleteResult
+            print("The batch delete request has deleted \(batchDeleteResult.result!) records.")
+            self.coreDataStack.saveContext()
+        } catch {
+            let updateError = error as NSError
+            print("\(updateError), \(updateError.userInfo)")
+        }
+        return
+    }
+    
+    public func deleteAllCDAppointmentsType() throws {
+        let fetchRequest: NSFetchRequest<CDAppointmentsType> = CDAppointmentsType.fetchRequest()
+        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
+        batchDeleteRequest.resultType = .resultTypeCount
+        do {
+            // Execute Batch Request
+            let batchDeleteResult = try self.coreDataStack.manageObjectContext.execute(batchDeleteRequest) as! NSBatchDeleteResult
+            print("The batch delete request has deleted \(batchDeleteResult.result!) records.")
+            self.coreDataStack.saveContext()
+        } catch {
+            let updateError = error as NSError
+            print("\(updateError), \(updateError.userInfo)")
+        }
+        return
+    }
+    
+    public func deleteAllCDFacilityStaff() throws {
+        let fetchRequest: NSFetchRequest<CDFacilityStaff> = CDFacilityStaff.fetchRequest()
         let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
         batchDeleteRequest.resultType = .resultTypeCount
         do {
@@ -205,6 +249,30 @@ extension AppointmentsCoreDataStore {
     }
     
     public func saveCDLastUpdated(_ date: CDLastUpdated) {
+        self.coreDataStack.saveContext()
+    }
+    
+    public func createCDAppointmentsType() -> CDAppointmentsType{
+        return CDAppointmentsType(context: self.coreDataStack.manageObjectContext)
+    }
+    
+    public func createCDFacilityStaff() -> CDFacilityStaff{
+        return CDFacilityStaff(context: self.coreDataStack.manageObjectContext)
+    }
+    
+    public func createCDStaffRole() -> CDStaffRole{
+        return CDStaffRole(context: self.coreDataStack.manageObjectContext)
+    }
+    
+    public func saveCDAppointmentsType(_ appointmentsType: CDAppointmentsType) {
+        self.coreDataStack.saveContext()
+    }
+    
+    public func saveCDFacilityStaff(_ facilityStaff: CDFacilityStaff) {
+        self.coreDataStack.saveContext()
+    }
+    
+    public func saveCDStaffRole() {
         self.coreDataStack.saveContext()
     }
     
