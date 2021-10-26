@@ -11,7 +11,6 @@ class FilterHeaderTableViewCell: RxUITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .black
         label.text = "All Staff"
-        label.font = UIFont.appFont(withStyle: .body, size: 16)
         label.numberOfLines = 4
         return label
     }()
@@ -20,7 +19,9 @@ class FilterHeaderTableViewCell: RxUITableViewCell {
         let checkboxButton = UIButton(frame: CGRect.zero)
         checkboxButton.backgroundColor = UIColor.white
         checkboxButton.translatesAutoresizingMaskIntoConstraints = false
-        checkboxButton.imageEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+        checkboxButton.imageView?.contentMode = .scaleToFill
+        checkboxButton.contentVerticalAlignment = .fill
+        checkboxButton.contentHorizontalAlignment = .fill
         checkboxButton.setImage(UIImage.moduleImage(named: "icon_checkbox_unselected"), for: .normal)
         checkboxButton.backgroundColor = .clear
         return checkboxButton
@@ -39,6 +40,8 @@ class FilterHeaderTableViewCell: RxUITableViewCell {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+    
+    private var viewModel: FilterHeaderTVCellViewModel?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -93,12 +96,65 @@ class FilterHeaderTableViewCell: RxUITableViewCell {
         ])
         
         NSLayoutConstraint.activate([
-            cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor,constant: 20),
+            cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor,constant: 10),
             cellView.topAnchor.constraint(equalTo: contentView.topAnchor),
             cellView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -20),
+            cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -10),
         ])
         
+        
+    }
+    
+}
+
+extension FilterHeaderTableViewCell {
+    
+    override func configure(viewModel: Any) {
+        guard let viewModel = viewModel as? FilterHeaderTVCellViewModel else { return }
+        self.viewModel = viewModel
+        bind(viewModel: viewModel)
+    }
+    
+    
+    private func bind(viewModel : FilterHeaderTVCellViewModel) {
+        
+        viewModel.outputs.headerTitle
+            .map { name -> Bool in
+                guard let name = name else {return true}
+                return name.isEmpty
+            }
+            .bind(to: self.nameLabel.rx.isHidden).disposed(by: disposeBag)
+        
+        viewModel.outputs.headerTitle
+            .subscribe(onNext: {
+                headerTitle in
+                if headerTitle == "All Categories" {
+                    self.cellView.backgroundColor = .white
+                    self.checkboxButton.imageEdgeInsets = UIEdgeInsets(top: 6, left: 6, bottom: 6, right: 6)
+                    self.nameLabel.font = UIFont.appFont(withStyle: .body, size: 16)
+                } else {
+                    self.cellView.backgroundColor = UIColor.appGrayLight
+                    self.checkboxButton.imageEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+                    self.nameLabel.font = UIFont.appFont(withStyle: .subhead, size: 16)
+                }
+                self.nameLabel.rx.text.onNext(headerTitle)
+            })
+            .disposed(by: disposeBag)
+        
+        checkboxButton.rx.tap
+            .bind(to: viewModel.inputs.markCheckbox)
+            .disposed(by: disposeBag)
+        
+        viewModel.outputs.checkFilter
+            .subscribe(onNext: { [weak self] selected in
+                guard let self = self else { return }
+                if selected {
+                    self.checkboxButton.setImage(UIImage.moduleImage(named: "icon_checkbox_selected"), for: .normal)
+                }else{
+                    self.checkboxButton.setImage(UIImage.moduleImage(named: "icon_checkbox_unselected"), for: .normal)
+                }
+            })
+            .disposed(by: disposeBag)
         
     }
     

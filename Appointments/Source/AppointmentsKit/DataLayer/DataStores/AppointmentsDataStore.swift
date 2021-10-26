@@ -9,14 +9,22 @@ protocol AppointmentsDataStore {
     func fetchAppointmentsForResident(residentID: Int, startDate: Date) -> [Appointment]
     func fetchAppointmentsSyncedFalse() -> [Appointment]
     func fetchAppointmentsType() -> [AppointmentsType]
+    func fetchAppointmentsTypeSelected() -> [AppointmentsType]
     func fetchFacilityStaff() -> [FacilityStaff]
+    func fetchFacilityStaffSelected() -> [FacilityStaff]
     func markAppointmentsSyncedTrue(_ appointment: Appointment)
+    func markAllFacilityStaff(status: Bool)
+    func markAllAppointmentsType(status: Bool)
     func saveAppointment(_ appointment: Appointment,_ lastUpdatedTime: Date)
     func saveLastUpdated(_ date: Date)
     func saveAppointmentsType(_ appointmentsType: AppointmentsType)
     func saveFacilityStaff(_ facilityStaff: FacilityStaff)
     func updateAppointment(_ appointment: Appointment)
-    func checkAppointmentsExist(tartDate: Double ,endDate: Double) -> Bool
+    func updateAppointmentType (_ appointmentType : AppointmentsType )
+    func updateFacilityStaff (_ facilityStaff : FacilityStaff )
+    func checkAppointmentsExist(startDate: Double ,endDate: Double) -> Bool
+    func checkAppointmentsTypeExist(appointmentsType: AppointmentsType) -> Bool
+    func checkFacilityStaffExist(facilityStaff: FacilityStaff) -> Bool
     func deleteAppointments(startDate: Double ,endDate: Double) throws
     func deleteAllAppointment() throws
     func deleteLastUpdated() throws
@@ -64,9 +72,33 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         return []
     }
     
+    func fetchAppointmentsTypeSelected() -> [AppointmentsType] {
+        do {
+            let appointmentsType = try self.fetchCDAppointmentsTypeSelected()
+            return appointmentsType.map{
+                appointmentsTypeCoreData -> AppointmentsType in
+                return AppointmentsType(managedObject: appointmentsTypeCoreData)
+            }
+        } catch { }
+        
+        return []
+    }
+    
     func fetchFacilityStaff() -> [FacilityStaff] {
         do {
             let facilityStaff = try self.fetchCDFacilityStaff()
+            return facilityStaff.map{
+                facilityStaffCoreData -> FacilityStaff in
+                return FacilityStaff(managedObject: facilityStaffCoreData)
+            }
+        } catch { }
+        
+        return []
+    }
+    
+    func fetchFacilityStaffSelected() -> [FacilityStaff] {
+        do {
+            let facilityStaff = try self.fetchCDFacilityStaffSelected()
             return facilityStaff.map{
                 facilityStaffCoreData -> FacilityStaff in
                 return FacilityStaff(managedObject: facilityStaffCoreData)
@@ -80,13 +112,30 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         try? self.fetchCDLastUpdated()?.date
     }
     
-    func checkAppointmentsExist(tartDate startDate: Double , endDate: Double) -> Bool {
+    func checkAppointmentsExist(startDate: Double , endDate: Double) -> Bool {
         do {
             let isExist = try self.checkCDAppointmentsExist(startOfMonth: startDate, endOfMonth: endDate)
             return isExist
         } catch { }
         return false
     }
+    
+    func checkAppointmentsTypeExist(appointmentsType: AppointmentsType) -> Bool {
+        do {
+            let isExist = try self.checkCDAppointmentsTypeExist(id: Int64(appointmentsType.id ?? 0))
+            return isExist
+        } catch { }
+        return false
+    }
+    
+    func checkFacilityStaffExist(facilityStaff: FacilityStaff) -> Bool {
+        do {
+            let isExist = try self.checkCDFacilityStaffExist(id: Int64(facilityStaff.staffId ?? 0))
+            return isExist
+        } catch { }
+        return false
+    }
+    
     
     func fetchAppointmentsSyncedFalse() -> [Appointment] {
         do {
@@ -166,7 +215,7 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         entity.facilityId = Int64(facilityStaff.facilityId ?? 0)
         entity.firstName = facilityStaff.firstName
         entity.lastName = facilityStaff.lastName
-        entity.isSelected = facilityStaff.isSelected ??  false
+        entity.isSelected = facilityStaff.isSelected ?? false
         entity.profileImageRoute = facilityStaff.profileImageRoute
         entity.roomNo = facilityStaff.roomNo
         entity.staffId = Int64(facilityStaff.staffId ?? 0)
@@ -195,10 +244,42 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         self.coreDataStack.saveContext()
     }
     
+    func markAllAppointmentsType(status: Bool) {
+        do {
+            try self.markAllCDAppointmentsType(status: status)
+        }
+        catch let error as NSError {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func markAllFacilityStaff(status: Bool) {
+        do {
+            try self.markAllCDFacilityStaff(status: status)
+        }
+        catch let error as NSError {
+            print(error.localizedDescription)
+        }
+    }
+    
     func markAppointmentsSyncedTrue (_ appointment : Appointment ) {
         guard let objectUpdate = try? self.fetchCDAppointmentForUpdate(id: Int64(appointment.id ?? 0), occurrenceId: Int64(appointment.occurrenceId ?? 0)) else { return }
         print(objectUpdate)
         objectUpdate.setValue(true, forKey: "isSynced")
+        self.coreDataStack.saveContext()
+    }
+    
+    func updateAppointmentType (_ appointmentType : AppointmentsType ) {
+        guard let objectUpdate = try? self.fetchCDAppointmentsTypeForUpdate(id: Int64(appointmentType.id ?? 0)) else { return }
+        print(objectUpdate)
+        objectUpdate.setValue(!(appointmentType.isSelected ?? true), forKey: "isSelected")
+        self.coreDataStack.saveContext()
+    }
+    
+    func updateFacilityStaff (_ facilityStaff : FacilityStaff ) {
+        guard let objectUpdate = try? self.fetchCDFacilityStaffForUpdate(id: Int64(facilityStaff.staffId ?? 0)) else { return }
+        print(objectUpdate)
+        objectUpdate.setValue(!(facilityStaff.isSelected ?? true), forKey: "isSelected")
         self.coreDataStack.saveContext()
     }
     

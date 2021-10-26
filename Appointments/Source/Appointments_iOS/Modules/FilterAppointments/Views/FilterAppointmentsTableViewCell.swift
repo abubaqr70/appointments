@@ -20,7 +20,10 @@ class FilterAppointmentsTableViewCell: RxUITableViewCell  {
         let checkboxButton = UIButton(frame: CGRect.zero)
         checkboxButton.backgroundColor = UIColor.white
         checkboxButton.translatesAutoresizingMaskIntoConstraints = false
-        checkboxButton.imageEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        checkboxButton.imageEdgeInsets = UIEdgeInsets(top: 6, left: 6, bottom: 6, right: 6)
+        checkboxButton.imageView?.contentMode = .scaleToFill
+        checkboxButton.contentVerticalAlignment = .fill
+        checkboxButton.contentHorizontalAlignment = .fill
         checkboxButton.setImage(UIImage.moduleImage(named: "icon_checkbox_unselected"), for: .normal)
         return checkboxButton
     }()
@@ -38,6 +41,8 @@ class FilterAppointmentsTableViewCell: RxUITableViewCell  {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+    
+    private var viewModel: FilterAppointmentsTVCellViewModel?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -92,11 +97,52 @@ class FilterAppointmentsTableViewCell: RxUITableViewCell  {
         ])
         
         NSLayoutConstraint.activate([
-            cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor,constant: 20),
+            cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor,constant: 10),
             cellView.topAnchor.constraint(equalTo: contentView.topAnchor),
             cellView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -20),
+            cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -10),
         ])
+        
+    }
+    
+}
+
+extension FilterAppointmentsTableViewCell {
+    
+    override func configure(viewModel: Any) {
+        guard let viewModel = viewModel as? FilterAppointmentsTVCellViewModel else { return }
+        self.viewModel = viewModel
+        bind(viewModel: viewModel)
+    }
+    
+    
+    private func bind(viewModel : FilterAppointmentsTVCellViewModel) {
+        
+        viewModel.outputs.title
+            .map { name -> Bool in
+                guard let name = name else {return true}
+                return name.isEmpty
+            }
+            .bind(to: self.nameLabel.rx.isHidden).disposed(by: disposeBag)
+        
+        viewModel.outputs.title
+            .bind(to: self.nameLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        checkboxButton.rx.tap
+            .bind(to: viewModel.inputs.markCheckbox)
+            .disposed(by: disposeBag)
+        
+        viewModel.outputs.checkFilter
+            .subscribe(onNext: { [weak self] selected in
+                guard let self = self else { return }
+                if selected {
+                    self.checkboxButton.setImage(UIImage.moduleImage(named: "icon_checkbox_selected"), for: .normal)
+                }else{
+                    self.checkboxButton.setImage(UIImage.moduleImage(named: "icon_checkbox_unselected"), for: .normal)
+                }
+            })
+            .disposed(by: disposeBag)
         
     }
     

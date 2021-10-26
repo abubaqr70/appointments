@@ -6,6 +6,12 @@ import RxSwift
 
 class FilterAppointmentsViewController: UIViewController {
     
+    private var sections: [(title: ReuseableCellViewModelType, rows: [ReuseableCellViewModelType])] = [] {
+        didSet {
+            tableView.reloadData()
+        }
+    }
+    
     fileprivate lazy var titleButton : UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 200, height: 40))
         button.setTitle("APPOINTMENTS", for: .normal)
@@ -57,6 +63,9 @@ class FilterAppointmentsViewController: UIViewController {
         tableView.rx.setDataSource(self).disposed(by: disposeBag)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        self.viewModel.inputs.refresh.onNext(Void())
+    }
     
 }
 extension FilterAppointmentsViewController{
@@ -120,9 +129,17 @@ extension FilterAppointmentsViewController{
     
     private func bindActions(viewModel : FilterAppointmentsViewModelType){
         
+        viewModel.outputs.sections.subscribe({ [weak self] section in
+            guard let `self` = self else { return }
+            self.sections = (section.element ?? [])
+        }).disposed(by: disposeBag)
+        
         titleButton.rx.tap
             .bind(to: viewModel.inputs.appointmentFilterObserver)
             .disposed(by: disposeBag)
+        
+        clearButton.rx.tap
+            .bind(to: viewModel.inputs.clear).disposed(by: disposeBag)
         
     }
     
@@ -130,26 +147,18 @@ extension FilterAppointmentsViewController{
 extension FilterAppointmentsViewController: UITableViewDelegate,UITableViewDataSource {
     
     public func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return self.sections.count
     }
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 {
-            return 0
-        }else {
-            return 3
-        }
-        
+        return sections[section].rows.count
     }
     
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        if section == 0 {
-            let view = FilterAppointmentsTableViewCell()
-            return view
-        }else {
-            let view = FilterHeaderTableViewCell()
-            return view
-        }
+        let view = FilterHeaderTableViewCell()
+        let element = sections[section].title
+        view.configure(viewModel: element)
+        return view
     }
     
     
@@ -157,7 +166,8 @@ extension FilterAppointmentsViewController: UITableViewDelegate,UITableViewDataS
         guard let cell = tableView.dequeueReusableCell(withIdentifier: FilterAppointmentsTableViewCell.reuseIdentifier, for: indexPath) as? FilterAppointmentsTableViewCell else {
             return UITableViewCell()
         }
-        
+        let element = sections[indexPath.section].rows[indexPath.row]
+        cell.configure(viewModel: element)
         return cell
         
     }

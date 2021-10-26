@@ -58,9 +58,35 @@ public class AppointmentsCoreDataStore {
         return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
     }
     
+    public func fetchCDAppointmentsTypeSelected() throws -> [CDAppointmentsType] {
+        let fetchRequest: NSFetchRequest<CDAppointmentsType> = CDAppointmentsType.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "isSelected == %@", "true")
+        return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
+    }
+    
+    public func fetchCDAppointmentsTypeForUpdate(id: Int64) throws -> CDAppointmentsType? {
+        let fetchRequest: NSFetchRequest<CDAppointmentsType> = CDAppointmentsType.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", "\(id)")
+        let results = try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
+        return results.first
+    }
+    
     public func fetchCDFacilityStaff() throws -> [CDFacilityStaff] {
         let fetchRequest: NSFetchRequest<CDFacilityStaff> = CDFacilityStaff.fetchRequest()
         return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
+    }
+    
+    public func fetchCDFacilityStaffSelected() throws -> [CDFacilityStaff] {
+        let fetchRequest: NSFetchRequest<CDFacilityStaff> = CDFacilityStaff.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "isSelected == %@", "true")
+        return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
+    }
+    
+    public func fetchCDFacilityStaffForUpdate(id: Int64) throws -> CDFacilityStaff? {
+        let fetchRequest: NSFetchRequest<CDFacilityStaff> = CDFacilityStaff.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "staffId == %@", "\(id)")
+        let results = try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
+        return results.first
     }
     
     public func deleteCDAppointment(id: UUID) throws {
@@ -79,6 +105,62 @@ public class AppointmentsCoreDataStore {
         }else {
             return false
         }
+    }
+    
+    public func checkCDAppointmentsTypeExist(id: Int64) throws -> Bool {
+        let fetchRequest: NSFetchRequest<CDAppointmentsType> = CDAppointmentsType.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", "\(id)")
+        let appointmentsType = try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
+        if appointmentsType.count > 0 {
+            return true
+        }else {
+            return false
+        }
+    }
+    
+    public func checkCDFacilityStaffExist(id: Int64) throws -> Bool {
+        let fetchRequest: NSFetchRequest<CDFacilityStaff> = CDFacilityStaff.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "staffId == %@", "\(id)")
+        let facilityStaff = try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
+        if facilityStaff.count > 0 {
+            return true
+        }else {
+            return false
+        }
+    }
+    
+    public func markAllCDAppointmentsType(status: Bool) throws {
+        let entityDescription: NSEntityDescription = CDAppointmentsType.entity()
+        let batchUpdateRequest = NSBatchUpdateRequest(entity: entityDescription)
+        batchUpdateRequest.resultType = .updatedObjectsCountResultType
+        batchUpdateRequest.propertiesToUpdate = ["isSelected": status]
+        do {
+            // Execute Batch Update
+            let batchUpdateResult = try self.coreDataStack.manageObjectContext.execute(batchUpdateRequest) as! NSBatchUpdateResult
+            print("The batch update request has updated \(batchUpdateResult.result ?? "") in Appointments Type records.")
+            self.coreDataStack.saveContext()
+        } catch {
+            let updateError = error as NSError
+            print("\(updateError), \(updateError.userInfo)")
+        }
+        return
+    }
+    
+    public func markAllCDFacilityStaff(status: Bool) throws {
+        let entityDescription: NSEntityDescription = CDFacilityStaff.entity()
+        let batchUpdateRequest = NSBatchUpdateRequest(entity: entityDescription)
+        batchUpdateRequest.resultType = .updatedObjectsCountResultType
+        batchUpdateRequest.propertiesToUpdate = ["isSelected": status]
+        do {
+            // Execute Batch Update
+            let batchUpdateResult = try self.coreDataStack.manageObjectContext.execute(batchUpdateRequest) as! NSBatchUpdateResult
+            print("The batch update request has updated \(batchUpdateResult.result ?? "") in Appointments Type records.")
+            self.coreDataStack.saveContext()
+        } catch {
+            let updateError = error as NSError
+            print("\(updateError), \(updateError.userInfo)")
+        }
+        return
     }
     
     public func deleteAllData() throws {

@@ -44,7 +44,7 @@ protocol AppointmentsViewModelType {
 }
 
 class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInputs, AppointmentsViewModelOutputs {
-   
+    
     var inputs: AppointmentsViewModelInputs { return self }
     var outputs: AppointmentsViewModelOutputs { return self }
     
@@ -144,7 +144,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         self.facilityDataStore = facilityDataStore
         self.appointmentsRepository = appointmentsRepository
         self.filterActionProvider = filterActionProvider
-        self.residentProvider = nil
+        self.residentProvider = residentProvider
         
         self.datePickerSubject
             .map {
@@ -168,7 +168,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         let fetchRequest = self.refreshAppointmentsSubject
             .withLatestFrom(self.datePickerSubject)
             .flatMap { [weak self] date -> Observable<Event<([Appointment],Date?)>> in
-                guard let self = self, let facilityID = self.facilityDataStore.currentFacility?["id"] as? Int else { return .never() }
+                guard let self = self, let facilityID = self.facilityDataStore.currentFacility?["facility_id"] as? Int else { return .never() }
                 self.isFilterAppliedSubject.onNext(self.filterActionProvider?.isFiltersApplied() ?? false)
                 self.loadingSubject.onNext(true)
                 let residentId = self.residentProvider?.currentResident?["resident_id"] as? Int

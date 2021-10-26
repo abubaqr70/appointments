@@ -27,6 +27,7 @@ class AppointmentRepository {
             
             guard let self = self else { return Disposables.create() }
             
+            self.whereIsMySQLite()
             //Mark:- Checking Internet Connection
             let reachability = self.reachabilityService.reachabilityType
             switch reachability {
@@ -238,7 +239,7 @@ class AppointmentRepository {
     
     //Mark:- Checking appointments of that month exist in dataStore
     func checkAppointmentsExist(with startDate: Date, with endDate: Date) -> Bool {
-        return self.dataStore.checkAppointmentsExist(tartDate: Double(startDate.timeIntervalSince1970), endDate: Double(endDate.timeIntervalSince1970))
+        return self.dataStore.checkAppointmentsExist(startDate: Double(startDate.timeIntervalSince1970), endDate: Double(endDate.timeIntervalSince1970))
     }
     
     //Mark:- Deleting appointments of that month from dataStore
@@ -261,7 +262,43 @@ class AppointmentRepository {
         }
     }
     
+    public func markAllAppointmentsTypeStatus(status: Bool) {
+        self.dataStore.markAllAppointmentsType(status: status)
+    }
     
+    public func markAllFacilityStaffStatus(status: Bool) {
+        self.dataStore.markAllFacilityStaff(status: status)
+    }
+    
+    public func markAppointmentsType(appointmentType: AppointmentsType) {
+        self.dataStore.updateAppointmentType(appointmentType)
+    }
+    
+    public func markFacilityStaff(facilityStaff: FacilityStaff) {
+        self.dataStore.updateFacilityStaff(facilityStaff)
+    }
+    
+    public func getAppointmentsTypeSelected() -> [AppointmentsType] {
+        self.dataStore.fetchAppointmentsTypeSelected()
+    }
+    
+    public func getFacilityStaffSelected() -> [FacilityStaff] {
+        self.dataStore.fetchFacilityStaffSelected()
+    }
+    
+    public func checkForMarkAppointmentsType() -> Bool {
+        if self.dataStore.fetchAppointmentsTypeSelected().count != self.dataStore.fetchAppointmentsType().count {
+            return true
+        }
+        return false
+    }
+    
+    public func checkForMarkFacilityStaff() -> Bool {
+        if self.dataStore.fetchFacilityStaffSelected().count != self.dataStore.fetchFacilityStaff().count {
+            return true
+        }
+        return false
+    }
     
     //Mark:- Fetch Appointments Type with FacilityId
     func getAppointmentsType(for facilityID: Int) ->  Observable<[AppointmentsType]> {
@@ -283,12 +320,14 @@ class AppointmentRepository {
                     
                     switch result {
                     case .success(let appointmentsType):
-                        try? self.dataStore.deleteAppointmentsType()
+                        //                        try? self.dataStore.deleteAppointmentsType()
                         
                         //Mark:- Saving appointments type
                         
                         for appointmentType in appointmentsType {
-                            self.dataStore.saveAppointmentsType(appointmentType)
+                            if !self.dataStore.checkAppointmentsTypeExist(appointmentsType: appointmentType) {
+                                self.dataStore.saveAppointmentsType(appointmentType)
+                            }
                         }
                         
                         observer.onNext(self.dataStore.fetchAppointmentsType())
@@ -325,10 +364,13 @@ class AppointmentRepository {
                     return Disposables.create() }
                 let jsonData = try JSONSerialization.data(withJSONObject: dictionary, options: [.prettyPrinted])
                 let facilityStaffs : [FacilityStaff] = try self.decode(data: jsonData)
-                try self.dataStore.deleteFacilityStaff()
+                //                try? self.dataStore.deleteFacilityStaff()
                 
+                //Mark:- Saving Facility staff
                 for facilityStaff in facilityStaffs {
-                    self.dataStore.saveFacilityStaff(facilityStaff)
+                    if !self.dataStore.checkFacilityStaffExist(facilityStaff: facilityStaff) {
+                        self.dataStore.saveFacilityStaff(facilityStaff)
+                    }
                 }
                 
                 observer.onNext(self.dataStore.fetchFacilityStaff())
@@ -343,11 +385,22 @@ class AppointmentRepository {
         
     }
     
-    
     func decode<T: Codable>(data: Data) throws -> T {
         
         let decoder = JSONDecoder()
         return try decoder.decode(T.self, from: data)
+    }
+    
+    func whereIsMySQLite() {
+        let path = FileManager
+            .default
+            .urls(for: .applicationSupportDirectory, in: .userDomainMask)
+            .last?
+            .absoluteString
+            .replacingOccurrences(of: "file://", with: "")
+            .removingPercentEncoding
+        
+        print(path ?? "Not found")
     }
     
 }
