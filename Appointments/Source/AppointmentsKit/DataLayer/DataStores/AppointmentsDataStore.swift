@@ -265,21 +265,21 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
     func markAppointmentsSyncedTrue (_ appointment : Appointment ) {
         guard let objectUpdate = try? self.fetchCDAppointmentForUpdate(id: Int64(appointment.id ?? 0), occurrenceId: Int64(appointment.occurrenceId ?? 0)) else { return }
         print(objectUpdate)
-        objectUpdate.setValue(true, forKey: "isSynced")
+        objectUpdate.setValue(NSNumber(booleanLiteral: true), forKey: "isSynced")
         self.coreDataStack.saveContext()
     }
     
     func updateAppointmentType (_ appointmentType : AppointmentsType ) {
         guard let objectUpdate = try? self.fetchCDAppointmentsTypeForUpdate(id: Int64(appointmentType.id ?? 0)) else { return }
         print(objectUpdate)
-        objectUpdate.setValue(!(appointmentType.isSelected ?? true), forKey: "isSelected")
+        objectUpdate.setValue(NSNumber(booleanLiteral: !(appointmentType.isSelected ?? true)), forKey: "isSelected")
         self.coreDataStack.saveContext()
     }
     
     func updateFacilityStaff (_ facilityStaff : FacilityStaff ) {
         guard let objectUpdate = try? self.fetchCDFacilityStaffForUpdate(id: Int64(facilityStaff.staffId ?? 0)) else { return }
         print(objectUpdate)
-        objectUpdate.setValue(!(facilityStaff.isSelected ?? true), forKey: "isSelected")
+        objectUpdate.setValue(NSNumber(booleanLiteral: !(facilityStaff.isSelected ?? true)), forKey: "isSelected")
         self.coreDataStack.saveContext()
     }
     

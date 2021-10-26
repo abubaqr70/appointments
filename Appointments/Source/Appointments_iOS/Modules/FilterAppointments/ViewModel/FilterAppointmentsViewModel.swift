@@ -17,6 +17,7 @@ protocol FilterAppointmentsViewModelOutputs {
     //Outputs
     var filterAppointments: Observable<Void> { get }
     var sections: Observable<[(title: ReuseableCellViewModelType, rows: [ReuseableCellViewModelType])]> { get }
+    var isAppointmentsFilterApplied: Observable<Bool> { get }
 }
 
 protocol FilterAppointmentsViewModelType {
@@ -35,6 +36,7 @@ class FilterAppointmentsViewModel : FilterAppointmentsViewModelType, FilterAppoi
     
     var filterAppointments: Observable<Void> { return filterAppointmentsSubject.asObservable() }
     var sections: Observable<[(title: ReuseableCellViewModelType, rows: [ReuseableCellViewModelType])]> { return sectionsSubject.asObservable() }
+    var isAppointmentsFilterApplied: Observable<Bool> { return isAppointmentsFilterAppliedSubject.asObservable() }
     
     private let appointmentFilterSubject = PublishSubject<Void>()
     private let filterAppointmentsSubject = PublishSubject<Void>()
@@ -45,6 +47,7 @@ class FilterAppointmentsViewModel : FilterAppointmentsViewModelType, FilterAppoi
     private let facilityStaffSubject = BehaviorSubject<[FacilityStaff]>(value: [])
     private let appointmentsTypeSubject = BehaviorSubject<[AppointmentsType]>(value: [])
     private let sectionsSubject = BehaviorSubject<[(title: ReuseableCellViewModelType, rows: [ReuseableCellViewModelType])]>(value: [])
+    private let isAppointmentsFilterAppliedSubject = BehaviorSubject<Bool>(value: false)
     
     private let facilityDataStore: FacilityDataStore
     private let appointmentsRepository: AppointmentRepository
@@ -99,6 +102,7 @@ class FilterAppointmentsViewModel : FilterAppointmentsViewModelType, FilterAppoi
             facilityStaff, appointmentsType -> [(title: ReuseableCellViewModelType, rows: [ReuseableCellViewModelType])] in
             print("Facility Staff Selected : \(self.appointmentsRepository.getFacilityStaffSelected().count)")
             print("AppointmentsType Selected : \(self.appointmentsRepository.getAppointmentsTypeSelected().count)")
+            self.isAppointmentsFilterAppliedSubject.onNext(self.appointmentsRepository.isAppointmentsFilterApplied())
             return self.createFilterTableViewSections(facilityStaff: facilityStaff, appointmentsType: appointmentsType)
         }
         .bind(to: self.sectionsSubject)
@@ -123,11 +127,24 @@ extension FilterAppointmentsViewModel {
     
     func createAllCategoriesSection() -> (title: ReuseableCellViewModelType, rows: [ReuseableCellViewModelType]) {
         
-        let headerViewModel = FilterHeaderTVCellViewModel(headerTitle: "All Categories", isSelectedAll: false)
+        let selected: Bool
+        if self.appointmentsRepository.checkForMarkFacilityStaff() && self.appointmentsRepository.checkForMarkAppointmentsType() {
+            selected = true
+        } else {
+            selected = false
+        }
+        
+        let headerViewModel = FilterHeaderTVCellViewModel(headerTitle: "All Categories", isSelectedAll: selected)
         
         headerViewModel.outputs.headerType.subscribe(onNext: {
             headerTitle in
             
+            if self.appointmentsRepository.checkForMarkFacilityStaff() && self.appointmentsRepository.checkForMarkAppointmentsType() {
+                self.markAllCategories(status: false)
+            } else {
+                self.markAllCategories(status: true)
+            }
+            self.refreshSubject.onNext(Void())
         }).disposed(by: disposeBag)
         
         return (headerViewModel, [])
@@ -135,17 +152,23 @@ extension FilterAppointmentsViewModel {
     
     func createStaffSection(facilityStaff: [FacilityStaff]) -> (title: ReuseableCellViewModelType, rows: [ReuseableCellViewModelType]) {
         
-        let headerViewModel = FilterHeaderTVCellViewModel(headerTitle: "All Staff", isSelectedAll: false)
+        let selected: Bool
+        if self.appointmentsRepository.checkForMarkFacilityStaff() {
+            selected = true
+        } else {
+            selected = false
+        }
+        
+        let headerViewModel = FilterHeaderTVCellViewModel(headerTitle: "All Staff", isSelectedAll: selected)
         
         headerViewModel.outputs.headerType.subscribe(onNext: {
             headerTitle in
             if self.appointmentsRepository.checkForMarkFacilityStaff() {
                 self.appointmentsRepository.markAllFacilityStaffStatus(status: false)
-                self.refreshSubject.onNext(Void())
             } else {
                 self.appointmentsRepository.markAllFacilityStaffStatus(status: true)
-                self.refreshSubject.onNext(Void())
             }
+            self.refreshSubject.onNext(Void())
         }).disposed(by: disposeBag)
         
         let cellViewModel : [ReuseableCellViewModelType] = facilityStaff.map { staff -> ReuseableCellViewModelType in
@@ -165,16 +188,23 @@ extension FilterAppointmentsViewModel {
     
     func createAppointmentsTypeSection(appointmentsType: [AppointmentsType]) -> (title: ReuseableCellViewModelType, rows: [ReuseableCellViewModelType]) {
         
-        let headerViewModel = FilterHeaderTVCellViewModel(headerTitle: "All Appointment Type", isSelectedAll: false)
+        let selected: Bool
+        if self.appointmentsRepository.checkForMarkAppointmentsType() {
+            selected = true
+        } else {
+            selected = false
+        }
+        
+        let headerViewModel = FilterHeaderTVCellViewModel(headerTitle: "All Appointment Type", isSelectedAll: selected)
+        
         headerViewModel.outputs.headerType.subscribe(onNext: {
             headerTitle in
             if self.appointmentsRepository.checkForMarkAppointmentsType() {
                 self.appointmentsRepository.markAllAppointmentsTypeStatus(status: false)
-                self.refreshSubject.onNext(Void())
             } else {
                 self.appointmentsRepository.markAllAppointmentsTypeStatus(status: true)
-                self.refreshSubject.onNext(Void())
             }
+            self.refreshSubject.onNext(Void())
         }).disposed(by: disposeBag)
         
         let cellViewModel : [ReuseableCellViewModelType] = appointmentsType.map { appointmentType -> ReuseableCellViewModelType in
@@ -190,6 +220,11 @@ extension FilterAppointmentsViewModel {
         }
         
         return (headerViewModel, cellViewModel)
+    }
+    
+    func markAllCategories(status: Bool) {
+        self.appointmentsRepository.markAllFacilityStaffStatus(status: status)
+        self.appointmentsRepository.markAllAppointmentsTypeStatus(status: status)
     }
     
 }
@@ -208,6 +243,7 @@ extension FilterAppointmentsViewModel {
         clearSubject.subscribe(onNext: {
             _ in
             print("Clear")
+            self.markAllCategories(status: false)
             self.refreshSubject.onNext(Void())
         }).disposed(by: disposeBag)
         

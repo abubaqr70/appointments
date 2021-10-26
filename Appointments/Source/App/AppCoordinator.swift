@@ -118,10 +118,28 @@ public class AppCoordinator: Coordinator<ResultType<Void>> {
         viewController.modalPresentationStyle = .fullScreen
         let navigationController = UINavigationController(rootViewController: viewController)
         navigationController.modalPresentationStyle = .fullScreen
-        self.rootNavigationController?.present(navigationController, animated: true, completion: nil)
+        if navigationType != .push {
+            self.rootNavigationController?.present(navigationController, animated: true, completion: nil)
+        } else {
+            if let root = root as? UINavigationController {
+                root.present(navigationController, animated: true, completion: nil)
+            } else {
+                fatalError("Pushing viewController on non navigation controller")
+            }
+        }
+        
         
         viewModel.outputs.filterAppointments.subscribe(onNext: {
-            self.rootNavigationController?.dismiss(animated: true, completion: nil)
+            
+            if self.navigationType != .push {
+                self.rootNavigationController?.dismiss(animated: true, completion: nil)
+            } else {
+                if let root = self.root as? UINavigationController {
+                    root.dismiss(animated: true, completion: nil)
+                } else {
+                    fatalError("Pushing viewController on non navigation controller")
+                }
+            }
         }).disposed(by: disposeBag)
     }
     

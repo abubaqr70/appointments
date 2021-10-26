@@ -22,11 +22,12 @@ public class AppointmentsViewController: UIViewController {
     }()
     
     fileprivate lazy var filteredBarButtonItem: UIBarButtonItem = {
-        let image = UIImage(named: "filtered")?.withRenderingMode(.alwaysOriginal)
+        let image = UIImage.moduleImage(named: "filtered")?.withRenderingMode(.alwaysTemplate)
         let item = UIBarButtonItem(image: image,
                                    style: .plain,
                                    target: self,
                                    action: #selector(filterButtonAction))
+        item.tintColor = UIColor.appSkyBlue
         return item
         
     }()
@@ -60,14 +61,7 @@ public class AppointmentsViewController: UIViewController {
     
     fileprivate lazy var titleButton : UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 200, height: 40))
-        button.setTitle("APPOINTMENTS", for: .normal)
-        button.setTitleColor(UIColor.appSkyBlue, for: .normal)
-        button.titleLabel?.font = UIFont.appFont(withStyle: .title3, size: 14)
-        button.semanticContentAttribute = UIApplication.shared
-            .userInterfaceLayoutDirection == .rightToLeft ? .forceLeftToRight : .forceRightToLeft
-        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 0)
-        button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 5)
-        button.setImage(UIImage.moduleImage(named: "icon_arrowdown"), for: .normal)
+        button.tintColor = UIColor.appSkyBlue
         return button
     }()
     
@@ -317,7 +311,17 @@ extension AppointmentsViewController{
             }
         }).disposed(by: disposeBag)
         
+        viewModel.outputs.isAppointmentsFilterApplied.subscribe(onNext: {
+            isApplied in
+            if isApplied {
+                self.titleButton.setImage(UIImage.moduleImage(named: "filter_appointments_down")?.withRenderingMode(.alwaysTemplate), for: .normal)
+            } else {
+                self.titleButton.setImage(UIImage.moduleImage(named: "appointment_down")?.withRenderingMode(.alwaysTemplate), for: .normal)
+            }
+        }).disposed(by: disposeBag)
+        
     }
+    
     private func isResident(viewModel : AppointmentsViewModelType) {
         self.profileView.isHidden = false
         self.segmentControl.isHidden = true
@@ -339,15 +343,11 @@ extension AppointmentsViewController{
                     ])
             })
             .disposed(by: self.disposeBag)
-        self.titleButton.setTitleColor(UIColor.black, for: .normal)
-        self.titleButton.setImage(nil, for: .normal)
     }
     
     private func ifNotResident(viewModel : AppointmentsViewModelType){
         self.profileView.isHidden = true
         self.segmentControl.isHidden = false
-        self.titleButton.setTitleColor(UIColor.appSkyBlue, for: .normal)
-        self.titleButton.setImage(UIImage.moduleImage(named: "icon_arrowdown"), for: .normal)
         self.bindLeftBarButton(viewModel: viewModel)
     }
     
@@ -364,7 +364,7 @@ extension AppointmentsViewController{
         titleButton.rx.tap
             .bind(to: viewModel.inputs.appointmentFilterObserver)
             .disposed(by: disposeBag)
-    
+        
         segmentControl.rx.selectedSegmentIndex
             .bind(to: viewModel.inputs.segmentControlObserver)
             .disposed(by: disposeBag)

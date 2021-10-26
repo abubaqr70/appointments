@@ -79,7 +79,6 @@ extension FilterAppointmentsTVCellViewModel {
         
         checkFilterSubject.onNext( facilityStaff.isSelected ?? false ? true : false )
         
-        
         markCheckboxSubject
             .withLatestFrom(self.checkFilterSubject)
             .map { isPresent -> Bool in
@@ -98,7 +97,6 @@ extension FilterAppointmentsTVCellViewModel {
     func bindActions(appointmentsType: AppointmentsType) {
         
         checkFilterSubject.onNext( appointmentsType.isSelected ?? false ? true : false )
-        
         
         markCheckboxSubject
             .withLatestFrom(self.checkFilterSubject)

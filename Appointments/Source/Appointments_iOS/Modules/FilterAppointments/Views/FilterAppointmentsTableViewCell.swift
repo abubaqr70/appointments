@@ -5,7 +5,7 @@ import RxCocoa
 import RxSwift
 
 class FilterAppointmentsTableViewCell: RxUITableViewCell  {
-
+    
     fileprivate lazy var nameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -62,7 +62,7 @@ class FilterAppointmentsTableViewCell: RxUITableViewCell  {
         setupViews()
         setupConstraints()
     }
-
+    
     private func setupViews() {
         selectionStyle = .none
         contentView.addSubview(cellView)
@@ -80,7 +80,7 @@ class FilterAppointmentsTableViewCell: RxUITableViewCell  {
             checkboxButton.widthAnchor.constraint(equalToConstant: 40),
             checkboxButton.heightAnchor.constraint(equalToConstant: 40)
         ])
-    
+        
         NSLayoutConstraint.activate([
             nameLabel.centerYAnchor.constraint(equalTo: cellView.centerYAnchor),
             nameLabel.leadingAnchor.constraint(equalTo: checkboxButton.trailingAnchor, constant: 10),

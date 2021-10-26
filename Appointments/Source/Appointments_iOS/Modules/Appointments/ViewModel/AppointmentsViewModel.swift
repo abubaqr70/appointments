@@ -36,6 +36,7 @@ protocol AppointmentsViewModelOutputs {
     var residentName: Observable<String> { get }
     var residentImage: Observable<String> { get }
     var isFilterApplied: Observable<Bool> { get }
+    var isAppointmentsFilterApplied: Observable<Bool> { get }
 }
 
 protocol AppointmentsViewModelType {
@@ -72,6 +73,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     var residentName: Observable<String> { return residentNameSubject.asObservable() }
     var residentImage: Observable<String> { return residentImageSubject.asObservable() }
     var isFilterApplied: Observable<Bool> { return isFilterAppliedSubject.asObservable() }
+    var isAppointmentsFilterApplied: Observable<Bool> { return isAppointmentsFilterAppliedSubject.asObservable() }
     
     //Mark: Private Properties
     
@@ -86,6 +88,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     
     private let sortedAppointmentsSubject = BehaviorSubject<[Appointment]>(value: [])
     private let mappedAppointmentsSubject = BehaviorSubject<[Appointment]>(value: [])
+    private let residentFilterAppointmentsSubject = BehaviorSubject<[Appointment]>(value: [])
     private let filteredAppointmentsSubject = BehaviorSubject<[Appointment]>(value: [])
     private let appointmentsSubject = BehaviorSubject<[Appointment]>(value: [])
     private let selectedAppointmentSubject = PublishSubject<Appointment>()
@@ -104,6 +107,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     private let residentImageSubject = BehaviorSubject<String>(value: "")
     private let residentNameSubject = BehaviorSubject<String>(value: "")
     private let isFilterAppliedSubject = BehaviorSubject<Bool>(value: false)
+    private let isAppointmentsFilterAppliedSubject = BehaviorSubject<Bool>(value: false)
     
     private let disposeBag = DisposeBag()
     private let facilityDataStore: FacilityDataStore
@@ -201,7 +205,15 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         
         fetchRequest.errors()
             .debug("Errors")
-            .map{$0.localizedDescription}
+            .map {
+                error in
+                let error = error.asAFError(orFailWith: "The internet connection appears to be offline.")
+                if error.isSessionTaskError {
+                    return "The internet connection appears to be offline."
+                } else {
+                    return error.localizedDescription
+                }
+            }
             .bind(to: errorAlertSubject)
             .disposed(by: disposeBag)
         
@@ -263,8 +275,54 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             } else {
                 return appointments
             }
-        }.bind(to: filteredAppointmentsSubject)
+        }
+        .bind(to: residentFilterAppointmentsSubject)
         .disposed(by: disposeBag)
+        
+        self.residentFilterAppointmentsSubject.map{
+            appointments -> [Appointment] in
+            let appointmentsTypes = self.appointmentsRepository.getAppointmentsTypeSelectedIds()
+            let facilityStaffMembers = self.appointmentsRepository.getFacilityStaffSelectedIds()
+            print("Selected Appointments type : \(appointmentsTypes)")
+            print("Selected Facility staff Members : \(facilityStaffMembers)")
+            self.isAppointmentsFilterAppliedSubject.onNext(self.appointmentsRepository.isAppointmentsFilterApplied())
+            if appointmentsTypes.count >= 1 && facilityStaffMembers.count >= 1 {
+                return appointments.filter{
+                    appointment in
+                    if appointment.user != nil {
+                        return  appointmentsTypes.contains(appointment.therapyId ?? 0) ?? false && facilityStaffMembers.contains(appointment.user?.id ?? 0) ?? false
+                    } else {
+                        return (appointment.userGroup?.facilityGroupMembers?.filter{
+                            groupMember in
+                            appointmentsTypes.contains(appointment.therapyId ?? 0) ?? false && facilityStaffMembers.contains(groupMember.userId ?? 0) ?? false
+                        }) != nil
+                    }
+                }
+            } else if appointmentsTypes.count >= 1  {
+                return appointments.filter{
+                    appointment in
+                    appointmentsTypes.contains(appointment.therapyId ?? 0) ?? false
+                }
+            } else if facilityStaffMembers.count >= 1 {
+                return appointments.filter{
+                    appointment in
+                    if appointment.user != nil {
+                        return facilityStaffMembers.contains(appointment.user?.id ?? 0) ?? false
+                    } else {
+                        return (appointment.userGroup?.facilityGroupMembers?.filter{
+                            groupMember in
+                            facilityStaffMembers.contains(groupMember.userId ?? 0) ?? false
+                        }) != nil
+                    }
+                }
+            } else {
+                return appointments
+            }
+            
+        }
+        .bind(to: filteredAppointmentsSubject)
+        .disposed(by: disposeBag)
+        
         
         Observable.combineLatest(filteredAppointmentsSubject, segmentControlSubject)
             .map{ appointment , segment -> [Appointment] in

@@ -61,7 +61,7 @@ class FilterHeaderTableViewCell: RxUITableViewCell {
         setupViews()
         setupConstraints()
     }
-
+    
     private func setupViews() {
         selectionStyle = .none
         contentView.addSubview(cellView)
@@ -79,7 +79,7 @@ class FilterHeaderTableViewCell: RxUITableViewCell {
             checkboxButton.widthAnchor.constraint(equalToConstant: 40),
             checkboxButton.heightAnchor.constraint(equalToConstant: 40)
         ])
-    
+        
         NSLayoutConstraint.activate([
             nameLabel.centerYAnchor.constraint(equalTo: cellView.centerYAnchor),
             nameLabel.leadingAnchor.constraint(equalTo: checkboxButton.trailingAnchor, constant: 10),

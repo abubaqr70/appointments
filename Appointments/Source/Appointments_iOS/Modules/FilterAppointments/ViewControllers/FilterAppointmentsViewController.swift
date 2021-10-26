@@ -14,14 +14,7 @@ class FilterAppointmentsViewController: UIViewController {
     
     fileprivate lazy var titleButton : UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 200, height: 40))
-        button.setTitle("APPOINTMENTS", for: .normal)
-        button.setTitleColor(UIColor.appSkyBlue, for: .normal)
-        button.titleLabel?.font = UIFont.appFont(withStyle: .title3, size: 14)
-        button.semanticContentAttribute = UIApplication.shared
-            .userInterfaceLayoutDirection == .rightToLeft ? .forceLeftToRight : .forceRightToLeft
-        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 0)
-        button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 5)
-        button.setImage(UIImage.moduleImage(named: "icon_arrowup"), for: .normal)
+        button.tintColor = UIColor.appSkyBlue
         return button
     }()
     
@@ -29,7 +22,7 @@ class FilterAppointmentsViewController: UIViewController {
         let button = UIButton()
         button.setTitle("Clear", for: .normal)
         button.setTitleColor(UIColor.appSkyBlue, for: .normal)
-        button.titleLabel?.font = UIFont.appFont(withStyle: .title3, size: 14)
+        button.titleLabel?.font = UIFont.appFont(withStyle: .title3, size: 16)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -141,7 +134,17 @@ extension FilterAppointmentsViewController{
         clearButton.rx.tap
             .bind(to: viewModel.inputs.clear).disposed(by: disposeBag)
         
+        viewModel.outputs.isAppointmentsFilterApplied.subscribe(onNext: {
+            isApplied in
+            if isApplied {
+                self.titleButton.setImage(UIImage.moduleImage(named: "filter_appointments_up")?.withRenderingMode(.alwaysTemplate), for: .normal)
+            } else {
+                self.titleButton.setImage(UIImage.moduleImage(named: "appointment_up")?.withRenderingMode(.alwaysTemplate), for: .normal)
+            }
+        }).disposed(by: disposeBag)
+        
     }
+    
     
 }
 extension FilterAppointmentsViewController: UITableViewDelegate,UITableViewDataSource {

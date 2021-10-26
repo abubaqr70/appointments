@@ -49,7 +49,7 @@ public class AppointmentsCoreDataStore {
     
     public func fetchCDAppointmentsSyncedFalse() throws -> [CDAppointment] {
         let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "isSynced == %@", "false")
+        fetchRequest.predicate = NSPredicate(format: "isSynced == %@",  NSNumber(booleanLiteral: false))
         return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
     }
     
@@ -60,7 +60,7 @@ public class AppointmentsCoreDataStore {
     
     public func fetchCDAppointmentsTypeSelected() throws -> [CDAppointmentsType] {
         let fetchRequest: NSFetchRequest<CDAppointmentsType> = CDAppointmentsType.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "isSelected == %@", "true")
+        fetchRequest.predicate = NSPredicate(format: "isSelected == %@", NSNumber(booleanLiteral: true))
         return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
     }
     
@@ -78,7 +78,7 @@ public class AppointmentsCoreDataStore {
     
     public func fetchCDFacilityStaffSelected() throws -> [CDFacilityStaff] {
         let fetchRequest: NSFetchRequest<CDFacilityStaff> = CDFacilityStaff.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "isSelected == %@", "true")
+        fetchRequest.predicate = NSPredicate(format: "isSelected == %@", NSNumber(booleanLiteral: true))
         return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
     }
     
@@ -133,7 +133,7 @@ public class AppointmentsCoreDataStore {
         let entityDescription: NSEntityDescription = CDAppointmentsType.entity()
         let batchUpdateRequest = NSBatchUpdateRequest(entity: entityDescription)
         batchUpdateRequest.resultType = .updatedObjectsCountResultType
-        batchUpdateRequest.propertiesToUpdate = ["isSelected": status]
+        batchUpdateRequest.propertiesToUpdate = ["isSelected": NSNumber(booleanLiteral: status)]
         do {
             // Execute Batch Update
             let batchUpdateResult = try self.coreDataStack.manageObjectContext.execute(batchUpdateRequest) as! NSBatchUpdateResult
@@ -150,11 +150,11 @@ public class AppointmentsCoreDataStore {
         let entityDescription: NSEntityDescription = CDFacilityStaff.entity()
         let batchUpdateRequest = NSBatchUpdateRequest(entity: entityDescription)
         batchUpdateRequest.resultType = .updatedObjectsCountResultType
-        batchUpdateRequest.propertiesToUpdate = ["isSelected": status]
+        batchUpdateRequest.propertiesToUpdate = ["isSelected":  NSNumber(booleanLiteral: status)]
         do {
             // Execute Batch Update
             let batchUpdateResult = try self.coreDataStack.manageObjectContext.execute(batchUpdateRequest) as! NSBatchUpdateResult
-            print("The batch update request has updated \(batchUpdateResult.result ?? "") in Appointments Type records.")
+            print("The batch update request has updated \(batchUpdateResult.result ?? "") in Facility staff records.")
             self.coreDataStack.saveContext()
         } catch {
             let updateError = error as NSError

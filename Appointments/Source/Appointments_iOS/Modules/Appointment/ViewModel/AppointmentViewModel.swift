@@ -75,11 +75,13 @@ class AppointmentViewModel: AppointmentViewModelType, AppointmentViewModelInputs
     private let isPresentSubject : BehaviorSubject<Bool>
     private let markPresentEnabledSubject : BehaviorSubject<Bool>
     private let appointmentsRepository: AppointmentRepository
+    private let appointmentsType: [AppointmentsType]
     
     init(appointment: Appointment,repository: AppointmentRepository){
         
         //Mark:- Setting User Names
         self.appointmentsRepository = repository
+        self.appointmentsType = self.appointmentsRepository.getLocalAppointmentsType()
         markPresentSubject = PublishSubject()
         isPresentSubject = BehaviorSubject(value: true)
         appointmentsSubject = BehaviorSubject(value: appointment)
@@ -106,7 +108,6 @@ class AppointmentViewModel: AppointmentViewModelType, AppointmentViewModelInputs
                         .font: UIFont.appFont(withStyle: .title3, size: 14)
                     ])
                 }
-               
                 attributedString.addAttribute(.font, value: UIFont.appFont(withStyle: .subhead, size: 14), range: NSRange(location: 0, length: 6))
                 return attributedString
             }
@@ -125,19 +126,8 @@ class AppointmentViewModel: AppointmentViewModelType, AppointmentViewModelInputs
             .bind(to: locationSubject)
             .disposed(by: disposeBag)
         
-        appointmentsSubject
-            .map { appointments -> NSMutableAttributedString in
-                let attributedString = NSMutableAttributedString(string: "Appointment Type: \(appointments.therapyId ?? 0)", attributes: [
-                    .font: UIFont.appFont(withStyle: .title3, size: 14),
-                ])
-                attributedString.addAttribute(.font, value: UIFont.appFont(withStyle: .subhead, size: 14), range: NSRange(location: 0, length: 17))
-                return attributedString
-            }
-            .bind(to: appointmentTypeSubject)
-            .disposed(by: disposeBag)
         
         profileImageSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.profileImageRoute)
-        
         
         appointmentsSubject
             .map({
@@ -158,6 +148,30 @@ class AppointmentViewModel: AppointmentViewModelType, AppointmentViewModelInputs
                 return "\(appointment.startDate?.timeString ?? "") - \(appointment.endDate?.timeString ?? "")"
             })
             .bind(to: timeSubject)
+            .disposed(by: disposeBag)
+        
+        appointmentsSubject
+            .map { appointments -> NSMutableAttributedString in
+                
+                let appointmentType : [AppointmentsType] = self.appointmentsType.filter{
+                    appointment in
+                    appointment.id == appointments.therapyId
+                }
+                
+                let type : String
+                if appointmentType.isEmpty {
+                    type = ""
+                } else {
+                    type = appointmentType.first?.name ?? ""
+                }
+                
+                let attributedString = NSMutableAttributedString(string: "Appointment Type: \(type)", attributes: [
+                    .font: UIFont.appFont(withStyle: .title3, size: 14),
+                ])
+                attributedString.addAttribute(.font, value: UIFont.appFont(withStyle: .subhead, size: 14), range: NSRange(location: 0, length: 17))
+                return attributedString
+            }
+            .bind(to: appointmentTypeSubject)
             .disposed(by: disposeBag)
         
         bindActions(appointment: appointment)

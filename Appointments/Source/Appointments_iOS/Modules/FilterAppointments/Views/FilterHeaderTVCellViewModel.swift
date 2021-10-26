@@ -16,7 +16,7 @@ protocol FilterHeaderTVCellViewModelOutputs {
     var headerTitle: Observable<String?> { get }
     var checkFilter : Observable<Bool> { get }
     var headerType: Observable<String> { get }
-
+    
 }
 
 protocol FilterHeaderTVCellViewModelType {
@@ -38,14 +38,14 @@ class FilterHeaderTVCellViewModel: FilterHeaderTVCellViewModelType, FilterHeader
     var headerTitle: Observable<String?> { return headerTitleSubject.asObservable() }
     var checkFilter: Observable<Bool> { return checkFilterSubject.asObservable() }
     var headerType: Observable<String> { return headerTypeSubject.asObservable() }
-  
+    
     //Mark: Init
     private let disposeBag = DisposeBag()
     private let headerTitleSubject: BehaviorSubject<String?>
     private let markCheckboxSubject : PublishSubject<Void>
     private let checkFilterSubject : BehaviorSubject<Bool>
     private let headerTypeSubject : PublishSubject<String>
-  
+    
     init(headerTitle: String, isSelectedAll: Bool) {
         
         //Mark:- Setting Properties

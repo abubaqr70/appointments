@@ -282,19 +282,55 @@ class AppointmentRepository {
         self.dataStore.fetchAppointmentsTypeSelected()
     }
     
+    public func getLocalAppointmentsType() -> [AppointmentsType] {
+        self.dataStore.fetchAppointmentsType()
+    }
+    
+    public func isAppointmentsFilterApplied() -> Bool {
+        if self.getFacilityStaffSelectedIds().count >= 1 && self.getAppointmentsTypeSelectedIds().count >= 1 {
+            return true
+        } else if self.getFacilityStaffSelectedIds().count >= 1 {
+            return true
+        } else if self.getAppointmentsTypeSelectedIds().count >= 1 {
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    public func getAppointmentsTypeSelectedIds() -> [Int] {
+        var selectedMembers = [Int]()
+        for appointmentType in self.dataStore.fetchAppointmentsTypeSelected() {
+            if appointmentType.id != nil {
+                selectedMembers.append(appointmentType.id!)
+            }
+        }
+        return selectedMembers
+    }
+    
     public func getFacilityStaffSelected() -> [FacilityStaff] {
         self.dataStore.fetchFacilityStaffSelected()
     }
     
+    public func getFacilityStaffSelectedIds() -> [Int] {
+        var selectedMembers = [Int]()
+        for members in self.dataStore.fetchFacilityStaffSelected() {
+            if members.staffId != nil {
+                selectedMembers.append(members.staffId!)
+            }
+        }
+        return selectedMembers
+    }
+    
     public func checkForMarkAppointmentsType() -> Bool {
-        if self.dataStore.fetchAppointmentsTypeSelected().count != self.dataStore.fetchAppointmentsType().count {
+        if self.dataStore.fetchAppointmentsTypeSelected().count == self.dataStore.fetchAppointmentsType().count {
             return true
         }
         return false
     }
     
     public func checkForMarkFacilityStaff() -> Bool {
-        if self.dataStore.fetchFacilityStaffSelected().count != self.dataStore.fetchFacilityStaff().count {
+        if self.dataStore.fetchFacilityStaffSelected().count == self.dataStore.fetchFacilityStaff().count {
             return true
         }
         return false
@@ -358,7 +394,6 @@ class AppointmentRepository {
             guard let self = self else { return Disposables.create() }
             
             observer.onNext(self.dataStore.fetchFacilityStaff())
-            
             do {
                 guard let dictionary = self.facilityDataStore.currentFacility?["staff"] as? [[String : Any]] else {
                     return Disposables.create() }
@@ -372,7 +407,6 @@ class AppointmentRepository {
                         self.dataStore.saveFacilityStaff(facilityStaff)
                     }
                 }
-                
                 observer.onNext(self.dataStore.fetchFacilityStaff())
                 observer.onCompleted()
             }catch let error as NSError{
