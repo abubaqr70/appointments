@@ -127,7 +127,7 @@ public class AppointmentsTypeCoreDataStore {
             didChange = true
         }
         if didChange {
-            print("CDAppointmentsType Changed")
+            print("CDAppointment Changed")
         }
     }
     

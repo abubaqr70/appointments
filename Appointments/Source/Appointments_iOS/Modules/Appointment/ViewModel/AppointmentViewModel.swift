@@ -104,7 +104,7 @@ class AppointmentViewModel: AppointmentViewModelType, AppointmentViewModelInputs
                         .font: UIFont.appFont(withStyle: .title3, size: 14)
                     ])
                 } else {
-                    attributedString = NSMutableAttributedString(string: "Staff: \(appointments.user?.fullName ?? "")", attributes: [
+                    attributedString = NSMutableAttributedString(string: "Staff: \(appointments.user?.firstName ?? "") \(appointments.user?.lastName ?? "")", attributes: [
                         .font: UIFont.appFont(withStyle: .title3, size: 14)
                     ])
                 }

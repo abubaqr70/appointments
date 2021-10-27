@@ -62,7 +62,7 @@ public class LastUpdatedCoreDataStore {
             didChange = true
         }
         if didChange {
-            print("CDLastUpdated Changed")
+            print("CDAppointment Changed")
         }
     }
     

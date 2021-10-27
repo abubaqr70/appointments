@@ -114,7 +114,7 @@ public class FacilityStaffCoreDataStore {
             didChange = true
         }
         if didChange {
-            print("CDFacilityStaff Changed")
+            print("CDAppointment Changed")
         }
     }
     

@@ -269,47 +269,14 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         .disposed(by: disposeBag)
         
         self.mappedAppointmentsSubject.map{ appointments -> [Appointment] in
-            if self.filterActionProvider?.isFiltersApplied() ?? false {
-                return appointments.filter{
-                    appointment in
-                    self.filterActionProvider?.memberIDsForSelectedFilters().contains(appointment.appointmentAttendance?.first?.residentId ?? 0) ?? false
-                }
-            } else {
-                return appointments
-            }
+            return self.residentStaffFilters(appointments: appointments)
         }
         .bind(to: residentFilterAppointmentsSubject)
         .disposed(by: disposeBag)
         
         self.residentFilterAppointmentsSubject.map{
             appointments -> [Appointment] in
-            let appointmentsTypes = self.appointmentsRepository.getAppointmentsTypeSelectedIds(facilityId: self.facilityId)
-            let facilityStaffMembers = self.appointmentsRepository.getFacilityStaffSelectedIds(facilityId: self.facilityId)
-            print("Selected Appointments type : \(appointmentsTypes)")
-            print("Selected Facility staff Members : \(facilityStaffMembers)")
-            self.isAppointmentsFilterAppliedSubject.onNext(self.appointmentsRepository.isAppointmentsFilterApplied(facilityId: self.facilityId))
-            if appointmentsTypes.count >= 1  {
-                return appointments.filter{
-                    appointment in
-                    appointmentsTypes.contains(appointment.therapyId ?? 0)
-                }
-            }
-            if facilityStaffMembers.count >= 1 {
-                return appointments.filter{
-                    appointment in
-                    if appointment.user != nil {
-                        return facilityStaffMembers.contains(appointment.user?.id ?? 0)
-                    } else {
-                        return (appointment.userGroup?.facilityGroupMembers?.filter{
-                            groupMember in
-                            facilityStaffMembers.contains(groupMember.userId ?? 0)
-                        }) != nil
-                    }
-                }
-            }
-            
-            return appointments
-            
+            return self.applyingAppointmentsFilter(appointments: appointments)
         }
         .bind(to: filteredAppointmentsSubject)
         .disposed(by: disposeBag)
@@ -325,6 +292,88 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             }.bind(to: sortedAppointmentsSubject)
             .disposed(by: disposeBag)
         
+    }
+    
+    func residentStaffFilters(appointments: [Appointment]) -> [Appointment] {
+        
+        if self.filterActionProvider?.isFiltersApplied() ?? false {
+            
+            guard let selectedResident = self.filterActionProvider?.allSelectedResidents()  else {return [] }
+            guard let selectedGroups = self.filterActionProvider?.allSelectedGroups() else {return [] }
+            
+            if selectedResident.count < 1 && selectedGroups.count < 1 {
+                return appointments
+            }
+            
+            var appointmentsFiltered = [Appointment]()
+            
+            if selectedResident.count >= 1 {
+                appointmentsFiltered += appointments.filter{
+                    appointment in
+                    selectedResident.contains(appointment.appointmentAttendance?.first?.residentId ?? 0)
+                }
+            }
+            
+            if selectedGroups.count >= 1 {
+                appointmentsFiltered += appointments.filter{
+                    appointment in
+                    selectedGroups.contains(appointment.groupId ?? 0)
+                }
+            }
+            return appointmentsFiltered
+        } else {
+            return appointments
+        }
+        
+    }
+    
+    func applyingAppointmentsFilter(appointments: [Appointment]) -> [Appointment] {
+        
+        self.isAppointmentsFilterAppliedSubject.onNext(self.appointmentsRepository.isAppointmentsFilterApplied(facilityId: self.facilityId))
+        
+        if self.appointmentsRepository.checkForMarkAppointmentsType(facilityId: self.facilityId) && self.appointmentsRepository.checkForMarkFacilityStaff(facilityId: self.facilityId, facilityDataStore: facilityDataStore) {
+            
+            return appointments
+        }
+        
+        let appointmentsTypes = self.appointmentsRepository.getAppointmentsTypeSelectedIds(facilityId: self.facilityId)
+        let facilityStaffMembers = self.appointmentsRepository.getFacilityStaffSelectedIds(facilityId: self.facilityId)
+        
+        if appointmentsTypes.count < 1 && facilityStaffMembers.count < 1{
+            return appointments
+        }
+        
+        var appointmentsFiltered = [Appointment]()
+        
+        if appointmentsTypes.count >= 1  {
+            appointmentsFiltered += appointments.filter{
+                appointment in
+                appointmentsTypes.contains(appointment.therapyId ?? 0)
+            }
+        }
+        
+        if facilityStaffMembers.count >= 1 {
+            appointmentsFiltered += appointments.filter{
+                appointment in
+                if appointment.user != nil {
+                    return facilityStaffMembers.contains(appointment.user?.id ?? 0)
+                } else {
+                    return true
+                }
+                
+                //                if appointment.user != nil {
+                //                    return facilityStaffMembers.contains(appointment.user?.id ?? 0)
+                //                } else {
+                //                    return (appointment.userGroup?.facilityGroupMembers?.filter{
+                //                        groupMember in
+                //                        facilityStaffMembers.contains(groupMember.userId ?? 0)
+                //                    }) != nil
+                //                }
+                
+            }
+        }
+        
+        return  appointmentsFiltered
     }
     
     func bindAppointmentsToCellViewModel() {

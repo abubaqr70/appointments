@@ -458,7 +458,7 @@ class AppointmentRepository {
                     
                     switch result {
                     case .success(let appointmentsType):
-                     
+                        
                         //Mark:- Fetching CoreData appointments type Ids
                         let coreDataAppointmentsType : [Int] = self.appointmentsTypeDataStore.fetchAppointmentsType(facilityId: facilityID).map{
                             appointmentsType in

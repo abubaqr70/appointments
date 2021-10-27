@@ -72,7 +72,11 @@ class FilterAppointmentsViewModel : FilterAppointmentsViewModelType, FilterAppoi
         
         appointmentsTypeFetchRequest
             .elements()
-            .bind(to: self.appointmentsTypeSubject)
+            .subscribe(onNext: {
+                appointmentTypes in
+                let sortedAppointmentTypes = appointmentTypes.sorted(by: {($0.name ?? "").compare($1.name ?? "") == ComparisonResult.orderedAscending})
+                self.appointmentsTypeSubject.onNext(sortedAppointmentTypes)
+            })
             .disposed(by: disposeBag)
         
         appointmentsTypeFetchRequest.errors()
@@ -88,7 +92,8 @@ class FilterAppointmentsViewModel : FilterAppointmentsViewModelType, FilterAppoi
             return self.appointmentsRepository.getFacilityStaff(for: self.facilityDataStore)
         }.subscribe(onNext: {
             facilityStaff in
-            self.facilityStaffSubject.onNext(facilityStaff)
+            let sortedFacilityStaff = facilityStaff.sorted(by: {("\($0.firstName ?? "") \($0.lastName ?? "")").compare("\($1.firstName ?? "") \($1.lastName ?? "")") == ComparisonResult.orderedAscending})
+            self.facilityStaffSubject.onNext(sortedFacilityStaff)
         }).disposed(by: disposeBag)
         
         
@@ -102,8 +107,6 @@ class FilterAppointmentsViewModel : FilterAppointmentsViewModelType, FilterAppoi
         
         Observable.combineLatest(self.facilityStaffSubject, self.appointmentsTypeSubject){
             facilityStaff, appointmentsType -> [(title: ReuseableCellViewModelType, rows: [ReuseableCellViewModelType])] in
-            print("Facility Staff Selected : \(self.appointmentsRepository.getFacilityStaffSelected(facilityId: self.facilityId).count)")
-            print("AppointmentsType Selected : \(self.appointmentsRepository.getAppointmentsTypeSelected(facilityId: self.facilityId).count)")
             self.isAppointmentsFilterAppliedSubject.onNext(self.appointmentsRepository.isAppointmentsFilterApplied(facilityId: self.facilityId))
             return self.createFilterTableViewSections(facilityStaff: facilityStaff, appointmentsType: appointmentsType)
         }

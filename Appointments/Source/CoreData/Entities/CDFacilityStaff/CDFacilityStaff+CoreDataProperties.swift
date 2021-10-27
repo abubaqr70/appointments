@@ -1,6 +1,6 @@
 //
 //  CDFacilityStaff+CoreDataProperties.swift
-//  Alamofire
+//  Appointments
 //
 //  Created by Mohammad Abubaqr on 27/10/2021.
 //

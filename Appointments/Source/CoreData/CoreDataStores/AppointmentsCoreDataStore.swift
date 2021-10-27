@@ -32,7 +32,7 @@ public class AppointmentsCoreDataStore {
     
     public func fetchCDAppointments(facilityId: Int64, startDate: Date) throws -> [CDAppointment] {
         let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "startedDate == %@ AND id == %@ ", argumentArray: [startDate,facilityId])
+        fetchRequest.predicate = NSPredicate(format: "startedDate == %@ AND facilityId == %@ ", argumentArray: [startDate,facilityId])
         return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
     }
     
@@ -63,7 +63,7 @@ public class AppointmentsCoreDataStore {
     
     public func checkCDAppointmentsExist(facilityID: Int64,startOfMonth: Double,endOfMonth: Double) throws -> Bool {
         let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@ AND startingDate >= %@ AND endingDate <= %@", argumentArray: [facilityID,startOfMonth,endOfMonth])
+        fetchRequest.predicate = NSPredicate(format: "facilityId == %@ AND startingDate >= %@ AND endingDate <= %@", argumentArray: [facilityID,startOfMonth,endOfMonth])
         let appointments = try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
         if appointments.count > 0 {
             return true
@@ -90,7 +90,7 @@ public class AppointmentsCoreDataStore {
     
     public func deleteCDAppointments(facilityID: Int64,startOfMonth: Double,endOfMonth: Double) throws {
         let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@ AND startingDate >= %@ AND endingDate <= %@", argumentArray: [facilityID,startOfMonth,endOfMonth])
+        fetchRequest.predicate = NSPredicate(format: "facilityId == %@ AND startingDate >= %@ AND endingDate <= %@", argumentArray: [facilityID,startOfMonth,endOfMonth])
         let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
         batchDeleteRequest.resultType = .resultTypeCount
         do {

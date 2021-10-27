@@ -7,4 +7,6 @@ public protocol FilterActionProvider {
     func isFiltersApplied() -> Bool
     func memberIDsForSelectedFilters() -> [Int]
     func filterButtonAction()
+    func allSelectedGroups() -> [Int]
+    func allSelectedResidents() -> [Int]
 }
