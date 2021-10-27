@@ -266,8 +266,20 @@ class AppointmentRepository {
         self.dataStore.markAllAppointmentsType(status: status)
     }
     
-    public func markAllFacilityStaffStatus(status: Bool) {
-        self.dataStore.markAllFacilityStaff(status: status)
+    public func markAllFacilityStaffStatus(for facilityDataStore: FacilityDataStore,status: Bool) {
+        if status {
+            let facilityStaff = self.getFacilityStaffFromDictionary(for: facilityDataStore)
+            for staff in facilityStaff {
+                self.dataStore.saveFacilityStaff(staff)
+            }
+        } else {
+            do {
+                try self.dataStore.deleteFacilityStaff()
+            }
+            catch let error as NSError {
+                print(error.localizedDescription)
+            }
+        }
     }
     
     public func markAppointmentsType(appointmentType: AppointmentsType) {
@@ -275,7 +287,13 @@ class AppointmentRepository {
     }
     
     public func markFacilityStaff(facilityStaff: FacilityStaff) {
-        self.dataStore.updateFacilityStaff(facilityStaff)
+        
+        if self.dataStore.checkFacilityStaffExist(facilityStaff: facilityStaff) {
+            self.dataStore.deleteFacilityStaff(facilityStaff)
+        } else {
+            self.dataStore.saveFacilityStaff(facilityStaff)
+        }
+        
     }
     
     public func getAppointmentsTypeSelected() -> [AppointmentsType] {
@@ -287,15 +305,13 @@ class AppointmentRepository {
     }
     
     public func isAppointmentsFilterApplied() -> Bool {
-        if self.getFacilityStaffSelectedIds().count >= 1 && self.getAppointmentsTypeSelectedIds().count >= 1 {
+        if self.getFacilityStaffSelectedIds().count >= 1 {
             return true
-        } else if self.getFacilityStaffSelectedIds().count >= 1 {
-            return true
-        } else if self.getAppointmentsTypeSelectedIds().count >= 1 {
-            return true
-        } else {
-            return false
         }
+        if self.getAppointmentsTypeSelectedIds().count >= 1 {
+            return true
+        }
+        return false
     }
     
     public func getAppointmentsTypeSelectedIds() -> [Int] {
@@ -309,12 +325,12 @@ class AppointmentRepository {
     }
     
     public func getFacilityStaffSelected() -> [FacilityStaff] {
-        self.dataStore.fetchFacilityStaffSelected()
+        self.dataStore.fetchFacilityStaff()
     }
     
     public func getFacilityStaffSelectedIds() -> [Int] {
         var selectedMembers = [Int]()
-        for members in self.dataStore.fetchFacilityStaffSelected() {
+        for members in self.dataStore.fetchFacilityStaff() {
             if members.staffId != nil {
                 selectedMembers.append(members.staffId!)
             }
@@ -329,8 +345,8 @@ class AppointmentRepository {
         return false
     }
     
-    public func checkForMarkFacilityStaff() -> Bool {
-        if self.dataStore.fetchFacilityStaffSelected().count == self.dataStore.fetchFacilityStaff().count {
+    public func checkForMarkFacilityStaff(for facilityDataStore: FacilityDataStore) -> Bool {
+        if self.dataStore.fetchFacilityStaff().count == self.getFacilityStaffFromDictionary(for: facilityDataStore).count {
             return true
         }
         return false
@@ -385,38 +401,35 @@ class AppointmentRepository {
         
     }
     
-    //Mark:- Save Facility Staff
+    //Mark:- Fetch Facility Staff Observable
     func getFacilityStaff(for facilityDataStore: FacilityDataStore) ->  Observable<[FacilityStaff]> {
-        
         
         return Observable.create { [weak self] observer in
             
             guard let self = self else { return Disposables.create() }
             
-            observer.onNext(self.dataStore.fetchFacilityStaff())
-            do {
-                guard let dictionary = self.facilityDataStore.currentFacility?["staff"] as? [[String : Any]] else {
-                    return Disposables.create() }
-                let jsonData = try JSONSerialization.data(withJSONObject: dictionary, options: [.prettyPrinted])
-                let facilityStaffs : [FacilityStaff] = try self.decode(data: jsonData)
-                //                try? self.dataStore.deleteFacilityStaff()
-                
-                //Mark:- Saving Facility staff
-                for facilityStaff in facilityStaffs {
-                    if !self.dataStore.checkFacilityStaffExist(facilityStaff: facilityStaff) {
-                        self.dataStore.saveFacilityStaff(facilityStaff)
-                    }
-                }
-                observer.onNext(self.dataStore.fetchFacilityStaff())
-                observer.onCompleted()
-            }catch let error as NSError{
-                print(error.localizedDescription)
-            }
-            
-            
+            let facilityStaff = self.getFacilityStaffFromDictionary(for: facilityDataStore)
+            observer.onNext(facilityStaff)
+            observer.onCompleted()
             return Disposables.create()
         }
         
+    }
+    
+    //Mark:- Fetch Facility Staff From Dictionary
+    func getFacilityStaffFromDictionary(for facilityDataStore: FacilityDataStore) -> [FacilityStaff] {
+        do {
+            guard let dictionary = self.facilityDataStore.currentFacility?["staff"] as? [[String : Any]] else {
+                return [] }
+            let jsonData = try JSONSerialization.data(withJSONObject: dictionary, options: [.prettyPrinted])
+            let facilityStaff : [FacilityStaff] = try self.decode(data: jsonData)
+            
+            //Mark:- Saving Facility staff
+            return facilityStaff
+        }catch let error as NSError{
+            print(error.localizedDescription)
+        }
+        return []
     }
     
     func decode<T: Codable>(data: Data) throws -> T {

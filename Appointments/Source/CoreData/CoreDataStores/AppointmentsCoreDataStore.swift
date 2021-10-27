@@ -229,6 +229,23 @@ public class AppointmentsCoreDataStore {
         return
     }
     
+    public func deleteCDFacilityStaff(staffId: Int64) throws {
+        let fetchRequest: NSFetchRequest<CDFacilityStaff> = CDFacilityStaff.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "staffId == %@", "\(staffId)")
+        do {
+            // Execute Batch Request
+            let facilityStaff = try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
+            for object in facilityStaff {
+                self.coreDataStack.manageObjectContext.delete(object)
+            }
+            self.coreDataStack.saveContext()
+        } catch {
+            let updateError = error as NSError
+            print("\(updateError), \(updateError.userInfo)")
+        }
+        return
+    }
+    
     public func deleteAllCDFacilityStaff() throws {
         let fetchRequest: NSFetchRequest<CDFacilityStaff> = CDFacilityStaff.fetchRequest()
         let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
@@ -352,19 +369,11 @@ extension AppointmentsCoreDataStore {
         return CDFacilityStaff(context: self.coreDataStack.manageObjectContext)
     }
     
-    public func createCDStaffRole() -> CDStaffRole{
-        return CDStaffRole(context: self.coreDataStack.manageObjectContext)
-    }
-    
     public func saveCDAppointmentsType(_ appointmentsType: CDAppointmentsType) {
         self.coreDataStack.saveContext()
     }
     
     public func saveCDFacilityStaff(_ facilityStaff: CDFacilityStaff) {
-        self.coreDataStack.saveContext()
-    }
-    
-    public func saveCDStaffRole() {
         self.coreDataStack.saveContext()
     }
     

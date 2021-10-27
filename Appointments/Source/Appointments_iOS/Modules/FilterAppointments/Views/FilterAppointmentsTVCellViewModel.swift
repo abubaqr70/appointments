@@ -49,14 +49,21 @@ class FilterAppointmentsTVCellViewModel: FilterAppointmentsTVCellViewModelType, 
     private let staffSubject : PublishSubject<FacilityStaff?>
     private let appointmentsTypeSubject : PublishSubject<AppointmentsType?>
     
-    init(facilityStaff: FacilityStaff) {
+    init(facilityStaff: FacilityStaff,appointmentsRepository: AppointmentRepository) {
         
         //Mark:- Setting Properties
         self.titleSubject = BehaviorSubject(value: "\(facilityStaff.firstName ?? "Test Staff") \(facilityStaff.lastName ?? "Name")")
         self.markCheckboxSubject = PublishSubject()
-        self.checkFilterSubject = BehaviorSubject(value: false)
+        let selectedFacilityStaff = appointmentsRepository.getFacilityStaffSelectedIds()
         self.staffSubject = PublishSubject()
         self.appointmentsTypeSubject = PublishSubject()
+        self.checkFilterSubject = BehaviorSubject(value: false)
+        guard let staffId = facilityStaff.staffId else {return}
+        if selectedFacilityStaff.contains(staffId) {
+            self.checkFilterSubject.onNext(true)
+        } else {
+            self.checkFilterSubject.onNext(false)
+        }
         self.bindActions(facilityStaff: facilityStaff)
     }
     
@@ -77,7 +84,7 @@ extension FilterAppointmentsTVCellViewModel {
     
     func bindActions(facilityStaff: FacilityStaff) {
         
-        checkFilterSubject.onNext( facilityStaff.isSelected ?? false ? true : false )
+//        checkFilterSubject.onNext( facilityStaff.isSelected ?? false ? true : false )
         
         markCheckboxSubject
             .withLatestFrom(self.checkFilterSubject)
@@ -97,7 +104,7 @@ extension FilterAppointmentsTVCellViewModel {
     func bindActions(appointmentsType: AppointmentsType) {
         
         checkFilterSubject.onNext( appointmentsType.isSelected ?? false ? true : false )
-        
+
         markCheckboxSubject
             .withLatestFrom(self.checkFilterSubject)
             .map { isPresent -> Bool in

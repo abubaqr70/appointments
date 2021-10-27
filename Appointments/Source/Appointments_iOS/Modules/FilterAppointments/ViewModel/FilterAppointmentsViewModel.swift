@@ -128,7 +128,7 @@ extension FilterAppointmentsViewModel {
     func createAllCategoriesSection() -> (title: ReuseableCellViewModelType, rows: [ReuseableCellViewModelType]) {
         
         let selected: Bool
-        if self.appointmentsRepository.checkForMarkFacilityStaff() && self.appointmentsRepository.checkForMarkAppointmentsType() {
+        if self.appointmentsRepository.checkForMarkFacilityStaff(for: self.facilityDataStore) && self.appointmentsRepository.checkForMarkAppointmentsType() {
             selected = true
         } else {
             selected = false
@@ -139,7 +139,7 @@ extension FilterAppointmentsViewModel {
         headerViewModel.outputs.headerType.subscribe(onNext: {
             headerTitle in
             
-            if self.appointmentsRepository.checkForMarkFacilityStaff() && self.appointmentsRepository.checkForMarkAppointmentsType() {
+            if self.appointmentsRepository.checkForMarkFacilityStaff(for: self.facilityDataStore) && self.appointmentsRepository.checkForMarkAppointmentsType() {
                 self.markAllCategories(status: false)
             } else {
                 self.markAllCategories(status: true)
@@ -153,7 +153,7 @@ extension FilterAppointmentsViewModel {
     func createStaffSection(facilityStaff: [FacilityStaff]) -> (title: ReuseableCellViewModelType, rows: [ReuseableCellViewModelType]) {
         
         let selected: Bool
-        if self.appointmentsRepository.checkForMarkFacilityStaff() {
+        if self.appointmentsRepository.checkForMarkFacilityStaff(for: facilityDataStore) {
             selected = true
         } else {
             selected = false
@@ -163,16 +163,16 @@ extension FilterAppointmentsViewModel {
         
         headerViewModel.outputs.headerType.subscribe(onNext: {
             headerTitle in
-            if self.appointmentsRepository.checkForMarkFacilityStaff() {
-                self.appointmentsRepository.markAllFacilityStaffStatus(status: false)
+            if self.appointmentsRepository.checkForMarkFacilityStaff(for: self.facilityDataStore) {
+                self.appointmentsRepository.markAllFacilityStaffStatus(for: self.facilityDataStore, status: false)
             } else {
-                self.appointmentsRepository.markAllFacilityStaffStatus(status: true)
+                self.appointmentsRepository.markAllFacilityStaffStatus(for: self.facilityDataStore, status: true)
             }
             self.refreshSubject.onNext(Void())
         }).disposed(by: disposeBag)
         
         let cellViewModel : [ReuseableCellViewModelType] = facilityStaff.map { staff -> ReuseableCellViewModelType in
-            let cellViewModel = FilterAppointmentsTVCellViewModel(facilityStaff: staff)
+            let cellViewModel = FilterAppointmentsTVCellViewModel(facilityStaff: staff,appointmentsRepository: self.appointmentsRepository)
             cellViewModel.outputs.staff.subscribe(onNext: {
                 staff in
                 guard let staff = staff else {return}
@@ -223,7 +223,7 @@ extension FilterAppointmentsViewModel {
     }
     
     func markAllCategories(status: Bool) {
-        self.appointmentsRepository.markAllFacilityStaffStatus(status: status)
+        self.appointmentsRepository.markAllFacilityStaffStatus(for: self.facilityDataStore, status: status)
         self.appointmentsRepository.markAllAppointmentsTypeStatus(status: status)
     }
     

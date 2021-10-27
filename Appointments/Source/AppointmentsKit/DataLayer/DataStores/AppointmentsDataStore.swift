@@ -26,6 +26,7 @@ protocol AppointmentsDataStore {
     func checkAppointmentsTypeExist(appointmentsType: AppointmentsType) -> Bool
     func checkFacilityStaffExist(facilityStaff: FacilityStaff) -> Bool
     func deleteAppointments(startDate: Double ,endDate: Double) throws
+    func deleteFacilityStaff( _ facilityStaff : FacilityStaff )
     func deleteAllAppointment() throws
     func deleteLastUpdated() throws
     func deleteFacilityStaff() throws
@@ -209,19 +210,11 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
     
     func saveFacilityStaff(_ facilityStaff: FacilityStaff) {
         let entity = self.createCDFacilityStaff()
-        entity.codeStatus = facilityStaff.codeStatus
-        entity.email = facilityStaff.email
-        entity.facilities = facilityStaff.facilities
-        entity.facilityId = Int64(facilityStaff.facilityId ?? 0)
+        
         entity.firstName = facilityStaff.firstName
         entity.lastName = facilityStaff.lastName
         entity.isSelected = facilityStaff.isSelected ?? false
-        entity.profileImageRoute = facilityStaff.profileImageRoute
-        entity.roomNo = facilityStaff.roomNo
         entity.staffId = Int64(facilityStaff.staffId ?? 0)
-        for staffRole in facilityStaff.roles ?? []{
-            entity.addToStaff(saveStaffRole(staffRole))
-        }
         self.saveCDFacilityStaff(entity)
     }
     
@@ -281,6 +274,16 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         print(objectUpdate)
         objectUpdate.setValue(NSNumber(booleanLiteral: !(facilityStaff.isSelected ?? true)), forKey: "isSelected")
         self.coreDataStack.saveContext()
+    }
+    
+    func deleteFacilityStaff ( _ facilityStaff : FacilityStaff ) {
+        do {
+            guard let staffId = facilityStaff.staffId else {return}
+            try self.deleteCDFacilityStaff(staffId: Int64(staffId))
+        }
+        catch let error as NSError {
+            print(error.localizedDescription)
+        }
     }
     
     func deleteAllAppointment() throws {
@@ -412,16 +415,6 @@ extension AppointmentsCoreDataStore {
         for facilityGroupMember in userGroup.facilityGroupMembers ?? [] {
             entity.addToFacilityGroupMembers(saveFacilityGroupMember(facilityGroupMember))
         }
-        return entity
-    }
-    
-    func saveStaffRole(_ staffRole: StaffRole) -> CDStaffRole{
-        let entity = self.createCDStaffRole()
-        entity.isEmployee = Int64(staffRole.isEmployee ?? 0)
-        entity.isProfile = Int64(staffRole.isProfile ?? 0)
-        entity.roleId = Int64(staffRole.roleId ?? 0)
-        entity.roleName = staffRole.roleName
-        entity.staffId = Int64(staffRole.staffId ?? 0)
         return entity
     }
     

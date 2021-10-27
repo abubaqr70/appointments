@@ -286,38 +286,27 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             print("Selected Appointments type : \(appointmentsTypes)")
             print("Selected Facility staff Members : \(facilityStaffMembers)")
             self.isAppointmentsFilterAppliedSubject.onNext(self.appointmentsRepository.isAppointmentsFilterApplied())
-            if appointmentsTypes.count >= 1 && facilityStaffMembers.count >= 1 {
+            if appointmentsTypes.count >= 1  {
                 return appointments.filter{
                     appointment in
-                    if appointment.user != nil {
-                        return  appointmentsTypes.contains(appointment.therapyId ?? 0) ?? false && facilityStaffMembers.contains(appointment.user?.id ?? 0) ?? false
-                    } else {
-                        return (appointment.userGroup?.facilityGroupMembers?.filter{
-                            groupMember in
-                            appointmentsTypes.contains(appointment.therapyId ?? 0) ?? false && facilityStaffMembers.contains(groupMember.userId ?? 0) ?? false
-                        }) != nil
-                    }
+                    appointmentsTypes.contains(appointment.therapyId ?? 0)
                 }
-            } else if appointmentsTypes.count >= 1  {
-                return appointments.filter{
-                    appointment in
-                    appointmentsTypes.contains(appointment.therapyId ?? 0) ?? false
-                }
-            } else if facilityStaffMembers.count >= 1 {
-                return appointments.filter{
-                    appointment in
-                    if appointment.user != nil {
-                        return facilityStaffMembers.contains(appointment.user?.id ?? 0) ?? false
-                    } else {
-                        return (appointment.userGroup?.facilityGroupMembers?.filter{
-                            groupMember in
-                            facilityStaffMembers.contains(groupMember.userId ?? 0) ?? false
-                        }) != nil
-                    }
-                }
-            } else {
-                return appointments
             }
+            if facilityStaffMembers.count >= 1 {
+                return appointments.filter{
+                    appointment in
+                    if appointment.user != nil {
+                        return facilityStaffMembers.contains(appointment.user?.id ?? 0)
+                    } else {
+                        return (appointment.userGroup?.facilityGroupMembers?.filter{
+                            groupMember in
+                            facilityStaffMembers.contains(groupMember.userId ?? 0)
+                        }) != nil
+                    }
+                }
+            }
+            
+            return appointments
             
         }
         .bind(to: filteredAppointmentsSubject)
