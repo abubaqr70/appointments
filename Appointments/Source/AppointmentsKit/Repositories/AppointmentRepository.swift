@@ -6,14 +6,20 @@ import RxSwift
 class AppointmentRepository {
     
     let appointmentService: AppointmentService
-    let dataStore: AppointmentsDataStore
+    let appointmentDataStore: AppointmentsDataStore
+    let facilityStaffDataStore: FacilityStaffDataStore
+    let appointmentsTypeDataStore: AppointmentsTypeDataStore
+    let lastUpdatedDataStore: LastUpdatedDataStore
     let facilityDataStore: FacilityDataStore
     let reachabilityService: ReachabilityService
     var isSyncing: Bool
     
-    init(appointmentService: AppointmentService, dataStore: AppointmentsDataStore, facilityDataStore: FacilityDataStore) {
+    init(appointmentService: AppointmentService, appointmentDataStore: AppointmentsDataStore, facilityStaffDataStore: FacilityStaffDataStore, appointmentsTypeDataStore: AppointmentsTypeDataStore, lastUpdatedDataStore: LastUpdatedDataStore, facilityDataStore: FacilityDataStore) {
         self.appointmentService = appointmentService
-        self.dataStore = dataStore
+        self.appointmentDataStore = appointmentDataStore
+        self.facilityStaffDataStore = facilityStaffDataStore
+        self.appointmentsTypeDataStore = appointmentsTypeDataStore
+        self.lastUpdatedDataStore = lastUpdatedDataStore
         self.facilityDataStore = facilityDataStore
         self.reachabilityService = ReachabilityService()
         self.isSyncing = false
@@ -27,15 +33,15 @@ class AppointmentRepository {
             
             guard let self = self else { return Disposables.create() }
             
-
+            
             //Mark:- Checking Internet Connection
             let reachability = self.reachabilityService.reachabilityType
             switch reachability {
             
             //Mark:- Internet Connected
             case .connected:
-                observer.onNext((self.dataStore.fetchAppointments(startDate: Date.startOfDay(date: date)),self.dataStore.fetchLastUpdated()))
-                let appointments = self.dataStore.fetchAppointmentsSyncedFalse()
+                observer.onNext((self.appointmentDataStore.fetchAppointments(facilityId: facilityID, startDate: Date.startOfDay(date: date)),self.lastUpdatedDataStore.fetchLastUpdated()))
+                let appointments = self.appointmentDataStore.fetchAppointmentsSyncedFalseWithFacilityId(facilityId: facilityID)
                 if appointments.count >= 1 {
                     
                     //Mark:- Sync Appointments from server
@@ -53,7 +59,7 @@ class AppointmentRepository {
                         }
                     }else{
                         
-                        observer.onNext((self.dataStore.fetchAppointments(startDate: Date.startOfDay(date: date)),self.dataStore.fetchLastUpdated()))
+                        observer.onNext((self.appointmentDataStore.fetchAppointments(facilityId: facilityID, startDate: Date.startOfDay(date: date)),self.lastUpdatedDataStore.fetchLastUpdated()))
                     }
                 }else {
                     self.fetchAppointmentsFromServer(date: date, observer: observer, facilityID: facilityID, residentId: nil)
@@ -62,7 +68,7 @@ class AppointmentRepository {
             //Mark:- Internet Disconnected
             case .disconnected:
                 
-                observer.onNext((self.dataStore.fetchAppointments(startDate: Date.startOfDay(date: date)),self.dataStore.fetchLastUpdated()))
+                observer.onNext((self.appointmentDataStore.fetchAppointments(facilityId: facilityID, startDate: Date.startOfDay(date: date)),self.lastUpdatedDataStore.fetchLastUpdated()))
             }
             
             return Disposables.create()
@@ -85,13 +91,13 @@ class AppointmentRepository {
             //Mark:- Internet Connected
             case .connected:
                 
-                observer.onNext((self.dataStore.fetchAppointmentsForResident(residentID: residentID, startDate: Date.startOfDay(date: date)),self.dataStore.fetchLastUpdated()))
-                let appointments = self.dataStore.fetchAppointmentsSyncedFalse()
+                observer.onNext((self.appointmentDataStore.fetchAppointmentsForResident(facilityId: facilityID, residentID: residentID, startDate: Date.startOfDay(date: date)),self.lastUpdatedDataStore.fetchLastUpdated()))
+                let appointments = self.appointmentDataStore.fetchAppointmentsSyncedFalseWithFacilityId(facilityId: facilityID)
                 if appointments.count >= 1 {
                     
                     //Mark:- Sync Appointments from server
                     if self.isSyncing == false {
-                        self.syncData() {
+                        self.localFacilitySyncData(facilityId: facilityID) {
                             (result: Result<Void,Error>) in
                             self.isSyncing = false
                             switch result {
@@ -104,7 +110,7 @@ class AppointmentRepository {
                         }
                     }else{
                         
-                        observer.onNext((self.dataStore.fetchAppointmentsForResident(residentID: residentID, startDate: Date.startOfDay(date: date)),self.dataStore.fetchLastUpdated()))
+                        observer.onNext((self.appointmentDataStore.fetchAppointmentsForResident(facilityId: facilityID, residentID: residentID, startDate: Date.startOfDay(date: date)),self.lastUpdatedDataStore.fetchLastUpdated()))
                     }
                 }else {
                     self.fetchAppointmentsFromServer(date: date, observer: observer, facilityID: facilityID, residentId: residentID)
@@ -113,7 +119,7 @@ class AppointmentRepository {
             //Mark:- Internet Disconnected
             case .disconnected:
                 
-                observer.onNext((self.dataStore.fetchAppointmentsForResident(residentID: residentID, startDate: Date.startOfDay(date: date)),self.dataStore.fetchLastUpdated()))
+                observer.onNext((self.appointmentDataStore.fetchAppointmentsForResident(facilityId: facilityID, residentID: residentID, startDate: Date.startOfDay(date: date)),self.lastUpdatedDataStore.fetchLastUpdated()))
                 
             }
             
@@ -135,29 +141,29 @@ class AppointmentRepository {
             case .success(let appointments):
                 
                 //Mark:- Checking if appointments of that month exist
-                let exist = self.checkAppointmentsExist(with: Date.startOfMonth(date: date), with: Date.endOfMonth(date: date))
+                let exist = self.checkAppointmentsExist(facilityId: facilityID, startDate: Date.startOfMonth(date: date), with: Date.endOfMonth(date: date))
                 
                 //Mark:- Deleting appointments for that month
                 if exist {
-                    self.deleteAppointments(with: Date.startOfMonth(date: date), with: Date.endOfMonth(date: date))
+                    self.deleteAppointments(facilityId: facilityID, startDate: Date.startOfMonth(date: date), with: Date.endOfMonth(date: date))
                 }
-                try? self.dataStore.deleteLastUpdated()
+                try? self.lastUpdatedDataStore.deleteLastUpdated()
                 
                 //Mark:- Saving appointments for that month
                 let updatedTime: Date = Date()
-                self.dataStore.saveLastUpdated(updatedTime)
+                self.lastUpdatedDataStore.saveLastUpdated(updatedTime)
                 
                 for appointment in appointments {
-                    self.dataStore.saveAppointment(appointment,updatedTime)
+                    self.appointmentDataStore.saveAppointment(appointment,updatedTime)
                 }
                 
                 //Mark:- Returning appointments for that day
                 if residentId != nil {
                     
-                    observer.onNext((self.dataStore.fetchAppointmentsForResident(residentID: residentId ?? 0, startDate: Date.startOfDay(date: date)),self.dataStore.fetchLastUpdated()))
+                    observer.onNext((self.appointmentDataStore.fetchAppointmentsForResident(facilityId: facilityID, residentID: residentId ?? 0, startDate: Date.startOfDay(date: date)),self.lastUpdatedDataStore.fetchLastUpdated()))
                 } else {
                     
-                    observer.onNext((self.dataStore.fetchAppointments(startDate: Date.startOfDay(date: date)),self.dataStore.fetchLastUpdated()))
+                    observer.onNext((self.appointmentDataStore.fetchAppointments(facilityId: facilityID, startDate: Date.startOfDay(date: date)),self.lastUpdatedDataStore.fetchLastUpdated()))
                 }
                 observer.onCompleted()
             }
@@ -169,7 +175,7 @@ class AppointmentRepository {
     //Mark:- Marking appointments in dataStore
     func updateAppointment(_ appointment: Appointment) {
         
-        self.dataStore.updateAppointment(appointment)
+        self.appointmentDataStore.updateAppointment(facilityId: appointment.facilityId ?? 0, appointment: appointment)
         
     }
     
@@ -192,13 +198,13 @@ class AppointmentRepository {
     }
     
     //Mark:- Syncing appointments on dataStore
-    func syncData(completion: @escaping (Result<Void,Error>) -> Void) {
+    func localFacilitySyncData(facilityId: Int, completion: @escaping (Result<Void,Error>) -> Void) {
         
         //Mark:- Setting isSyncing True
         self.isSyncing = true
         
         //Mark:- Fetch Appointments from dataStore which are not synced
-        let appointments = self.dataStore.fetchAppointmentsSyncedFalse()
+        let appointments = self.appointmentDataStore.fetchAppointmentsSyncedFalseWithFacilityId(facilityId: facilityId)
         
         //Mark:- Syncing appointments on server
         self.markAppointmentsOnServer(appointments) {
@@ -212,7 +218,7 @@ class AppointmentRepository {
                 if appointmentsResponse.success == true {
                     
                     for appointment in appointments {
-                        self.dataStore.markAppointmentsSyncedTrue(appointment)
+                        self.appointmentDataStore.markAppointmentsSyncedTrue(facilityId: facilityId, appointment: appointment)
                     }
                     
                 }else {
@@ -225,7 +231,53 @@ class AppointmentRepository {
                     }
                     
                     for appointment in appointmentsSuccess {
-                        self.dataStore.markAppointmentsSyncedTrue(appointment)
+                        self.appointmentDataStore.markAppointmentsSyncedTrue(facilityId: facilityId, appointment: appointment)
+                    }
+                    
+                }
+                completion(Result.success(Void()))
+                
+            case .failure(let error):
+                completion(Result.failure(error))
+            }
+        }
+    }
+    
+    //Mark:- Syncing appointments on dataStore
+    func syncData(completion: @escaping (Result<Void,Error>) -> Void) {
+        
+        //Mark:- Setting isSyncing True
+        self.isSyncing = true
+        
+        //Mark:- Fetch Appointments from dataStore which are not synced
+        let appointments = self.appointmentDataStore.fetchAppointmentsSyncedFalse()
+        
+        //Mark:- Syncing appointments on server
+        self.markAppointmentsOnServer(appointments) {
+            (result: Result<AppointmentsResponse, Error>) in
+            switch result {
+            
+            //Mark:- Checking Syncing appointments success
+            case .success(let appointmentsResponse):
+                
+                //Mark:- Marking appointments synced true in dataStore
+                if appointmentsResponse.success == true {
+                    
+                    for appointment in appointments {
+                        self.appointmentDataStore.markAppointmentsSyncedTrue(facilityId: appointment.facilityId ?? 0, appointment: appointment)
+                    }
+                    
+                }else {
+                    
+                    //Mark:- Marking only those appointments which are synced true from server in dataStore
+                    let appointmentsSuccess : [Appointment] = appointments.filter { appointment in
+                        return !(appointmentsResponse.failures?.contains(where: { appointmentFailure in
+                            return appointmentFailure.id == appointment.id && appointmentFailure.occurrenceId == appointment.occurrenceId
+                        }) ?? false)
+                    }
+                    
+                    for appointment in appointmentsSuccess {
+                        self.appointmentDataStore.markAppointmentsSyncedTrue(facilityId: appointment.facilityId ?? 0, appointment: appointment)
                     }
                     
                 }
@@ -238,14 +290,14 @@ class AppointmentRepository {
     }
     
     //Mark:- Checking appointments of that month exist in dataStore
-    func checkAppointmentsExist(with startDate: Date, with endDate: Date) -> Bool {
-        return self.dataStore.checkAppointmentsExist(startDate: Double(startDate.timeIntervalSince1970), endDate: Double(endDate.timeIntervalSince1970))
+    func checkAppointmentsExist(facilityId: Int, startDate: Date, with endDate: Date) -> Bool {
+        return self.appointmentDataStore.checkAppointmentsExist(facilityId: facilityId, startDate: Double(startDate.timeIntervalSince1970), endDate: Double(endDate.timeIntervalSince1970))
     }
     
     //Mark:- Deleting appointments of that month from dataStore
-    func deleteAppointments(with startDate: Date, with endDate: Date) {
+    func deleteAppointments(facilityId: Int, startDate: Date, with endDate: Date) {
         do {
-            try self.dataStore.deleteAppointments(startDate: Double(startDate.timeIntervalSince1970), endDate: Double(endDate.timeIntervalSince1970))
+            try self.appointmentDataStore.deleteAppointments(facilityId: facilityId, startDate: Double(startDate.timeIntervalSince1970), endDate: Double(endDate.timeIntervalSince1970))
         }
         catch let error as NSError {
             print(error.localizedDescription)
@@ -255,7 +307,10 @@ class AppointmentRepository {
     //Mark:- Deleting all appointments from dataStore
     func clearAllData(){
         do {
-            try self.dataStore.deleteAllAppointment()
+            try self.appointmentDataStore.deleteAllAppointment()
+            try self.lastUpdatedDataStore.deleteLastUpdated()
+            try self.appointmentsTypeDataStore.deleteAllAppointmentType()
+            try self.facilityStaffDataStore.deleteAllFacilityStaff()
         }
         catch let error as NSError {
             print(error.localizedDescription)
@@ -263,22 +318,22 @@ class AppointmentRepository {
     }
     
     //Mark:- Marking all appointments type from dataStore
-    public func markAllAppointmentsTypeStatus(status: Bool) {
-        self.dataStore.markAllAppointmentsType(status: status)
+    public func markAllAppointmentsTypeStatus(facilityId: Int, status: Bool) {
+        self.appointmentsTypeDataStore.markAllAppointmentsType(facilityId: facilityId, status: status)
     }
     
     //Mark:- Selecting Or Deselecting all Facility staff from dataStore
-    public func markAllFacilityStaffStatus(for facilityDataStore: FacilityDataStore,status: Bool) {
+    public func markAllFacilityStaffStatus( facilityId: Int, facilityDataStore: FacilityDataStore,status: Bool) {
         if status {
             let facilityStaff = self.getFacilityStaffFromDictionary(for: facilityDataStore)
             for staff in facilityStaff {
-                if !self.dataStore.checkFacilityStaffExist(facilityStaff: staff) {
-                    self.dataStore.saveFacilityStaff(staff)
+                if !self.facilityStaffDataStore.checkFacilityStaffExist(facilityId: facilityId, facilityStaff: staff) {
+                    self.facilityStaffDataStore.saveFacilityStaff(staff)
                 }
             }
         } else {
             do {
-                try self.dataStore.deleteFacilityStaff()
+                try self.facilityStaffDataStore.deleteFacilityStaffWithFacilityId(facilityId: facilityId)
             }
             catch let error as NSError {
                 print(error.localizedDescription)
@@ -287,47 +342,47 @@ class AppointmentRepository {
     }
     
     //Mark:- Marking appointments type from dataStore
-    public func markAppointmentsType(appointmentType: AppointmentsType) {
-        self.dataStore.updateAppointmentType(appointmentType)
+    public func markAppointmentsType( facilityId: Int, appointmentType: AppointmentsType) {
+        self.appointmentsTypeDataStore.updateAppointmentType(facilityId: facilityId, appointmentType: appointmentType)
     }
     
     //Mark:- Selecting Or Deselecting Facility staff from dataStore
-    public func markFacilityStaff(facilityStaff: FacilityStaff) {
+    public func markFacilityStaff(facilityId: Int, facilityStaff: FacilityStaff) {
         
-        if self.dataStore.checkFacilityStaffExist(facilityStaff: facilityStaff) {
-            self.dataStore.deleteFacilityStaff(facilityStaff)
+        if self.facilityStaffDataStore.checkFacilityStaffExist(facilityId: facilityId, facilityStaff: facilityStaff) {
+            self.facilityStaffDataStore.deleteFacilityStaff(facilityId: facilityId, facilityStaff: facilityStaff)
         } else {
-            self.dataStore.saveFacilityStaff(facilityStaff)
+            self.facilityStaffDataStore.saveFacilityStaff(facilityStaff)
         }
         
     }
     
     //Mark:- Fetching selected AppointmentsType from dataStore
-    public func getAppointmentsTypeSelected() -> [AppointmentsType] {
-        self.dataStore.fetchAppointmentsTypeSelected()
+    public func getAppointmentsTypeSelected(facilityId: Int) -> [AppointmentsType] {
+        self.appointmentsTypeDataStore.fetchAppointmentsTypeSelected(facilityId: facilityId)
     }
     
     //Mark:-  Fetching local AppointmentsType from dataStore
-    public func getLocalAppointmentsType() -> [AppointmentsType] {
-        self.dataStore.fetchAppointmentsType()
+    public func getLocalAppointmentsType(facilityId: Int) -> [AppointmentsType] {
+        self.appointmentsTypeDataStore.fetchAppointmentsType(facilityId: facilityId)
     }
     
     //Mark:- checking appointmentsFilter Applied
-    public func isAppointmentsFilterApplied() -> Bool {
-        if self.getFacilityStaffSelectedIds().count >= 1 {
+    public func isAppointmentsFilterApplied(facilityId: Int) -> Bool {
+        if self.getFacilityStaffSelectedIds(facilityId: facilityId).count >= 1 {
             return true
         }
-        if self.getAppointmentsTypeSelectedIds().count >= 1 {
+        if self.getAppointmentsTypeSelectedIds(facilityId: facilityId).count >= 1 {
             return true
         }
         return false
     }
     
-
+    
     //Mark:- Fetching Selected Appointment Type Ids
-    public func getAppointmentsTypeSelectedIds() -> [Int] {
+    public func getAppointmentsTypeSelectedIds(facilityId: Int) -> [Int] {
         var selectedMembers = [Int]()
-        for appointmentType in self.dataStore.fetchAppointmentsTypeSelected() {
+        for appointmentType in self.appointmentsTypeDataStore.fetchAppointmentsTypeSelected(facilityId: facilityId) {
             if appointmentType.id != nil {
                 selectedMembers.append(appointmentType.id!)
             }
@@ -336,14 +391,14 @@ class AppointmentRepository {
     }
     
     //Mark:- Fetching Selected Appointment Type Ids
-    public func getFacilityStaffSelected() -> [FacilityStaff] {
-        self.dataStore.fetchFacilityStaff()
+    public func getFacilityStaffSelected(facilityId: Int) -> [FacilityStaff] {
+        self.facilityStaffDataStore.fetchFacilityStaff(facilityId: facilityId)
     }
     
     //Mark:- Fetching Selected Staff Ids
-    public func getFacilityStaffSelectedIds() -> [Int] {
+    public func getFacilityStaffSelectedIds(facilityId: Int) -> [Int] {
         var selectedMembers = [Int]()
-        for members in self.dataStore.fetchFacilityStaff() {
+        for members in self.facilityStaffDataStore.fetchFacilityStaff(facilityId: facilityId) {
             if members.staffId != nil {
                 selectedMembers.append(members.staffId!)
             }
@@ -352,32 +407,32 @@ class AppointmentRepository {
     }
     
     //Mark:- Check wether mark or unmark Appointments Type
-    public func checkForMarkAppointmentsType() -> Bool {
-        if self.dataStore.fetchAppointmentsTypeSelected().count == self.dataStore.fetchAppointmentsType().count {
+    public func checkForMarkAppointmentsType(facilityId: Int) -> Bool {
+        if self.appointmentsTypeDataStore.fetchAppointmentsTypeSelected(facilityId: facilityId).count == self.appointmentsTypeDataStore.fetchAppointmentsType(facilityId: facilityId).count {
             return true
         }
         return false
     }
     
     //Mark:- Check wether isSelectedSome Appointments Type
-    public func isSelectedSomeAppointmentsType() -> Bool {
-        if self.getAppointmentsTypeSelectedIds().count >= 1 && !checkForMarkAppointmentsType(){
+    public func isSelectedSomeAppointmentsType(facilityId: Int) -> Bool {
+        if self.getAppointmentsTypeSelectedIds(facilityId: facilityId).count >= 1 && !checkForMarkAppointmentsType(facilityId: facilityId){
             return true
         }
         return false
     }
     
     //Mark:- Check wether mark or unmark Facility Staff
-    public func checkForMarkFacilityStaff(for facilityDataStore: FacilityDataStore) -> Bool {
-        if self.dataStore.fetchFacilityStaff().count == self.getFacilityStaffFromDictionary(for: facilityDataStore).count {
+    public func checkForMarkFacilityStaff(facilityId: Int, facilityDataStore: FacilityDataStore) -> Bool {
+        if self.facilityStaffDataStore.fetchFacilityStaff(facilityId: facilityId).count == self.getFacilityStaffFromDictionary(for: facilityDataStore).count {
             return true
         }
         return false
     }
     
     //Mark:- Check wether isSelectedSome FacilityStaff
-    public func isSelectedSomeFacilityStaff(for facilityDataStore: FacilityDataStore) -> Bool {
-        if self.getFacilityStaffSelectedIds().count >= 1 && !checkForMarkFacilityStaff(for: facilityDataStore){
+    public func isSelectedSomeFacilityStaff(facilityId: Int, facilityDataStore: FacilityDataStore) -> Bool {
+        if self.getFacilityStaffSelectedIds(facilityId: facilityId).count >= 1 && !checkForMarkFacilityStaff(facilityId: facilityId, facilityDataStore: facilityDataStore){
             return true
         }
         return false
@@ -398,22 +453,44 @@ class AppointmentRepository {
             //Mark:- Internet Connected
             case .connected:
                 
-                observer.onNext(self.dataStore.fetchAppointmentsType())
+                observer.onNext(self.appointmentsTypeDataStore.fetchAppointmentsType(facilityId: facilityID))
                 self.appointmentService.getAppointmentsType(for: facilityID) { (result: Result<[AppointmentsType], Error>) in
                     
                     switch result {
                     case .success(let appointmentsType):
-                        //                        try? self.dataStore.deleteAppointmentsType()
+                     
+                        //Mark:- Fetching CoreData appointments type Ids
+                        let coreDataAppointmentsType : [Int] = self.appointmentsTypeDataStore.fetchAppointmentsType(facilityId: facilityID).map{
+                            appointmentsType in
+                            appointmentsType.id ?? 0
+                        }
                         
-                        //Mark:- Saving appointments type
+                        //Mark:- Fetching Server appointments type Ids
+                        let serverAppointmentsType : [Int] = appointmentsType.map{
+                            appointmentsType in
+                            appointmentsType.id ?? 0
+                        }
                         
-                        for appointmentType in appointmentsType {
-                            if !self.dataStore.checkAppointmentsTypeExist(appointmentsType: appointmentType) {
-                                self.dataStore.saveAppointmentsType(appointmentType)
+                        //Mark:- Deleting CoreData appointments type which are deleted from server
+                        for appointmentType in coreDataAppointmentsType {
+                            if !serverAppointmentsType.contains(appointmentType) {
+                                self.appointmentsTypeDataStore.deleteAppointmentsType(facilityId: facilityID, appointmentTypeId: appointmentType)
                             }
                         }
                         
-                        observer.onNext(self.dataStore.fetchAppointmentsType())
+                        for appointmentType in appointmentsType {
+                            
+                            //Mark:- Checking if Appointment Type Exist
+                            if !self.appointmentsTypeDataStore.checkAppointmentsTypeExist(facilityId: facilityID, appointmentsType: appointmentType) {
+                                //Mark:- Saving New Appointment Type
+                                self.appointmentsTypeDataStore.saveAppointmentsType(appointmentType)
+                            } else {
+                                //Mark:- Updating Existing Appointment Type
+                                self.appointmentsTypeDataStore.updateAllAppointmentsType(facilityId: facilityID, appointmentsType: appointmentType)
+                            }
+                        }
+                        
+                        observer.onNext(self.appointmentsTypeDataStore.fetchAppointmentsType(facilityId: facilityID))
                         observer.onCompleted()
                     case .failure(let error):
                         observer.onError(error)
@@ -423,7 +500,7 @@ class AppointmentRepository {
             //Mark:- Internet Disconnected
             case .disconnected:
                 
-                observer.onNext(self.dataStore.fetchAppointmentsType())
+                observer.onNext(self.appointmentsTypeDataStore.fetchAppointmentsType(facilityId: facilityID))
                 
             }
             

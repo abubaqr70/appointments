@@ -15,9 +15,10 @@ public class AppointmentsCoreDataStore {
         self.coreDataStack = coreDataStack
     }
     
-    public func fetchCDAppointmentForUpdate(id: Int64,occurrenceId: Int64) throws -> CDAppointment? {
+    //Mark:- CDAppointments Fetching + Syncing + Deleting
+    public func fetchCDAppointmentForUpdate(facilityId: Int64, id: Int64, occurrenceId: Int64) throws -> CDAppointment? {
         let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@ AND occurrenceId == %@", "\(id)", "\(occurrenceId)")
+        fetchRequest.predicate = NSPredicate(format: "facilityId == %@ AND id == %@ AND occurrenceId == %@", "\(facilityId)" , "\(id)", "\(occurrenceId)")
         let results = try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
         return results.first
     }
@@ -29,58 +30,28 @@ public class AppointmentsCoreDataStore {
         return results.first
     }
     
-    public func fetchCDLastUpdated() throws -> CDLastUpdated? {
-        let fetchRequest: NSFetchRequest<CDLastUpdated> = CDLastUpdated.fetchRequest()
-        let results = try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
-        return results.first
-    }
-    
-    public func fetchCDAppointments(startDate: Date) throws -> [CDAppointment] {
+    public func fetchCDAppointments(facilityId: Int64, startDate: Date) throws -> [CDAppointment] {
         let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "startedDate == %@", argumentArray: [startDate])
+        fetchRequest.predicate = NSPredicate(format: "startedDate == %@ AND id == %@ ", argumentArray: [startDate,facilityId])
         return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
     }
     
-    public func fetchCDAppointmentsForResident(residentID:Int64, startDate: Date) throws -> [CDAppointment] {
+    public func fetchCDAppointmentsForResident(facilityId: Int64, residentID:Int64, startDate: Date) throws -> [CDAppointment] {
         let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "startedDate == %@ && ANY appointmentAttendance.residentId == %@", argumentArray: [startDate, residentID])
+        fetchRequest.predicate = NSPredicate(format: "facilityId == %@ AND startedDate == %@ && ANY appointmentAttendance.residentId == %@", argumentArray: [facilityId,startDate, residentID])
         return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
     }
     
     public func fetchCDAppointmentsSyncedFalse() throws -> [CDAppointment] {
         let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "isSynced == %@",  NSNumber(booleanLiteral: false))
+        fetchRequest.predicate = NSPredicate(format: "isSynced == %@" ,  NSNumber(booleanLiteral: false))
         return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
     }
     
-    public func fetchCDAppointmentsType() throws -> [CDAppointmentsType] {
-        let fetchRequest: NSFetchRequest<CDAppointmentsType> = CDAppointmentsType.fetchRequest()
+    public func fetchCDAppointmentsSyncedFalseWithFacilityID(facilityId: Int64) throws -> [CDAppointment] {
+        let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "isSynced == %@ AND id == %@",  NSNumber(booleanLiteral: false), "\(facilityId)")
         return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
-    }
-    
-    public func fetchCDAppointmentsTypeSelected() throws -> [CDAppointmentsType] {
-        let fetchRequest: NSFetchRequest<CDAppointmentsType> = CDAppointmentsType.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "isSelected == %@", NSNumber(booleanLiteral: true))
-        return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
-    }
-    
-    public func fetchCDAppointmentsTypeForUpdate(id: Int64) throws -> CDAppointmentsType? {
-        let fetchRequest: NSFetchRequest<CDAppointmentsType> = CDAppointmentsType.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", "\(id)")
-        let results = try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
-        return results.first
-    }
-    
-    public func fetchCDFacilityStaff() throws -> [CDFacilityStaff] {
-        let fetchRequest: NSFetchRequest<CDFacilityStaff> = CDFacilityStaff.fetchRequest()
-        return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
-    }
-    
-    public func fetchCDFacilityStaffForUpdate(id: Int64) throws -> CDFacilityStaff? {
-        let fetchRequest: NSFetchRequest<CDFacilityStaff> = CDFacilityStaff.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "staffId == %@", "\(id)")
-        let results = try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
-        return results.first
     }
     
     public func deleteCDAppointment(id: UUID) throws {
@@ -90,67 +61,15 @@ public class AppointmentsCoreDataStore {
         }
     }
     
-    public func checkCDAppointmentsExist(startOfMonth: Double,endOfMonth: Double) throws -> Bool {
+    public func checkCDAppointmentsExist(facilityID: Int64,startOfMonth: Double,endOfMonth: Double) throws -> Bool {
         let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "startingDate >= %@ AND endingDate <= %@", argumentArray: [startOfMonth,endOfMonth])
+        fetchRequest.predicate = NSPredicate(format: "id == %@ AND startingDate >= %@ AND endingDate <= %@", argumentArray: [facilityID,startOfMonth,endOfMonth])
         let appointments = try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
         if appointments.count > 0 {
             return true
         }else {
             return false
         }
-    }
-    
-    public func checkCDAppointmentsTypeExist(id: Int64) throws -> Bool {
-        let fetchRequest: NSFetchRequest<CDAppointmentsType> = CDAppointmentsType.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", "\(id)")
-        let appointmentsType = try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
-        if appointmentsType.count > 0 {
-            return true
-        }else {
-            return false
-        }
-    }
-    
-    public func checkCDFacilityStaffExist(id: Int64) throws -> Bool {
-        let fetchRequest: NSFetchRequest<CDFacilityStaff> = CDFacilityStaff.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "staffId == %@", "\(id)")
-        let facilityStaff = try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
-        if facilityStaff.count > 0 {
-            return true
-        }else {
-            return false
-        }
-    }
-    
-    public func markAllCDAppointmentsType(status: Bool) throws {
-        let entityDescription: NSEntityDescription = CDAppointmentsType.entity()
-        let batchUpdateRequest = NSBatchUpdateRequest(entity: entityDescription)
-        batchUpdateRequest.resultType = .updatedObjectIDsResultType
-        batchUpdateRequest.propertiesToUpdate = ["isSelected": NSNumber(booleanLiteral: status)]
-        do {
-            // Execute Batch Update
-            let batchUpdateResult = try self.coreDataStack.manageObjectContext.execute(batchUpdateRequest) as! NSBatchUpdateResult
-            print("The batch update request has updated \(batchUpdateResult.result ?? "") in Appointments Type records.")
-            
-            let objects = batchUpdateResult.result as! [NSManagedObjectID]
-            objects.forEach({ objID in
-                let managedObject = self.coreDataStack.manageObjectContext.object(with: objID)
-                self.coreDataStack.manageObjectContext.refresh(managedObject, mergeChanges: false)
-            })
-        } catch {
-            let updateError = error as NSError
-            print("\(updateError), \(updateError.userInfo)")
-        }
-        return
-    }
-    
-    public func deleteAllData() throws {
-        try? self.deleteAllAppointment()
-        try? self.deleteAllLastUpdated()
-        try? self.deleteAllCDFacilityStaff()
-        try? self.deleteAllCDAppointmentsType()
-        return
     }
     
     public func deleteAllAppointments() throws {
@@ -169,74 +88,9 @@ public class AppointmentsCoreDataStore {
         return
     }
     
-    public func deleteAllLastUpdated() throws {
-        let fetchRequest: NSFetchRequest<CDLastUpdated> = CDLastUpdated.fetchRequest()
-        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
-        batchDeleteRequest.resultType = .resultTypeCount
-        do {
-            // Execute Batch Request
-            let batchDeleteResult = try self.coreDataStack.manageObjectContext.execute(batchDeleteRequest) as! NSBatchDeleteResult
-            print("The batch delete request has deleted \(batchDeleteResult.result!) records.")
-            self.coreDataStack.saveContext()
-        } catch {
-            let updateError = error as NSError
-            print("\(updateError), \(updateError.userInfo)")
-        }
-        return
-    }
-    
-    public func deleteAllCDAppointmentsType() throws {
-        let fetchRequest: NSFetchRequest<CDAppointmentsType> = CDAppointmentsType.fetchRequest()
-        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
-        batchDeleteRequest.resultType = .resultTypeCount
-        do {
-            // Execute Batch Request
-            let batchDeleteResult = try self.coreDataStack.manageObjectContext.execute(batchDeleteRequest) as! NSBatchDeleteResult
-            print("The batch delete request has deleted \(batchDeleteResult.result!) records.")
-            self.coreDataStack.saveContext()
-        } catch {
-            let updateError = error as NSError
-            print("\(updateError), \(updateError.userInfo)")
-        }
-        return
-    }
-    
-    public func deleteCDFacilityStaff(staffId: Int64) throws {
-        let fetchRequest: NSFetchRequest<CDFacilityStaff> = CDFacilityStaff.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "staffId == %@", "\(staffId)")
-        do {
-            // Execute Batch Request
-            let facilityStaff = try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
-            for object in facilityStaff {
-                self.coreDataStack.manageObjectContext.delete(object)
-            }
-            self.coreDataStack.saveContext()
-        } catch {
-            let updateError = error as NSError
-            print("\(updateError), \(updateError.userInfo)")
-        }
-        return
-    }
-    
-    public func deleteAllCDFacilityStaff() throws {
-        let fetchRequest: NSFetchRequest<CDFacilityStaff> = CDFacilityStaff.fetchRequest()
-        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
-        batchDeleteRequest.resultType = .resultTypeCount
-        do {
-            // Execute Batch Request
-            let batchDeleteResult = try self.coreDataStack.manageObjectContext.execute(batchDeleteRequest) as! NSBatchDeleteResult
-            print("The batch delete request has deleted \(batchDeleteResult.result!) records.")
-            self.coreDataStack.saveContext()
-        } catch {
-            let updateError = error as NSError
-            print("\(updateError), \(updateError.userInfo)")
-        }
-        return
-    }
-    
-    public func deleteCDAppointments(startOfMonth: Double,endOfMonth: Double) throws {
+    public func deleteCDAppointments(facilityID: Int64,startOfMonth: Double,endOfMonth: Double) throws {
         let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "startingDate >= %@ AND endingDate <= %@", argumentArray: [startOfMonth,endOfMonth])
+        fetchRequest.predicate = NSPredicate(format: "id == %@ AND startingDate >= %@ AND endingDate <= %@", argumentArray: [facilityID,startOfMonth,endOfMonth])
         let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
         batchDeleteRequest.resultType = .resultTypeCount
         do {
@@ -322,30 +176,6 @@ extension AppointmentsCoreDataStore {
     }
     
     public func saveCDAppointmentAttendance(_ appointmentAttendance: CDAppointmentAttendance) {
-        self.coreDataStack.saveContext()
-    }
-    
-    public func createCDLastUpdated() -> CDLastUpdated{
-        return CDLastUpdated(context: self.coreDataStack.manageObjectContext)
-    }
-    
-    public func saveCDLastUpdated(_ date: CDLastUpdated) {
-        self.coreDataStack.saveContext()
-    }
-    
-    public func createCDAppointmentsType() -> CDAppointmentsType{
-        return CDAppointmentsType(context: self.coreDataStack.manageObjectContext)
-    }
-    
-    public func createCDFacilityStaff() -> CDFacilityStaff{
-        return CDFacilityStaff(context: self.coreDataStack.manageObjectContext)
-    }
-    
-    public func saveCDAppointmentsType(_ appointmentsType: CDAppointmentsType) {
-        self.coreDataStack.saveContext()
-    }
-    
-    public func saveCDFacilityStaff(_ facilityStaff: CDFacilityStaff) {
         self.coreDataStack.saveContext()
     }
     

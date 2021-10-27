@@ -20,5 +20,6 @@ extension CDFacilityStaff {
     @NSManaged public var isSelected: Bool
     @NSManaged public var lastName: String?
     @NSManaged public var staffId: Int64
+    @NSManaged public var facilityId: Int64
 
 }

@@ -81,7 +81,7 @@ class AppointmentViewModel: AppointmentViewModelType, AppointmentViewModelInputs
         
         //Mark:- Setting User Names
         self.appointmentsRepository = repository
-        self.appointmentsType = self.appointmentsRepository.getLocalAppointmentsType()
+        self.appointmentsType = self.appointmentsRepository.getLocalAppointmentsType(facilityId: appointment.facilityId ?? 0)
         markPresentSubject = PublishSubject()
         isPresentSubject = BehaviorSubject(value: true)
         appointmentsSubject = BehaviorSubject(value: appointment)

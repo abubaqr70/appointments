@@ -25,8 +25,11 @@ import Foundation
         let service = AppointmentService(baseURL: self.baseURL,
                                          authHeaderProvider: self.authentication,
                                          client: self.client)
-        let dataStore = AppointmentsCoreDataStore(coreDataStack: CoreDataStack())
-        self.repository = AppointmentRepository(appointmentService: service,dataStore: dataStore,facilityDataStore: self.facilityDataStore)
+        let appointmentDataStore = AppointmentsCoreDataStore(coreDataStack: CoreDataStack())
+        let facilityStaffDataStore = FacilityStaffCoreDataStore(coreDataStack: CoreDataStack())
+        let appointmentsTypeDataStore = AppointmentsTypeCoreDataStore(coreDataStack: CoreDataStack())
+        let lastUpdatedDataStore = LastUpdatedCoreDataStore(coreDataStack: CoreDataStack())
+        self.repository = AppointmentRepository(appointmentService: service, appointmentDataStore: appointmentDataStore, facilityStaffDataStore: facilityStaffDataStore, appointmentsTypeDataStore: appointmentsTypeDataStore, lastUpdatedDataStore: lastUpdatedDataStore, facilityDataStore: facilityDataStore)
         self.dataHandler = AppointmentDataHandler(repository: self.repository)
     }
     

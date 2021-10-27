@@ -4,39 +4,24 @@ import Foundation
 
 protocol AppointmentsDataStore {
     
-    func fetchAppointments(startDate: Date) -> [Appointment]
-    func fetchLastUpdated() -> Date?
-    func fetchAppointmentsForResident(residentID: Int, startDate: Date) -> [Appointment]
+    func fetchAppointments(facilityId: Int, startDate: Date) -> [Appointment]
+    func fetchAppointmentsForResident(facilityId: Int, residentID: Int, startDate: Date) -> [Appointment]
+    func fetchAppointmentsSyncedFalseWithFacilityId(facilityId: Int) -> [Appointment]
     func fetchAppointmentsSyncedFalse() -> [Appointment]
-    func fetchAppointmentsType() -> [AppointmentsType]
-    func fetchAppointmentsTypeSelected() -> [AppointmentsType]
-    func fetchFacilityStaff() -> [FacilityStaff]
-    func markAppointmentsSyncedTrue(_ appointment: Appointment)
-    func markAllAppointmentsType(status: Bool)
+    func markAppointmentsSyncedTrue(facilityId: Int, appointment: Appointment)
     func saveAppointment(_ appointment: Appointment,_ lastUpdatedTime: Date)
-    func saveLastUpdated(_ date: Date)
-    func saveAppointmentsType(_ appointmentsType: AppointmentsType)
-    func saveFacilityStaff(_ facilityStaff: FacilityStaff)
-    func updateAppointment(_ appointment: Appointment)
-    func updateAppointmentType (_ appointmentType : AppointmentsType )
-    func updateFacilityStaff (_ facilityStaff : FacilityStaff )
-    func checkAppointmentsExist(startDate: Double ,endDate: Double) -> Bool
-    func checkAppointmentsTypeExist(appointmentsType: AppointmentsType) -> Bool
-    func checkFacilityStaffExist(facilityStaff: FacilityStaff) -> Bool
-    func deleteAppointments(startDate: Double ,endDate: Double) throws
-    func deleteFacilityStaff( _ facilityStaff : FacilityStaff )
+    func updateAppointment(facilityId: Int, appointment: Appointment)
+    func checkAppointmentsExist(facilityId: Int, startDate: Double ,endDate: Double) -> Bool
+    func deleteAppointments(facilityId: Int, startDate: Double ,endDate: Double) throws
     func deleteAllAppointment() throws
-    func deleteLastUpdated() throws
-    func deleteFacilityStaff() throws
-    func deleteAppointmentsType() throws
     
 }
 
 extension AppointmentsCoreDataStore: AppointmentsDataStore {
- 
-    func fetchAppointments(startDate: Date) -> [Appointment] {
+    
+    func fetchAppointments(facilityId: Int, startDate: Date) -> [Appointment] {
         do {
-            let appointments = try self.fetchCDAppointments(startDate: startDate)
+            let appointments = try self.fetchCDAppointments(facilityId: Int64(facilityId), startDate: startDate)
             return appointments.map{
                 appointmentCoreData -> Appointment in
                 return Appointment(managedObject: appointmentCoreData)
@@ -46,10 +31,10 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         return []
     }
     
-    func fetchAppointmentsForResident(residentID: Int, startDate: Date) -> [Appointment] {
+    func fetchAppointmentsForResident(facilityId: Int, residentID: Int, startDate: Date) -> [Appointment] {
         do {
             let residentID = Int64(residentID)
-            let appointments = try self.fetchCDAppointmentsForResident(residentID: residentID, startDate: startDate)
+            let appointments = try self.fetchCDAppointmentsForResident(facilityId: Int64(facilityId), residentID: residentID, startDate: startDate)
             return appointments.map{
                 appointmentCoreData -> Appointment in
                 return Appointment(managedObject: appointmentCoreData)
@@ -59,71 +44,17 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         return []
     }
     
-    func fetchAppointmentsType() -> [AppointmentsType] {
+    func fetchAppointmentsSyncedFalseWithFacilityId(facilityId: Int) -> [Appointment] {
         do {
-            let appointmentsType = try self.fetchCDAppointmentsType()
-            return appointmentsType.map{
-                appointmentsTypeCoreData -> AppointmentsType in
-                return AppointmentsType(managedObject: appointmentsTypeCoreData)
+            let appointments = try self.fetchCDAppointmentsSyncedFalseWithFacilityID(facilityId: Int64(facilityId))
+            return appointments.map{
+                appointmentCoreData -> Appointment in
+                return Appointment(managedObject: appointmentCoreData)
             }
         } catch { }
         
         return []
     }
-    
-    func fetchAppointmentsTypeSelected() -> [AppointmentsType] {
-        do {
-            let appointmentsType = try self.fetchCDAppointmentsTypeSelected()
-            return appointmentsType.map{
-                appointmentsTypeCoreData -> AppointmentsType in
-                return AppointmentsType(managedObject: appointmentsTypeCoreData)
-            }
-        } catch { }
-        
-        return []
-    }
-    
-    func fetchFacilityStaff() -> [FacilityStaff] {
-        do {
-            let facilityStaff = try self.fetchCDFacilityStaff()
-            return facilityStaff.map{
-                facilityStaffCoreData -> FacilityStaff in
-                return FacilityStaff(managedObject: facilityStaffCoreData)
-            }
-        } catch { }
-        
-        return []
-    }
-    
-  
-    func fetchLastUpdated() -> Date? {
-        try? self.fetchCDLastUpdated()?.date
-    }
-    
-    func checkAppointmentsExist(startDate: Double , endDate: Double) -> Bool {
-        do {
-            let isExist = try self.checkCDAppointmentsExist(startOfMonth: startDate, endOfMonth: endDate)
-            return isExist
-        } catch { }
-        return false
-    }
-    
-    func checkAppointmentsTypeExist(appointmentsType: AppointmentsType) -> Bool {
-        do {
-            let isExist = try self.checkCDAppointmentsTypeExist(id: Int64(appointmentsType.id ?? 0))
-            return isExist
-        } catch { }
-        return false
-    }
-    
-    func checkFacilityStaffExist(facilityStaff: FacilityStaff) -> Bool {
-        do {
-            let isExist = try self.checkCDFacilityStaffExist(id: Int64(facilityStaff.staffId ?? 0))
-            return isExist
-        } catch { }
-        return false
-    }
-    
     
     func fetchAppointmentsSyncedFalse() -> [Appointment] {
         do {
@@ -137,11 +68,58 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         return []
     }
     
-    func saveLastUpdated(_ date: Date) {
-        let entity = self.createCDLastUpdated()
-        entity.date = date
-        self.saveCDLastUpdated(entity)
+    func markAppointmentsSyncedTrue(facilityId: Int, appointment: Appointment) {
+        guard let objectUpdate = try? self.fetchCDAppointmentForUpdate(facilityId: Int64(facilityId), id: Int64(appointment.id ?? 0), occurrenceId: Int64(appointment.occurrenceId ?? 0)) else { return }
+        print(objectUpdate)
+        objectUpdate.setValue(NSNumber(booleanLiteral: true), forKey: "isSynced")
+        self.coreDataStack.saveContext()
     }
+    
+    func updateAppointment(facilityId: Int, appointment: Appointment) {
+        guard let objectUpdate = try? self.fetchCDAppointmentForUpdate(facilityId: Int64(facilityId), id: Int64(appointment.id ?? 0), occurrenceId: Int64(appointment.occurrenceId ?? 0)) else { return }
+        print(objectUpdate)
+        objectUpdate.setValue(false, forKey: "isSynced")
+        for appointmentAttendance in objectUpdate.appointmentAttendance?.allObjects as? [CDAppointmentAttendance] ?? [] {
+            if appointmentAttendance.ofAppointments?.occurrenceId ?? 0 == appointment.occurrenceId ?? 0 && appointmentAttendance.id == appointment.appointmentAttendance?.first?.id ?? 0 && appointmentAttendance.residentId == appointment.appointmentAttendance?.first?.residentId ?? 0 && appointmentAttendance.users?.id ?? 0 == appointment.appointmentAttendance?.first?.user?.id ?? 0 {
+                if appointment.appointmentAttendance?.first?.present == "present" {
+                    appointmentAttendance.present = ""
+                } else {
+                    appointmentAttendance.present = "present"
+                }
+                let attendance = appointmentAttendance
+                objectUpdate.removeFromAppointmentAttendance(appointmentAttendance)
+                objectUpdate.addToAppointmentAttendance(attendance)
+            }
+        }
+        self.coreDataStack.saveContext()
+    }
+    
+    func deleteAppointments(facilityId: Int, startDate: Double, endDate: Double) throws {
+        do {
+            try self.deleteCDAppointments(facilityID: Int64(facilityId), startOfMonth: startDate, endOfMonth: endDate)
+        }
+        catch let error as NSError {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func deleteAllAppointment() throws {
+        do {
+            try self.deleteAllAppointments()
+        }
+        catch let error as NSError {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func checkAppointmentsExist(facilityId : Int, startDate: Double , endDate: Double) -> Bool {
+        do {
+            let isExist = try self.checkCDAppointmentsExist(facilityID: Int64(facilityId), startOfMonth: startDate, endOfMonth: endDate)
+            return isExist
+        } catch { }
+        return false
+    }
+    
     
     func saveAppointment(_ appointment: Appointment,_ lastUpdatedTime: Date) {
         let entity = self.createCDAppointment()
@@ -178,135 +156,6 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         }
         
         self.saveCDAppointment(entity)
-    }
-    
-    
-    func saveAppointmentsType(_ appointmentsType: AppointmentsType) {
-        let entity = self.createCDAppointmentsType()
-        entity.id = Int64(appointmentsType.id ?? 0)
-        entity.name = appointmentsType.name
-        entity.active = appointmentsType.active ?? false
-        entity.created = Int64(appointmentsType.created ?? 0)
-        entity.modified = Int64(appointmentsType.modified ?? 0)
-        entity.createdById = Int64(appointmentsType.createdById ?? 0)
-        entity.facilityId = Int64(appointmentsType.facilityId ?? 0)
-        entity.isSelected = appointmentsType.isSelected ?? false
-        entity.rank = Int64(appointmentsType.rank ?? 0)
-        self.saveCDAppointmentsType(entity)
-    }
-    
-    func saveFacilityStaff(_ facilityStaff: FacilityStaff) {
-        let entity = self.createCDFacilityStaff()
-        
-        entity.firstName = facilityStaff.firstName
-        entity.lastName = facilityStaff.lastName
-        entity.isSelected = facilityStaff.isSelected ?? false
-        entity.staffId = Int64(facilityStaff.staffId ?? 0)
-        self.saveCDFacilityStaff(entity)
-    }
-    
-    func updateAppointment (_ appointment : Appointment ) {
-        guard let objectUpdate = try? self.fetchCDAppointmentForUpdate(id: Int64(appointment.id ?? 0), occurrenceId: Int64(appointment.occurrenceId ?? 0)) else { return }
-        print(objectUpdate)
-        objectUpdate.setValue(false, forKey: "isSynced")
-        for appointmentAttendance in objectUpdate.appointmentAttendance?.allObjects as? [CDAppointmentAttendance] ?? [] {
-            if appointmentAttendance.ofAppointments?.occurrenceId ?? 0 == appointment.occurrenceId ?? 0 && appointmentAttendance.id == appointment.appointmentAttendance?.first?.id ?? 0 && appointmentAttendance.residentId == appointment.appointmentAttendance?.first?.residentId ?? 0 && appointmentAttendance.users?.id ?? 0 == appointment.appointmentAttendance?.first?.user?.id ?? 0 {
-                if appointment.appointmentAttendance?.first?.present == "present" {
-                    appointmentAttendance.present = ""
-                } else {
-                    appointmentAttendance.present = "present"
-                }
-                let attendance = appointmentAttendance
-                objectUpdate.removeFromAppointmentAttendance(appointmentAttendance)
-                objectUpdate.addToAppointmentAttendance(attendance)
-            }
-        }
-        self.coreDataStack.saveContext()
-    }
-    
-    func markAllAppointmentsType(status: Bool) {
-        do {
-            try self.markAllCDAppointmentsType(status: status)
-        }
-        catch let error as NSError {
-            print(error.localizedDescription)
-        }
-    }
-        
-    func markAppointmentsSyncedTrue (_ appointment : Appointment ) {
-        guard let objectUpdate = try? self.fetchCDAppointmentForUpdate(id: Int64(appointment.id ?? 0), occurrenceId: Int64(appointment.occurrenceId ?? 0)) else { return }
-        print(objectUpdate)
-        objectUpdate.setValue(NSNumber(booleanLiteral: true), forKey: "isSynced")
-        self.coreDataStack.saveContext()
-    }
-    
-    func updateAppointmentType (_ appointmentType : AppointmentsType ) {
-        guard let objectUpdate = try? self.fetchCDAppointmentsTypeForUpdate(id: Int64(appointmentType.id ?? 0)) else { return }
-        print(objectUpdate)
-        objectUpdate.setValue(NSNumber(booleanLiteral: !(appointmentType.isSelected ?? true)), forKey: "isSelected")
-        self.coreDataStack.saveContext()
-    }
-    
-    func updateFacilityStaff (_ facilityStaff : FacilityStaff ) {
-        guard let objectUpdate = try? self.fetchCDFacilityStaffForUpdate(id: Int64(facilityStaff.staffId ?? 0)) else { return }
-        print(objectUpdate)
-        objectUpdate.setValue(NSNumber(booleanLiteral: !(facilityStaff.isSelected ?? true)), forKey: "isSelected")
-        self.coreDataStack.saveContext()
-    }
-    
-    func deleteFacilityStaff ( _ facilityStaff : FacilityStaff ) {
-        do {
-            guard let staffId = facilityStaff.staffId else {return}
-            try self.deleteCDFacilityStaff(staffId: Int64(staffId))
-        }
-        catch let error as NSError {
-            print(error.localizedDescription)
-        }
-    }
-    
-    func deleteAllAppointment() throws {
-        do {
-            try self.deleteAllData()
-        }
-        catch let error as NSError {
-            print(error.localizedDescription)
-        }
-    }
-    
-    func deleteFacilityStaff() throws {
-        do {
-            try self.deleteAllCDFacilityStaff()
-        }
-        catch let error as NSError {
-            print(error.localizedDescription)
-        }
-    }
-    
-    func deleteAppointmentsType() throws {
-        do {
-            try self.deleteAllCDAppointmentsType()
-        }
-        catch let error as NSError {
-            print(error.localizedDescription)
-        }
-    }
-    
-    func deleteLastUpdated() throws {
-        do {
-            try self.deleteAllLastUpdated()
-        }
-        catch let error as NSError {
-            print(error.localizedDescription)
-        }
-    }
-    
-    func deleteAppointments(startDate: Double , endDate: Double) throws {
-        do {
-            try self.deleteCDAppointments(startOfMonth: startDate, endOfMonth: endDate)
-        }
-        catch let error as NSError {
-            print(error.localizedDescription)
-        }
     }
     
 }

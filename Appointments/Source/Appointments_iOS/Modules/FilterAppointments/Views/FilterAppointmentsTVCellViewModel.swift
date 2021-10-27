@@ -54,7 +54,7 @@ class FilterAppointmentsTVCellViewModel: FilterAppointmentsTVCellViewModelType, 
         //Mark:- Setting Properties
         self.titleSubject = BehaviorSubject(value: "\(facilityStaff.firstName ?? "Test Staff") \(facilityStaff.lastName ?? "Name")")
         self.markCheckboxSubject = PublishSubject()
-        let selectedFacilityStaff = appointmentsRepository.getFacilityStaffSelectedIds()
+        let selectedFacilityStaff = appointmentsRepository.getFacilityStaffSelectedIds(facilityId: facilityStaff.facilityId ?? 0)
         self.staffSubject = PublishSubject()
         self.appointmentsTypeSubject = PublishSubject()
         self.checkFilterSubject = BehaviorSubject(value: false)

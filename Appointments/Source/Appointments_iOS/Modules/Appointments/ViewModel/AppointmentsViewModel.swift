@@ -111,6 +111,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     
     private let disposeBag = DisposeBag()
     private let facilityDataStore: FacilityDataStore
+    private let facilityId: Int
     private let residentProvider: ResidentDataStore?
     private let appointmentsRepository: AppointmentRepository
     private let filterActionProvider: FilterActionProvider?
@@ -124,6 +125,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         self.appointmentsRepository = appointmentsRepository
         self.filterActionProvider = filterActionProvider
         self.residentProvider = nil
+        self.facilityId = facilityDataStore.currentFacility?["facility_id"] as? Int ?? 0
         self.datePickerSubject
             .map {
                 let dateFormatter = DateFormatter()
@@ -149,7 +151,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         self.appointmentsRepository = appointmentsRepository
         self.filterActionProvider = filterActionProvider
         self.residentProvider = residentProvider
-        
+        self.facilityId = facilityDataStore.currentFacility?["facility_id"] as? Int ?? 0
         self.datePickerSubject
             .map {
                 let dateFormatter = DateFormatter()
@@ -281,11 +283,11 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         
         self.residentFilterAppointmentsSubject.map{
             appointments -> [Appointment] in
-            let appointmentsTypes = self.appointmentsRepository.getAppointmentsTypeSelectedIds()
-            let facilityStaffMembers = self.appointmentsRepository.getFacilityStaffSelectedIds()
+            let appointmentsTypes = self.appointmentsRepository.getAppointmentsTypeSelectedIds(facilityId: self.facilityId)
+            let facilityStaffMembers = self.appointmentsRepository.getFacilityStaffSelectedIds(facilityId: self.facilityId)
             print("Selected Appointments type : \(appointmentsTypes)")
             print("Selected Facility staff Members : \(facilityStaffMembers)")
-            self.isAppointmentsFilterAppliedSubject.onNext(self.appointmentsRepository.isAppointmentsFilterApplied())
+            self.isAppointmentsFilterAppliedSubject.onNext(self.appointmentsRepository.isAppointmentsFilterApplied(facilityId: self.facilityId))
             if appointmentsTypes.count >= 1  {
                 return appointments.filter{
                     appointment in

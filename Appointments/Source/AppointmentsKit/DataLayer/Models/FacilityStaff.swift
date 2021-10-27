@@ -8,6 +8,7 @@ struct FacilityStaff : Codable {
     let lastName : String?
     let staffId : Int?
     let isSelected : Bool?
+    let facilityId : Int?
     
     enum CodingKeys: String, CodingKey {
         
@@ -15,6 +16,7 @@ struct FacilityStaff : Codable {
         case lastName = "last_name"
         case staffId = "staff_id"
         case isSelected = "isSelected"
+        case facilityId = "facility_id"
     }
     
 }
@@ -27,6 +29,7 @@ extension FacilityStaff {
         firstName = try values.decodeIfPresent(String.self, forKey: .firstName)
         lastName = try values.decodeIfPresent(String.self, forKey: .lastName)
         staffId = try values.decodeIfPresent(Int.self, forKey: .staffId)
+        facilityId = try values.decodeIfPresent(Int.self, forKey: .facilityId)
         isSelected = try values.decodeIfPresent(Bool.self, forKey: .isSelected)
     }
     
@@ -40,6 +43,7 @@ extension FacilityStaff {
         self.firstName = managedObject.firstName
         self.lastName = managedObject.lastName
         self.isSelected = managedObject.isSelected
+        self.facilityId = Int(managedObject.facilityId)
     }
     
 }
@@ -52,7 +56,7 @@ extension FacilityStaff {
         self.firstName = facilityStaff.firstName
         self.lastName = facilityStaff.lastName
         self.isSelected = facilityStaff.isSelected
-        
+        self.facilityId = facilityStaff.facilityId
     }
     
 }
