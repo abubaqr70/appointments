@@ -323,6 +323,7 @@ class AppointmentRepository {
         return false
     }
     
+
     //Mark:- Fetching Selected Appointment Type Ids
     public func getAppointmentsTypeSelectedIds() -> [Int] {
         var selectedMembers = [Int]()
@@ -358,9 +359,25 @@ class AppointmentRepository {
         return false
     }
     
+    //Mark:- Check wether isSelectedSome Appointments Type
+    public func isSelectedSomeAppointmentsType() -> Bool {
+        if self.getAppointmentsTypeSelectedIds().count >= 1 && !checkForMarkAppointmentsType(){
+            return true
+        }
+        return false
+    }
+    
     //Mark:- Check wether mark or unmark Facility Staff
     public func checkForMarkFacilityStaff(for facilityDataStore: FacilityDataStore) -> Bool {
         if self.dataStore.fetchFacilityStaff().count == self.getFacilityStaffFromDictionary(for: facilityDataStore).count {
+            return true
+        }
+        return false
+    }
+    
+    //Mark:- Check wether isSelectedSome FacilityStaff
+    public func isSelectedSomeFacilityStaff(for facilityDataStore: FacilityDataStore) -> Bool {
+        if self.getFacilityStaffSelectedIds().count >= 1 && !checkForMarkFacilityStaff(for: facilityDataStore){
             return true
         }
         return false

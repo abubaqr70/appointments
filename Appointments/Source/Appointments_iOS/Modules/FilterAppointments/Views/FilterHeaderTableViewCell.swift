@@ -156,6 +156,13 @@ extension FilterHeaderTableViewCell {
             })
             .disposed(by: disposeBag)
         
+        viewModel.outputs.isSelectedSome.subscribe(onNext: {
+            selectedSome in
+            if selectedSome {
+                self.checkboxButton.setImage(UIImage.moduleImage(named: "icon_checkbox"), for: .normal)
+            }
+        }).disposed(by: disposeBag)
+        
     }
     
 }

@@ -16,6 +16,7 @@ protocol FilterHeaderTVCellViewModelOutputs {
     var headerTitle: Observable<String?> { get }
     var checkFilter : Observable<Bool> { get }
     var headerType: Observable<String> { get }
+    var isSelectedSome: Observable<Bool> { get }
     
 }
 
@@ -30,7 +31,7 @@ class FilterHeaderTVCellViewModel: FilterHeaderTVCellViewModelType, FilterHeader
     
     var inputs: FilterHeaderTVCellViewModelInputs { return self }
     var outputs: FilterHeaderTVCellViewModelOutputs { return self }
-    
+   
     //Mark: Inputs
     var markCheckbox: AnyObserver<Void> { return markCheckboxSubject.asObserver() }
     
@@ -38,20 +39,24 @@ class FilterHeaderTVCellViewModel: FilterHeaderTVCellViewModelType, FilterHeader
     var headerTitle: Observable<String?> { return headerTitleSubject.asObservable() }
     var checkFilter: Observable<Bool> { return checkFilterSubject.asObservable() }
     var headerType: Observable<String> { return headerTypeSubject.asObservable() }
+    var isSelectedSome: Observable<Bool> { return isSelectedSomeSubject.asObservable() }
+    
     
     //Mark: Init
     private let disposeBag = DisposeBag()
+    private let isSelectedSomeSubject: BehaviorSubject<Bool>
     private let headerTitleSubject: BehaviorSubject<String?>
     private let markCheckboxSubject : PublishSubject<Void>
     private let checkFilterSubject : BehaviorSubject<Bool>
     private let headerTypeSubject : PublishSubject<String>
     
-    init(headerTitle: String, isSelectedAll: Bool) {
+    init(headerTitle: String, isSelectedAll: Bool, isSelectedSome: Bool) {
         
         //Mark:- Setting Properties
         self.headerTitleSubject = BehaviorSubject(value: headerTitle)
         self.markCheckboxSubject = PublishSubject()
         self.checkFilterSubject = BehaviorSubject(value: false)
+        self.isSelectedSomeSubject = BehaviorSubject(value: isSelectedSome)
         self.headerTypeSubject = PublishSubject()
         self.bindActions(headerTitle: headerTitle, isSelectedAll: isSelectedAll)
     }
@@ -63,8 +68,7 @@ extension FilterHeaderTVCellViewModel {
     func bindActions(headerTitle: String, isSelectedAll: Bool) {
         
         checkFilterSubject.onNext( isSelectedAll ? true : false )
-        
-        
+    
         markCheckboxSubject
             .withLatestFrom(self.checkFilterSubject)
             .map { isPresent -> Bool in

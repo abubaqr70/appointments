@@ -127,14 +127,16 @@ extension FilterAppointmentsViewModel {
     
     func createAllCategoriesSection() -> (title: ReuseableCellViewModelType, rows: [ReuseableCellViewModelType]) {
         
-        let selected: Bool
+        let selectedAll: Bool
         if self.appointmentsRepository.checkForMarkFacilityStaff(for: self.facilityDataStore) && self.appointmentsRepository.checkForMarkAppointmentsType() {
-            selected = true
+            selectedAll = true
         } else {
-            selected = false
+            selectedAll = false
         }
         
-        let headerViewModel = FilterHeaderTVCellViewModel(headerTitle: "All Categories", isSelectedAll: selected)
+        let selectedSome = self.appointmentsRepository.isSelectedSomeFacilityStaff(for: facilityDataStore) && self.appointmentsRepository.isSelectedSomeAppointmentsType()
+       
+        let headerViewModel = FilterHeaderTVCellViewModel(headerTitle: "All Categories", isSelectedAll: selectedAll, isSelectedSome: selectedSome)
         
         headerViewModel.outputs.headerType.subscribe(onNext: {
             headerTitle in
@@ -159,7 +161,9 @@ extension FilterAppointmentsViewModel {
             selected = false
         }
         
-        let headerViewModel = FilterHeaderTVCellViewModel(headerTitle: "All Staff", isSelectedAll: selected)
+        let selectedSome = self.appointmentsRepository.isSelectedSomeFacilityStaff(for: facilityDataStore)
+        
+        let headerViewModel = FilterHeaderTVCellViewModel(headerTitle: "All Staff", isSelectedAll: selected,isSelectedSome: selectedSome)
         
         headerViewModel.outputs.headerType.subscribe(onNext: {
             headerTitle in
@@ -195,7 +199,9 @@ extension FilterAppointmentsViewModel {
             selected = false
         }
         
-        let headerViewModel = FilterHeaderTVCellViewModel(headerTitle: "All Appointment Type", isSelectedAll: selected)
+        let selectedSome = self.appointmentsRepository.isSelectedSomeAppointmentsType()
+        
+        let headerViewModel = FilterHeaderTVCellViewModel(headerTitle: "All Appointment Type", isSelectedAll: selected,isSelectedSome: selectedSome)
         
         headerViewModel.outputs.headerType.subscribe(onNext: {
             headerTitle in
