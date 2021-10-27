@@ -134,9 +134,7 @@ extension FilterAppointmentsViewModel {
             selectedAll = false
         }
         
-        let selectedSome = self.appointmentsRepository.isSelectedSomeFacilityStaff(for: facilityDataStore) && self.appointmentsRepository.isSelectedSomeAppointmentsType()
-       
-        let headerViewModel = FilterHeaderTVCellViewModel(headerTitle: "All Categories", isSelectedAll: selectedAll, isSelectedSome: selectedSome)
+        let headerViewModel = FilterHeaderTVCellViewModel(headerTitle: "All Categories", isSelectedAll: selectedAll, isSelectedSome: false)
         
         headerViewModel.outputs.headerType.subscribe(onNext: {
             headerTitle in
