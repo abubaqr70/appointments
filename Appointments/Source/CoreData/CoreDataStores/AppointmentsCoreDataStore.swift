@@ -76,12 +76,6 @@ public class AppointmentsCoreDataStore {
         return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
     }
     
-    public func fetchCDFacilityStaffSelected() throws -> [CDFacilityStaff] {
-        let fetchRequest: NSFetchRequest<CDFacilityStaff> = CDFacilityStaff.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "isSelected == %@", NSNumber(booleanLiteral: true))
-        return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
-    }
-    
     public func fetchCDFacilityStaffForUpdate(id: Int64) throws -> CDFacilityStaff? {
         let fetchRequest: NSFetchRequest<CDFacilityStaff> = CDFacilityStaff.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "staffId == %@", "\(id)")
@@ -138,28 +132,6 @@ public class AppointmentsCoreDataStore {
             // Execute Batch Update
             let batchUpdateResult = try self.coreDataStack.manageObjectContext.execute(batchUpdateRequest) as! NSBatchUpdateResult
             print("The batch update request has updated \(batchUpdateResult.result ?? "") in Appointments Type records.")
-            
-            let objects = batchUpdateResult.result as! [NSManagedObjectID]
-            objects.forEach({ objID in
-                let managedObject = self.coreDataStack.manageObjectContext.object(with: objID)
-                self.coreDataStack.manageObjectContext.refresh(managedObject, mergeChanges: false)
-            })
-        } catch {
-            let updateError = error as NSError
-            print("\(updateError), \(updateError.userInfo)")
-        }
-        return
-    }
-    
-    public func markAllCDFacilityStaff(status: Bool) throws {
-        let entityDescription: NSEntityDescription = CDFacilityStaff.entity()
-        let batchUpdateRequest = NSBatchUpdateRequest(entity: entityDescription)
-        batchUpdateRequest.resultType = .updatedObjectIDsResultType
-        batchUpdateRequest.propertiesToUpdate = ["isSelected":  NSNumber(booleanLiteral: status)]
-        do {
-            // Execute Batch Update
-            let batchUpdateResult = try self.coreDataStack.manageObjectContext.execute(batchUpdateRequest) as! NSBatchUpdateResult
-            print("The batch update request has updated \(batchUpdateResult.result ?? "") in Facility staff records.")
             
             let objects = batchUpdateResult.result as! [NSManagedObjectID]
             objects.forEach({ objID in

@@ -11,9 +11,7 @@ protocol AppointmentsDataStore {
     func fetchAppointmentsType() -> [AppointmentsType]
     func fetchAppointmentsTypeSelected() -> [AppointmentsType]
     func fetchFacilityStaff() -> [FacilityStaff]
-    func fetchFacilityStaffSelected() -> [FacilityStaff]
     func markAppointmentsSyncedTrue(_ appointment: Appointment)
-    func markAllFacilityStaff(status: Bool)
     func markAllAppointmentsType(status: Bool)
     func saveAppointment(_ appointment: Appointment,_ lastUpdatedTime: Date)
     func saveLastUpdated(_ date: Date)
@@ -35,7 +33,7 @@ protocol AppointmentsDataStore {
 }
 
 extension AppointmentsCoreDataStore: AppointmentsDataStore {
-    
+ 
     func fetchAppointments(startDate: Date) -> [Appointment] {
         do {
             let appointments = try self.fetchCDAppointments(startDate: startDate)
@@ -97,18 +95,7 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         return []
     }
     
-    func fetchFacilityStaffSelected() -> [FacilityStaff] {
-        do {
-            let facilityStaff = try self.fetchCDFacilityStaffSelected()
-            return facilityStaff.map{
-                facilityStaffCoreData -> FacilityStaff in
-                return FacilityStaff(managedObject: facilityStaffCoreData)
-            }
-        } catch { }
-        
-        return []
-    }
-    
+  
     func fetchLastUpdated() -> Date? {
         try? self.fetchCDLastUpdated()?.date
     }
@@ -245,16 +232,7 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
             print(error.localizedDescription)
         }
     }
-    
-    func markAllFacilityStaff(status: Bool) {
-        do {
-            try self.markAllCDFacilityStaff(status: status)
-        }
-        catch let error as NSError {
-            print(error.localizedDescription)
-        }
-    }
-    
+        
     func markAppointmentsSyncedTrue (_ appointment : Appointment ) {
         guard let objectUpdate = try? self.fetchCDAppointmentForUpdate(id: Int64(appointment.id ?? 0), occurrenceId: Int64(appointment.occurrenceId ?? 0)) else { return }
         print(objectUpdate)

@@ -27,7 +27,7 @@ class AppointmentRepository {
             
             guard let self = self else { return Disposables.create() }
             
-            self.whereIsMySQLite()
+
             //Mark:- Checking Internet Connection
             let reachability = self.reachabilityService.reachabilityType
             switch reachability {
@@ -262,15 +262,19 @@ class AppointmentRepository {
         }
     }
     
+    //Mark:- Marking all appointments type from dataStore
     public func markAllAppointmentsTypeStatus(status: Bool) {
         self.dataStore.markAllAppointmentsType(status: status)
     }
     
+    //Mark:- Selecting Or Deselecting all Facility staff from dataStore
     public func markAllFacilityStaffStatus(for facilityDataStore: FacilityDataStore,status: Bool) {
         if status {
             let facilityStaff = self.getFacilityStaffFromDictionary(for: facilityDataStore)
             for staff in facilityStaff {
-                self.dataStore.saveFacilityStaff(staff)
+                if !self.dataStore.checkFacilityStaffExist(facilityStaff: staff) {
+                    self.dataStore.saveFacilityStaff(staff)
+                }
             }
         } else {
             do {
@@ -282,10 +286,12 @@ class AppointmentRepository {
         }
     }
     
+    //Mark:- Marking appointments type from dataStore
     public func markAppointmentsType(appointmentType: AppointmentsType) {
         self.dataStore.updateAppointmentType(appointmentType)
     }
     
+    //Mark:- Selecting Or Deselecting Facility staff from dataStore
     public func markFacilityStaff(facilityStaff: FacilityStaff) {
         
         if self.dataStore.checkFacilityStaffExist(facilityStaff: facilityStaff) {
@@ -296,14 +302,17 @@ class AppointmentRepository {
         
     }
     
+    //Mark:- Fetching selected AppointmentsType from dataStore
     public func getAppointmentsTypeSelected() -> [AppointmentsType] {
         self.dataStore.fetchAppointmentsTypeSelected()
     }
     
+    //Mark:-  Fetching local AppointmentsType from dataStore
     public func getLocalAppointmentsType() -> [AppointmentsType] {
         self.dataStore.fetchAppointmentsType()
     }
     
+    //Mark:- checking appointmentsFilter Applied
     public func isAppointmentsFilterApplied() -> Bool {
         if self.getFacilityStaffSelectedIds().count >= 1 {
             return true
@@ -314,6 +323,7 @@ class AppointmentRepository {
         return false
     }
     
+    //Mark:- Fetching Selected Appointment Type Ids
     public func getAppointmentsTypeSelectedIds() -> [Int] {
         var selectedMembers = [Int]()
         for appointmentType in self.dataStore.fetchAppointmentsTypeSelected() {
@@ -324,10 +334,12 @@ class AppointmentRepository {
         return selectedMembers
     }
     
+    //Mark:- Fetching Selected Appointment Type Ids
     public func getFacilityStaffSelected() -> [FacilityStaff] {
         self.dataStore.fetchFacilityStaff()
     }
     
+    //Mark:- Fetching Selected Staff Ids
     public func getFacilityStaffSelectedIds() -> [Int] {
         var selectedMembers = [Int]()
         for members in self.dataStore.fetchFacilityStaff() {
@@ -338,6 +350,7 @@ class AppointmentRepository {
         return selectedMembers
     }
     
+    //Mark:- Check wether mark or unmark Appointments Type
     public func checkForMarkAppointmentsType() -> Bool {
         if self.dataStore.fetchAppointmentsTypeSelected().count == self.dataStore.fetchAppointmentsType().count {
             return true
@@ -345,6 +358,7 @@ class AppointmentRepository {
         return false
     }
     
+    //Mark:- Check wether mark or unmark Facility Staff
     public func checkForMarkFacilityStaff(for facilityDataStore: FacilityDataStore) -> Bool {
         if self.dataStore.fetchFacilityStaff().count == self.getFacilityStaffFromDictionary(for: facilityDataStore).count {
             return true
@@ -436,18 +450,6 @@ class AppointmentRepository {
         
         let decoder = JSONDecoder()
         return try decoder.decode(T.self, from: data)
-    }
-    
-    func whereIsMySQLite() {
-        let path = FileManager
-            .default
-            .urls(for: .applicationSupportDirectory, in: .userDomainMask)
-            .last?
-            .absoluteString
-            .replacingOccurrences(of: "file://", with: "")
-            .removingPercentEncoding
-        
-        print(path ?? "Not found")
     }
     
 }
