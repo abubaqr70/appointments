@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = 'Appointments'
-    s.version          = '0.0.2-rc.30'
+    s.version          = '0.0.2-rc.31'
     s.summary          = 'Appointment pod for iOS Apps'
     
     s.description      = <<-DESC
