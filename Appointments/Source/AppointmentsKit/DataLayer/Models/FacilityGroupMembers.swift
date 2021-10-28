@@ -12,7 +12,7 @@ struct FacilityGroupMembers : Codable {
 	enum CodingKeys: String, CodingKey {
 
 		case id = "id"
-		case userId = "userId"
+		case userId = "fk_user_id"
 		case groupId = "fk_group_id"
 		case memberType = "v_member_type"
 	}
