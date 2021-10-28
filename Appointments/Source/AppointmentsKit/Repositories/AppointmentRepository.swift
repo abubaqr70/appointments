@@ -10,17 +10,15 @@ class AppointmentRepository {
     let facilityStaffDataStore: FacilityStaffDataStore
     let appointmentsTypeDataStore: AppointmentsTypeDataStore
     let lastUpdatedDataStore: LastUpdatedDataStore
-    let facilityDataStore: FacilityDataStore
     let reachabilityService: ReachabilityService
     var isSyncing: Bool
     
-    init(appointmentService: AppointmentService, appointmentDataStore: AppointmentsDataStore, facilityStaffDataStore: FacilityStaffDataStore, appointmentsTypeDataStore: AppointmentsTypeDataStore, lastUpdatedDataStore: LastUpdatedDataStore, facilityDataStore: FacilityDataStore) {
+    init(appointmentService: AppointmentService, appointmentDataStore: AppointmentsDataStore, facilityStaffDataStore: FacilityStaffDataStore, appointmentsTypeDataStore: AppointmentsTypeDataStore, lastUpdatedDataStore: LastUpdatedDataStore, facilityDataStore: FacilityDataStore?) {
         self.appointmentService = appointmentService
         self.appointmentDataStore = appointmentDataStore
         self.facilityStaffDataStore = facilityStaffDataStore
         self.appointmentsTypeDataStore = appointmentsTypeDataStore
         self.lastUpdatedDataStore = lastUpdatedDataStore
-        self.facilityDataStore = facilityDataStore
         self.reachabilityService = ReachabilityService()
         self.isSyncing = false
     }
@@ -46,7 +44,7 @@ class AppointmentRepository {
                     
                     //Mark:- Sync Appointments from server
                     if self.isSyncing == false {
-                        self.syncData() {
+                        self.localFacilitySyncData(facilityId: facilityID){
                             (result: Result<Void,Error>) in
                             self.isSyncing = false
                             switch result {
@@ -183,7 +181,7 @@ class AppointmentRepository {
     func markAppointmentsOnServer(_ appointments: [Appointment],completion: @escaping (Result<AppointmentsResponse,Error>) -> Void) {
         
         //Mark:- Appointments Service syncing appointments
-        self.appointmentService.syncAppointments(for: self.facilityDataStore.currentFacility?["facility_id"] as? Int ?? 0, params: appointments,completion: completion )
+        self.appointmentService.syncAppointments(for: appointments.first?.facilityId ?? 0, params: appointments,completion: completion )
         
     }
     
@@ -527,7 +525,7 @@ class AppointmentRepository {
     //Mark:- Fetch Facility Staff From Dictionary
     func getFacilityStaffFromDictionary(for facilityDataStore: FacilityDataStore) -> [FacilityStaff] {
         do {
-            guard let dictionary = self.facilityDataStore.currentFacility?["staff"] as? [[String : Any]] else {
+            guard let dictionary = facilityDataStore.currentFacility?["staff"] as? [[String : Any]] else {
                 return [] }
             let jsonData = try JSONSerialization.data(withJSONObject: dictionary, options: [.prettyPrinted])
             let facilityStaff : [FacilityStaff] = try self.decode(data: jsonData)

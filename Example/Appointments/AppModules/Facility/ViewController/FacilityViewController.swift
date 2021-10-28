@@ -70,14 +70,14 @@ class FacilityViewController: BaseViewController {
     private func didSelect(facility: [String:Any]){
         let appDependency = AppDependencyContainer(baseURL: APPURL.Domain,
                                                    authentication: AuthenticationProvider.init(),
-                                                   userDataStore: UserProvider.init(),
-                                                   facilityDataStore: FacilityProvider.init(facility: facility))
+                                                   userDataStore: UserProvider.init())
         
         let appCoordinator = appDependency.makeAppointmentsCoordinator(root: self.navigationController ?? UINavigationController(),
                                                                        navigationType: .present,
                                                                        addActionProvider: nil,
                                                                        filterActionProvider: nil,
-                                                                       residentProvider: nil)
+                                                                       residentProvider: nil,
+                                                                       facilityDataStore: FacilityProvider.init(facility: [:]))
         appCoordinator
             .start()
             .subscribe()

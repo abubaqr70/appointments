@@ -37,6 +37,7 @@ protocol AppointmentsViewModelOutputs {
     var residentImage: Observable<String> { get }
     var isFilterApplied: Observable<Bool> { get }
     var isAppointmentsFilterApplied: Observable<Bool> { get }
+    var facilityDataStoreOutput: FacilityDataStore { get }
 }
 
 protocol AppointmentsViewModelType {
@@ -74,6 +75,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     var residentImage: Observable<String> { return residentImageSubject.asObservable() }
     var isFilterApplied: Observable<Bool> { return isFilterAppliedSubject.asObservable() }
     var isAppointmentsFilterApplied: Observable<Bool> { return isAppointmentsFilterAppliedSubject.asObservable() }
+    var facilityDataStoreOutput: FacilityDataStore { return self.facilityDataStore }
     
     //Mark: Private Properties
     
@@ -107,14 +109,14 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     private let residentImageSubject = BehaviorSubject<String>(value: "")
     private let residentNameSubject = BehaviorSubject<String>(value: "")
     private let isFilterAppliedSubject = BehaviorSubject<Bool>(value: false)
-    private let isAppointmentsFilterAppliedSubject = BehaviorSubject<Bool>(value: false)
+    let isAppointmentsFilterAppliedSubject = BehaviorSubject<Bool>(value: false)
     
-    private let disposeBag = DisposeBag()
-    private let facilityDataStore: FacilityDataStore
-    private let facilityId: Int
-    private let residentProvider: ResidentDataStore?
-    private let appointmentsRepository: AppointmentRepository
-    private let filterActionProvider: FilterActionProvider?
+    let disposeBag = DisposeBag()
+    let facilityDataStore: FacilityDataStore
+    let facilityId: Int
+    let residentProvider: ResidentDataStore?
+    let appointmentsRepository: AppointmentRepository
+    let filterActionProvider: FilterActionProvider?
     
     
     init(facilityDataStore: FacilityDataStore,
@@ -125,6 +127,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         self.appointmentsRepository = appointmentsRepository
         self.filterActionProvider = filterActionProvider
         self.residentProvider = nil
+        
         self.facilityId = facilityDataStore.currentFacility?["facility_id"] as? Int ?? 0
         self.datePickerSubject
             .map {
@@ -179,7 +182,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
                 self.loadingSubject.onNext(true)
                 let residentId = self.residentProvider?.currentResident?["resident_id"] as? Int
                 if residentId != nil {
-                    return self.bindappointmentsForResident(date: date, facilityID: facilityID, residentId: residentId!)
+                    return self.bindAppointmentsForResident(date: date, facilityID: facilityID, residentId: residentId!)
                 }else {
                     return self.bindAppointmentsForTab(date: date, facilityID: facilityID)
                 }
@@ -241,7 +244,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             .materialize()
     }
     
-    func bindappointmentsForResident(date: Date, facilityID: Int, residentId: Int) -> Observable<Event<([Appointment],Date?)>>{
+    func bindAppointmentsForResident(date: Date, facilityID: Int, residentId: Int) -> Observable<Event<([Appointment],Date?)>>{
         self.isResidentSubject.onNext(true)
         let residentName =  "\(self.residentProvider?.currentResident?["first_name"] as? String ?? "") \(self.residentProvider?.currentResident?["last_name"] as? String ?? "")"
         self.residentNameSubject.onNext(residentName)
@@ -263,20 +266,22 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             }
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'"
-            return mappedAppointments.sorted(by: {dateFormatter.date(from: $0.startDate?.date ?? "")?.compare(dateFormatter.date(from: $1.startDate?.date ?? "") ?? Date()) == ComparisonResult.orderedAscending})
+            
+            if let residentId = self.residentProvider?.currentResident?["resident_id"] as? Int {
+                let mappedAppointments = mappedAppointments.sorted(by: {dateFormatter.date(from: $0.startDate?.date ?? "")?.compare(dateFormatter.date(from: $1.startDate?.date ?? "") ?? Date()) == ComparisonResult.orderedAscending})
+                return mappedAppointments.filter{
+                    appointment in
+                    return appointment.appointmentAttendance?.first?.residentId == residentId
+                }
+            } else {
+                return mappedAppointments.sorted(by: {dateFormatter.date(from: $0.startDate?.date ?? "")?.compare(dateFormatter.date(from: $1.startDate?.date ?? "") ?? Date()) == ComparisonResult.orderedAscending})
+            }
+            
         }
         .bind(to: mappedAppointmentsSubject)
         .disposed(by: disposeBag)
-        
         self.mappedAppointmentsSubject.map{ appointments -> [Appointment] in
-            return self.residentStaffFilters(appointments: appointments)
-        }
-        .bind(to: residentFilterAppointmentsSubject)
-        .disposed(by: disposeBag)
-        
-        self.residentFilterAppointmentsSubject.map{
-            appointments -> [Appointment] in
-            return self.applyingAppointmentsFilter(appointments: appointments)
+            return self.filtersApply(appointments: appointments)
         }
         .bind(to: filteredAppointmentsSubject)
         .disposed(by: disposeBag)
@@ -292,88 +297,6 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             }.bind(to: sortedAppointmentsSubject)
             .disposed(by: disposeBag)
         
-    }
-    
-    func residentStaffFilters(appointments: [Appointment]) -> [Appointment] {
-        
-        if self.filterActionProvider?.isFiltersApplied() ?? false {
-            
-            guard let selectedResident = self.filterActionProvider?.allSelectedResidents()  else {return [] }
-            guard let selectedGroups = self.filterActionProvider?.allSelectedGroups() else {return [] }
-            
-            if selectedResident.count < 1 && selectedGroups.count < 1 {
-                return appointments
-            }
-            
-            var appointmentsFiltered = [Appointment]()
-            
-            if selectedResident.count >= 1 {
-                appointmentsFiltered += appointments.filter{
-                    appointment in
-                    selectedResident.contains(appointment.appointmentAttendance?.first?.residentId ?? 0)
-                }
-            }
-            
-            if selectedGroups.count >= 1 {
-                appointmentsFiltered += appointments.filter{
-                    appointment in
-                    selectedGroups.contains(appointment.groupId ?? 0)
-                }
-            }
-            return appointmentsFiltered
-        } else {
-            return appointments
-        }
-        
-    }
-    
-    func applyingAppointmentsFilter(appointments: [Appointment]) -> [Appointment] {
-        
-        self.isAppointmentsFilterAppliedSubject.onNext(self.appointmentsRepository.isAppointmentsFilterApplied(facilityId: self.facilityId))
-        
-        if self.appointmentsRepository.checkForMarkAppointmentsType(facilityId: self.facilityId) && self.appointmentsRepository.checkForMarkFacilityStaff(facilityId: self.facilityId, facilityDataStore: facilityDataStore) {
-            
-            return appointments
-        }
-        
-        let appointmentsTypes = self.appointmentsRepository.getAppointmentsTypeSelectedIds(facilityId: self.facilityId)
-        let facilityStaffMembers = self.appointmentsRepository.getFacilityStaffSelectedIds(facilityId: self.facilityId)
-        
-        if appointmentsTypes.count < 1 && facilityStaffMembers.count < 1{
-            return appointments
-        }
-        
-        var appointmentsFiltered = [Appointment]()
-        
-        if appointmentsTypes.count >= 1  {
-            appointmentsFiltered += appointments.filter{
-                appointment in
-                appointmentsTypes.contains(appointment.therapyId ?? 0)
-            }
-        }
-        
-        if facilityStaffMembers.count >= 1 {
-            appointmentsFiltered += appointments.filter{
-                appointment in
-                if appointment.user != nil {
-                    return facilityStaffMembers.contains(appointment.user?.id ?? 0)
-                } else {
-                    return true
-                }
-                
-                //                if appointment.user != nil {
-                //                    return facilityStaffMembers.contains(appointment.user?.id ?? 0)
-                //                } else {
-                //                    return (appointment.userGroup?.facilityGroupMembers?.filter{
-                //                        groupMember in
-                //                        facilityStaffMembers.contains(groupMember.userId ?? 0)
-                //                    }) != nil
-                //                }
-                
-            }
-        }
-        
-        return  appointmentsFiltered
     }
     
     func bindAppointmentsToCellViewModel() {
@@ -446,4 +369,3 @@ extension AppointmentsViewModel {
         
     }
 }
-

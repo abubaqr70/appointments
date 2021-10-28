@@ -45,24 +45,28 @@ public class AppCoordinator: Coordinator<ResultType<Void>> {
     private let addActionProvider: AddActionProvider?
     private let filterActionProvider: FilterActionProvider?
     private let residentProvider: ResidentDataStore?
+    private let facilityDataStore: FacilityDataStore
     
     init(root: UIViewController,
          navigationType: NavigationType,
          factory: AppointmentsFactory,
          addActionProvider: AddActionProvider?,
          filterActionProvider: FilterActionProvider?,
-         residentProvider: ResidentDataStore?) {
+         residentProvider: ResidentDataStore?,
+         facilityDataStore: FacilityDataStore) {
         self.root = root
         self.navigationType = navigationType
         self.factory = factory
         self.addActionProvider = addActionProvider
         self.filterActionProvider = filterActionProvider
         self.residentProvider = residentProvider
+        self.facilityDataStore = facilityDataStore
     }
     
     public override func start() -> Observable<ResultType<Void>> {
         let viewModel = self.factory.makeAppointmentsViewModel(residentProvider: residentProvider,
-                                                               filterActionProvider: filterActionProvider)
+                                                               filterActionProvider: filterActionProvider,
+                                                               facilityDataStore: facilityDataStore)
         let viewController = self.factory.makeAppointmentsViewController(viewModel: viewModel)
         self.bindAppointmentViewModel(viewModel: viewModel)
         if navigationType != .push {
@@ -93,7 +97,7 @@ public class AppCoordinator: Coordinator<ResultType<Void>> {
         }).disposed(by: disposeBag)
         
         viewModel.outputs.filterAppointments.subscribe(onNext: {
-            self.presentFilterAppointments()
+            self.presentFilterAppointments(facilityDataStore: viewModel.outputs.facilityDataStoreOutput)
         }).disposed(by: disposeBag)
     }
     
@@ -112,8 +116,8 @@ public class AppCoordinator: Coordinator<ResultType<Void>> {
         
     }
     
-    func presentFilterAppointments() {
-        let viewModel = self.factory.makeFilterAppointmentsViewModel()
+    func presentFilterAppointments(facilityDataStore: FacilityDataStore) {
+        let viewModel = self.factory.makeFilterAppointmentsViewModel(facilityDataStore: facilityDataStore)
         let viewController = self.factory.makeFilterAppointmentsViewController(viewModel: viewModel)
         viewController.modalPresentationStyle = .fullScreen
         let navigationController = UINavigationController(rootViewController: viewController)
@@ -148,11 +152,13 @@ public class AppCoordinator: Coordinator<ResultType<Void>> {
 
 protocol AppointmentsFactory {
     func makeAppointmentsViewController(viewModel: AppointmentsViewModelType) -> AppointmentsViewController
-    func makeAppointmentsViewModel(residentProvider: ResidentDataStore?,filterActionProvider: FilterActionProvider?) -> AppointmentsViewModelType
+    func makeAppointmentsViewModel(residentProvider: ResidentDataStore?,
+                                   filterActionProvider: FilterActionProvider?,
+                                   facilityDataStore: FacilityDataStore) -> AppointmentsViewModelType
     func makeAppointmentViewController(viewModel: AppointmentViewModelType) -> AppointmentViewController
     func makeAppointmentViewModel(appointment: Appointment) -> AppointmentViewModelType
     func makeFilterAppointmentsViewController(viewModel: FilterAppointmentsViewModelType) -> FilterAppointmentsViewController
-    func makeFilterAppointmentsViewModel() -> FilterAppointmentsViewModelType
+    func makeFilterAppointmentsViewModel(facilityDataStore: FacilityDataStore) -> FilterAppointmentsViewModelType
 }
 
 extension AppDependencyContainer: AppointmentsFactory {

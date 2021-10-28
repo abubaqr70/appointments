@@ -50,7 +50,7 @@ public class AppointmentsCoreDataStore {
     
     public func fetchCDAppointmentsSyncedFalseWithFacilityID(facilityId: Int64) throws -> [CDAppointment] {
         let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "isSynced == %@ AND id == %@",  NSNumber(booleanLiteral: false), "\(facilityId)")
+        fetchRequest.predicate = NSPredicate(format: "isSynced == %@ AND facilityId == %@",  NSNumber(booleanLiteral: false), "\(facilityId)")
         return try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
     }
     
