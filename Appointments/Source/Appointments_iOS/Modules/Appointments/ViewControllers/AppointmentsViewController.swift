@@ -211,8 +211,9 @@ extension AppointmentsViewController{
         let safeArea = view.safeAreaLayoutGuide
         
         NSLayoutConstraint.activate([
-            nameStackView.topAnchor.constraint(equalTo: profileView.topAnchor, constant: 10),
+            nameStackView.topAnchor.constraint(equalTo: profileView.topAnchor),
             nameStackView.leadingAnchor.constraint(equalTo: profileImage.trailingAnchor, constant: 10),
+            nameStackView.centerYAnchor.constraint(equalTo: profileView.centerYAnchor),
             nameStackView.trailingAnchor.constraint(equalTo: profileView.trailingAnchor, constant: -10),
             segmentControl.heightAnchor.constraint(equalToConstant: 30),
             segmentControl.topAnchor.constraint(equalTo: residentStackView.topAnchor, constant: 10)
