@@ -170,7 +170,7 @@ extension AppointmentsViewModel {
                 return appointments
                 
                 //Mark:- Skipping facility staff only if all selected
-            } else if self.appointmentsRepository.checkForMarkAppointmentsType(facilityId: facilityId) {
+            } else if self.appointmentsRepository.checkForMarkFacilityStaff(facilityId: facilityId, facilityDataStore: facilityDataStore) {
                 
                 //Mark:- Applying filters on appointment Types if any
                 if appointmentsTypes.count >= 1 {
