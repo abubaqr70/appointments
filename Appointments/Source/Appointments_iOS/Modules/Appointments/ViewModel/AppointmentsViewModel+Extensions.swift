@@ -27,7 +27,7 @@ extension AppointmentsViewModel {
         
         //Mark:- Checking wether we need to apply filter or not when all selected
         self.isAppointmentsFilterAppliedSubject.onNext(self.appointmentsRepository.isAppointmentsFilterApplied(facilityId: self.facilityId))
-     
+        
         //Mark:- Checking wether we need to apply filter or not
         if selectedResident.count >= 1 || selectedGroups.count >= 1 || appointmentsTypes.count >= 1 || facilityStaffMembers.count >= 1 {
             
@@ -60,7 +60,8 @@ extension AppointmentsViewModel {
                     }
                     
                     //Mark:- Applying filters on selected residents if any
-                } else if selectedResident.count >= 1 {
+                }
+                if selectedResident.count >= 1 {
                     appointments = appointments.filter{
                         appointment in
                         return selectedResident.contains(appointment.appointmentAttendance?.first?.residentId ?? 0)
@@ -80,7 +81,8 @@ extension AppointmentsViewModel {
                     }
                     
                     //Mark:- Applying filters on selected groups if any
-                } else if selectedGroups.count >= 1 {
+                }
+                if selectedGroups.count >= 1 {
                     appointments = appointments.filter{
                         appointment in
                         return selectedGroups.contains(appointment.groupId ?? 0)
@@ -88,7 +90,8 @@ extension AppointmentsViewModel {
                     }
                     
                     //Mark:- Applying filters on appointment Types if any
-                } else {
+                }
+                if appointmentsTypes.count >= 1 {
                     appointments = appointments.filter{
                         appointment in
                         return appointmentsTypes.contains(appointment.therapyId ?? 0)
@@ -108,14 +111,16 @@ extension AppointmentsViewModel {
                     }
                     
                     //Mark:- Applying filters on selected residents if any
-                } else if selectedResident.count >= 1 {
+                }
+                if selectedResident.count >= 1 {
                     appointments = appointments.filter{
                         appointment in
                         return selectedResident.contains(appointment.appointmentAttendance?.first?.residentId ?? 0)
                     }
                     
                     //Mark:- Applying filters on appointment Types if any
-                } else if appointmentsTypes.count >= 1 {
+                }
+                if appointmentsTypes.count >= 1 {
                     appointments = appointments.filter{
                         appointment in
                         return appointmentsTypes.contains(appointment.therapyId ?? 0)
