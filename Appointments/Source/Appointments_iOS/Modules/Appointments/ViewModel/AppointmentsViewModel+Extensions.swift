@@ -42,8 +42,10 @@ extension AppointmentsViewModel {
                         return selectedResident.contains(appointment.appointmentAttendance?.first?.residentId ?? 0) && selectedGroups.contains(appointment.groupId ?? 0)
                     } else if selectedResident.count >= 1 {
                         return selectedResident.contains(appointment.appointmentAttendance?.first?.residentId ?? 0)
-                    } else {
+                    } else if selectedGroups.count >= 1 {
                         return selectedGroups.contains(appointment.groupId ?? 0)
+                    } else {
+                        return true
                     }
                 }
                 

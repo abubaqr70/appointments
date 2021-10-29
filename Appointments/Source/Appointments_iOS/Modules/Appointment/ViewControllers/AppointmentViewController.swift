@@ -417,7 +417,7 @@ extension AppointmentViewController{
         viewModel.outputs.staff
             .map { staff -> Bool in
                 guard let staff = staff else {return true}
-                return staff.string == "Staff: "
+                return staff.string == "Staff: " || staff.string == "Staff:  "
             }
             .bind(to: self.staffLabel.rx.isHidden)
             .disposed(by: disposeBag)
