@@ -35,6 +35,7 @@ protocol AppointmentsViewModelOutputs {
     var isResident: Observable<Bool> { get }
     var residentName: Observable<String> { get }
     var residentImage: Observable<String> { get }
+    var residentRoom: Observable<String> { get }
     var isFilterApplied: Observable<Bool> { get }
     var isAppointmentsFilterApplied: Observable<Bool> { get }
     var facilityDataStoreOutput: FacilityDataStore { get }
@@ -73,6 +74,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     var isRefreshing: Observable<Bool> { return isRefreshingSubject.asObservable() }
     var residentName: Observable<String> { return residentNameSubject.asObservable() }
     var residentImage: Observable<String> { return residentImageSubject.asObservable() }
+    var residentRoom: Observable<String> { return residentRoomSubject.asObservable() }
     var isFilterApplied: Observable<Bool> { return isFilterAppliedSubject.asObservable() }
     var isAppointmentsFilterApplied: Observable<Bool> { return isAppointmentsFilterAppliedSubject.asObservable() }
     var facilityDataStoreOutput: FacilityDataStore { return self.facilityDataStore }
@@ -108,6 +110,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     private let isRefreshingSubject = BehaviorSubject<Bool>(value: false)
     private let residentImageSubject = BehaviorSubject<String>(value: "")
     private let residentNameSubject = BehaviorSubject<String>(value: "")
+    private let residentRoomSubject = BehaviorSubject<String> (value: "")
     private let isFilterAppliedSubject = BehaviorSubject<Bool>(value: false)
     let isAppointmentsFilterAppliedSubject = BehaviorSubject<Bool>(value: false)
     
@@ -249,6 +252,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         let residentName =  "\(self.residentProvider?.currentResident?["first_name"] as? String ?? "") \(self.residentProvider?.currentResident?["last_name"] as? String ?? "")"
         self.residentNameSubject.onNext(residentName)
         self.residentImageSubject.onNext(self.residentProvider?.currentResident?["profileImageRoute"] as? String ?? "")
+        self.residentRoomSubject.onNext(self.residentProvider?.currentResident?["room_no"] as? String ?? "")
         return self.appointmentsRepository.getAppointmentsForResident(for: facilityID,
                                                                       residentID: residentId,
                                                                       date: date)

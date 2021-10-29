@@ -161,19 +161,26 @@ extension AppointmentsViewModel {
             if self.appointmentsRepository.checkForMarkAppointmentsType(facilityId: facilityId) {
                 
                 //Mark:- Applying filters on facility staff
-                return appointments.filter{
-                    appointment in
-                    return filterInStaffAndGroup(facilityStaffMembers: facilityStaffMembers, appointment: appointment)
+                if facilityStaffMembers.count >= 1 {
+                    return appointments.filter{
+                        appointment in
+                        return filterInStaffAndGroup(facilityStaffMembers: facilityStaffMembers, appointment: appointment)
+                    }
                 }
+                return appointments
                 
                 //Mark:- Skipping facility staff only if all selected
             } else if self.appointmentsRepository.checkForMarkAppointmentsType(facilityId: facilityId) {
                 
                 //Mark:- Applying filters on appointment Types if any
-                return appointments.filter{
-                    appointment in
-                    return  appointmentsTypes.contains(appointment.therapyId ?? 0)
+                if appointmentsTypes.count >= 1 {
+                    return appointments.filter{
+                        appointment in
+                        return  appointmentsTypes.contains(appointment.therapyId ?? 0)
+                    }
                 }
+                
+                return appointments
                 
             } else {
                 return appointments.filter{

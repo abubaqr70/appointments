@@ -49,6 +49,15 @@ public class AppointmentsViewController: UIViewController {
         return label
     }()
     
+    fileprivate lazy var roomLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = UIColor.appGrayDark
+        label.font = UIFont.appFont(withStyle: .title3, size: 14)
+        label.numberOfLines = 4
+        return label
+    }()
+    
     fileprivate lazy var profileImage : UIImageView = {
         let view = UIImageView(frame: CGRect.zero)
         view.image = UIImage.moduleImage(named: "image_profile_placeholder")
@@ -57,6 +66,16 @@ public class AppointmentsViewController: UIViewController {
         view.layer.cornerRadius = 20
         view.clipsToBounds = true
         return view
+    }()
+    
+    fileprivate lazy var nameStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [nameLabel, roomLabel])
+        stackView.axis = .vertical
+        stackView.spacing = 5
+        stackView.alignment = .fill
+        stackView.distribution = .fillEqually
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
     }()
     
     fileprivate lazy var titleButton : UIButton = {
@@ -162,7 +181,7 @@ extension AppointmentsViewController{
         setupNavigationBar()
         
         self.navigationItem.titleView = titleButton
-        self.profileView.addSubview(nameLabel)
+        self.profileView.addSubview(nameStackView)
         self.profileView.addSubview(profileImage)
         self.view.addSubview(residentStackView)
         self.view.addSubview(lastUpdatedLabel)
@@ -192,9 +211,9 @@ extension AppointmentsViewController{
         let safeArea = view.safeAreaLayoutGuide
         
         NSLayoutConstraint.activate([
-            nameLabel.topAnchor.constraint(equalTo: profileView.topAnchor, constant: 10),
-            nameLabel.leadingAnchor.constraint(equalTo: profileImage.trailingAnchor, constant: 10),
-            nameLabel.trailingAnchor.constraint(equalTo: profileView.trailingAnchor, constant: -10),
+            nameStackView.topAnchor.constraint(equalTo: profileView.topAnchor, constant: 10),
+            nameStackView.leadingAnchor.constraint(equalTo: profileImage.trailingAnchor, constant: 10),
+            nameStackView.trailingAnchor.constraint(equalTo: profileView.trailingAnchor, constant: -10),
             segmentControl.heightAnchor.constraint(equalToConstant: 30),
             segmentControl.topAnchor.constraint(equalTo: residentStackView.topAnchor, constant: 10)
         ])
@@ -329,6 +348,20 @@ extension AppointmentsViewController{
         self.viewModel.outputs.residentName
             .bind(to: self.nameLabel.rx.text)
             .disposed(by: self.disposeBag)
+        
+        viewModel.outputs.residentRoom
+            .map { roomNo -> Bool in
+                return roomNo.isEmpty
+            }
+            .bind(to: self.roomLabel.rx.isHidden).disposed(by: disposeBag)
+        
+        viewModel.outputs.residentRoom
+            .map {
+                roomNo -> String in
+                return ("Room # \(roomNo)")
+            }
+            .bind(to: self.roomLabel.rx.text)
+            .disposed(by: disposeBag)
         
         self.viewModel.outputs.residentImage
             .subscribe(onNext: { [weak self] url in
