@@ -61,9 +61,9 @@ public class AppointmentsCoreDataStore {
         }
     }
     
-    public func checkCDAppointmentsExist(facilityID: Int64,startOfMonth: Double,endOfMonth: Double) throws -> Bool {
+    public func checkCDAppointmentsExist(facilityID: Int64, month: Int64, year: Int64) throws -> Bool {
         let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "facilityId == %@ AND startingDate >= %@ AND endingDate <= %@", argumentArray: [facilityID,startOfMonth,endOfMonth])
+        fetchRequest.predicate = NSPredicate(format: "facilityId == %@ AND month == %@ AND year == %@", argumentArray: [facilityID,month,year])
         let appointments = try self.coreDataStack.manageObjectContext.fetch(fetchRequest)
         if appointments.count > 0 {
             return true
@@ -88,9 +88,9 @@ public class AppointmentsCoreDataStore {
         return
     }
     
-    public func deleteCDAppointments(facilityID: Int64,startOfMonth: Double,endOfMonth: Double) throws {
+    public func deleteCDAppointments(facilityID: Int64, month: Int64, year: Int64) throws {
         let fetchRequest: NSFetchRequest<CDAppointment> = CDAppointment.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "facilityId == %@ AND startingDate >= %@ AND endingDate <= %@", argumentArray: [facilityID,startOfMonth,endOfMonth])
+        fetchRequest.predicate = NSPredicate(format: "facilityId == %@ AND month == %@ AND year == %@", argumentArray: [facilityID,month,year])
         let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
         batchDeleteRequest.resultType = .resultTypeCount
         do {

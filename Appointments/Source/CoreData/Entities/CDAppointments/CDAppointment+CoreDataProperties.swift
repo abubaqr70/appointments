@@ -18,16 +18,18 @@ extension CDAppointment {
     @NSManaged public var id: Int64
     @NSManaged public var isSynced: Bool
     @NSManaged public var isTherapy: Bool
+    @NSManaged public var lastUpdatedTime: Date?
     @NSManaged public var location: String?
     @NSManaged public var occurrenceId: Int64
     @NSManaged public var parentEventId: Int64
     @NSManaged public var residentId: Int64
+    @NSManaged public var startedDate: Date?
     @NSManaged public var startingDate: Double
     @NSManaged public var therapistId: Int64
     @NSManaged public var therapyId: Int64
     @NSManaged public var title: String?
-    @NSManaged public var lastUpdatedTime: Date?
-    @NSManaged public var startedDate: Date?
+    @NSManaged public var year: Int64
+    @NSManaged public var month: Int64
     @NSManaged public var appointmentAttendance: NSSet?
     @NSManaged public var appointmentTag: NSSet?
     @NSManaged public var endDate: CDEndDate?

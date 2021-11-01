@@ -139,12 +139,13 @@ class AppointmentRepository {
             case .success(let appointments):
                 
                 //Mark:- Checking if appointments of that month exist
-                let exist = self.checkAppointmentsExist(facilityId: facilityID, startDate: Date.startOfMonth(date: date), with: Date.endOfMonth(date: date))
-                
+                let exist = self.checkAppointmentsExist(facilityId: facilityID, month: Date.getMonth(date: date), year: Date.getYear(date: date))
+
                 //Mark:- Deleting appointments for that month
                 if exist {
-                    self.deleteAppointments(facilityId: facilityID, startDate: Date.startOfMonth(date: date), with: Date.endOfMonth(date: date))
+                    self.deleteAppointments(facilityId: facilityID, month: Date.getMonth(date: date), year: Date.getYear(date: date))
                 }
+//                try? self.appointmentDataStore.deleteAllAppointment()
                 try? self.lastUpdatedDataStore.deleteLastUpdated()
                 
                 //Mark:- Saving appointments for that month
@@ -288,14 +289,14 @@ class AppointmentRepository {
     }
     
     //Mark:- Checking appointments of that month exist in dataStore
-    func checkAppointmentsExist(facilityId: Int, startDate: Date, with endDate: Date) -> Bool {
-        return self.appointmentDataStore.checkAppointmentsExist(facilityId: facilityId, startDate: Double(startDate.timeIntervalSince1970), endDate: Double(endDate.timeIntervalSince1970))
+    func checkAppointmentsExist(facilityId: Int, month: Int, year: Int) -> Bool {
+        return self.appointmentDataStore.checkAppointmentsExist(facilityId: facilityId, month: month, year: year)
     }
     
     //Mark:- Deleting appointments of that month from dataStore
-    func deleteAppointments(facilityId: Int, startDate: Date, with endDate: Date) {
+    func deleteAppointments(facilityId: Int, month: Int, year: Int) {
         do {
-            try self.appointmentDataStore.deleteAppointments(facilityId: facilityId, startDate: Double(startDate.timeIntervalSince1970), endDate: Double(endDate.timeIntervalSince1970))
+            try self.appointmentDataStore.deleteAppointments(facilityId: facilityId, month: month, year: year)
         }
         catch let error as NSError {
             print(error.localizedDescription)

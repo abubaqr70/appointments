@@ -11,8 +11,8 @@ protocol AppointmentsDataStore {
     func markAppointmentsSyncedTrue(facilityId: Int, appointment: Appointment)
     func saveAppointment(_ appointment: Appointment,_ lastUpdatedTime: Date)
     func updateAppointment(facilityId: Int, appointment: Appointment)
-    func checkAppointmentsExist(facilityId: Int, startDate: Double ,endDate: Double) -> Bool
-    func deleteAppointments(facilityId: Int, startDate: Double ,endDate: Double) throws
+    func checkAppointmentsExist(facilityId : Int, month: Int , year: Int) -> Bool
+    func deleteAppointments(facilityId : Int, month: Int , year: Int) throws
     func deleteAllAppointment() throws
     
 }
@@ -94,9 +94,9 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         self.coreDataStack.saveContext()
     }
     
-    func deleteAppointments(facilityId: Int, startDate: Double, endDate: Double) throws {
+    func deleteAppointments(facilityId : Int, month: Int , year: Int) throws {
         do {
-            try self.deleteCDAppointments(facilityID: Int64(facilityId), startOfMonth: startDate, endOfMonth: endDate)
+            try self.deleteCDAppointments(facilityID: Int64(facilityId), month: Int64(month), year: Int64(year))
         }
         catch let error as NSError {
             print(error.localizedDescription)
@@ -112,9 +112,9 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         }
     }
     
-    func checkAppointmentsExist(facilityId : Int, startDate: Double , endDate: Double) -> Bool {
+    func checkAppointmentsExist(facilityId : Int, month: Int , year: Int) -> Bool {
         do {
-            let isExist = try self.checkCDAppointmentsExist(facilityID: Int64(facilityId), startOfMonth: startDate, endOfMonth: endDate)
+            let isExist = try self.checkCDAppointmentsExist(facilityID: Int64(facilityId), month: Int64(month), year: Int64(year))
             return isExist
         } catch { }
         return false
@@ -142,6 +142,8 @@ extension AppointmentsCoreDataStore: AppointmentsDataStore {
         let dateFormatterFromString = DateFormatter()
         dateFormatterFromString.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'"
         let date = Date.init(timeIntervalSince1970: TimeInterval(Float(appointment.startingDate ?? 0.0)))
+        entity.month = Int64(Date.getMonth(date: date))
+        entity.year = Int64(Date.getYear(date: date))
         entity.startedDate = Date.startOfDay(date: date)
         entity.lastUpdatedTime = lastUpdatedTime
         entity.startDate = appointment.startDate != nil ? saveStartDate(appointment.startDate!) : nil

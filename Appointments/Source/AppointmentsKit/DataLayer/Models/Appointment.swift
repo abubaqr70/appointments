@@ -20,6 +20,8 @@ struct Appointment: Codable {
     let endingDate : Double?
     let eventLength : Int?
     let lastUpdatedTime : Date?
+    let month : Int?
+    let year : Int?
     let startDate : StartDate?
     let endDate : EndDate?
     var appointmentTags : [AppointmentTag]?
@@ -52,6 +54,8 @@ struct Appointment: Codable {
         case user = "user"
         case userGroup = "userGroup"
         case lastUpdatedTime = "lastUpdatedTime"
+        case month = "monthmonth"
+        case year = "yearyear"
         
     }
     
@@ -84,6 +88,8 @@ extension Appointment {
         appointmentAttendance = try values.decodeIfPresent([AppointmentAttendance].self, forKey: .appointmentAttendance)
         user = try values.decodeIfPresent(AppointmentUser.self, forKey: .user)
         userGroup = try values.decodeIfPresent(UserGroup.self, forKey: .userGroup)
+        month = try values.decodeIfPresent(Int.self, forKey: .month)
+        year = try values.decodeIfPresent(Int.self, forKey: .year)
         
     }
     
@@ -109,6 +115,8 @@ extension Appointment {
         self.endingDate = managedObject.endingDate
         self.eventLength = Int(managedObject.eventLength)
         self.lastUpdatedTime = managedObject.lastUpdatedTime
+        self.month = Int(managedObject.month)
+        self.year = Int(managedObject.year)
         self.startDate = managedObject.startDate != nil ? StartDate(managedObject: managedObject.startDate!) : nil
         self.endDate = managedObject.endDate != nil ? EndDate(managedObject: managedObject.endDate!) : nil
         self.user = managedObject.user != nil ? AppointmentUser(managedObject: managedObject.user!) : nil
@@ -144,6 +152,8 @@ extension Appointment {
         self.endingDate = appointment.endingDate
         self.eventLength = appointment.eventLength
         self.lastUpdatedTime = appointment.lastUpdatedTime
+        self.month = appointment.month
+        self.year = appointment.year
         self.startDate = appointment.startDate != nil ? StartDate(startDate:appointment.startDate!) : nil
         self.endDate = appointment.endDate != nil ? EndDate(endDate: appointment.endDate!) : nil
         self.user = appointment.user != nil ? AppointmentUser(appointmentUser: appointment.user!) : nil

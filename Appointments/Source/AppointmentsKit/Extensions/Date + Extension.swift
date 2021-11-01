@@ -18,6 +18,14 @@ extension Date {
         return dayRange?.count ?? 0
     }
     
+    static func getMonth(date: Date) -> Int{
+        return Calendar.current.component(.month, from: date)
+    }
+    
+    static func getYear(date: Date) -> Int{
+        return Calendar.current.component(.year, from: date)
+    }
+    
     static func endOfMonth(date: Date) -> Date {
         let dayCount : Int = Date.numberOfDaysInMonthCount(date: date)
         
