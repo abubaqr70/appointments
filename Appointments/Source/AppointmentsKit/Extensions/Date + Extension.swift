@@ -5,15 +5,31 @@ import Foundation
 extension Date {
     
     static func startOfMonth(date: Date) -> Date {
-        let startMonthComponent = Calendar.current.dateComponents([.year,.month], from: date)
-        return Calendar.current.date(from: startMonthComponent)!
+        var comp = Calendar.current.dateComponents(
+            [.era, .year, .month, .day],
+            from: date)
+        
+        comp.day = 1
+        return Calendar.current.date(from: comp) ?? Date()
+    }
+    
+    static func numberOfDaysInMonthCount(date: Date) -> Int {
+        let dayRange =  Calendar.current.range(of: .day, in: .month, for: date)
+        return dayRange?.count ?? 0
     }
     
     static func endOfMonth(date: Date) -> Date {
-        var endMonthComponents = DateComponents()
-        endMonthComponents.month = 1
-        endMonthComponents.second = -1
-        return Calendar.current.date(byAdding: endMonthComponents, to: Date.startOfMonth(date: date)) ?? Date()
+        let dayCount : Int = Date.numberOfDaysInMonthCount(date: date)
+        
+        var comp = Calendar.current.dateComponents(
+            [.era, .year, .month, .day],
+            from: date)
+        
+        comp.day = dayCount
+        comp.hour = 23
+        comp.minute = 59
+        comp.second = 0
+        return Calendar.current.date(from: comp) ?? Date()
     }
     
     static func startOfDay(date: Date) -> Date {
@@ -26,11 +42,11 @@ extension Date {
         components.second = -1
         return Calendar.current.date(byAdding: components, to: Date.startOfDay(date: date)) ?? Date ()
     }
-  
+    
     static func getSuffixDate(date: Date) -> String{
         let calendar = Calendar.current
         let day = calendar.component(.day, from: date)
-   
+        
         switch day {
         case 11...13: return "th"
         default:
