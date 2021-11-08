@@ -37,7 +37,8 @@ import Foundation
                                             addActionProvider: AddActionProvider?,
                                             filterActionProvider: FilterActionProvider?,
                                             residentProvider: ResidentDataStore?,
-                                            facilityDataStore: FacilityDataStore) -> AppCoordinator {
+                                            facilityDataStore: FacilityDataStore,
+                                            permissionProvider: PermissionProvider) -> AppCoordinator {
         
         return AppCoordinator(root: root,
                               navigationType: navigationType,
@@ -45,7 +46,8 @@ import Foundation
                               addActionProvider: addActionProvider,
                               filterActionProvider: filterActionProvider,
                               residentProvider: residentProvider,
-                              facilityDataStore: facilityDataStore)
+                              facilityDataStore: facilityDataStore,
+                              permissionProvider: permissionProvider)
     }
     
     
@@ -96,23 +98,29 @@ import Foundation
     
     func makeAppointmentsViewModel(residentProvider: ResidentDataStore?,
                                    filterActionProvider: FilterActionProvider?,
-                                   facilityDataStore: FacilityDataStore) -> AppointmentsViewModelType {
+                                   facilityDataStore: FacilityDataStore,
+                                   permissionProvider: PermissionProvider) -> AppointmentsViewModelType {
         if residentProvider != nil {
             return AppointmentsViewModel(facilityDataStore: facilityDataStore,
                                          appointmentsRepository: self.repository,
                                          residentProvider: residentProvider,
-                                         filterActionProvider: filterActionProvider)
+                                         filterActionProvider: filterActionProvider,
+                                         permissionProvider: permissionProvider)
         }  else {
             return AppointmentsViewModel(facilityDataStore: facilityDataStore,
                                          appointmentsRepository: self.repository,
-                                         filterActionProvider: filterActionProvider)
+                                         filterActionProvider: filterActionProvider,
+                                         permissionProvider: permissionProvider)
         }
         
     }
     
-    func makeAppointmentViewModel(appointment: Appointment) -> AppointmentViewModelType {
+    func makeAppointmentViewModel(appointment: Appointment,
+                                  permissionProvider: PermissionProvider) -> AppointmentViewModelType {
         
-        return AppointmentViewModel(appointment: appointment, repository: self.repository)
+        return AppointmentViewModel(appointment: appointment,
+                                    repository: self.repository,
+                                    permissionProvider: permissionProvider)
     }
     
     func makeFilterAppointmentsViewModel(facilityDataStore: FacilityDataStore) -> FilterAppointmentsViewModelType {

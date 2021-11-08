@@ -120,12 +120,19 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     let residentProvider: ResidentDataStore?
     let appointmentsRepository: AppointmentRepository
     let filterActionProvider: FilterActionProvider?
+    let permissionProvider: PermissionProvider
     
     
     init(facilityDataStore: FacilityDataStore,
          appointmentsRepository: AppointmentRepository,
-         filterActionProvider: FilterActionProvider?){
+         filterActionProvider: FilterActionProvider?,
+         permissionProvider: PermissionProvider){
         
+        print("authorizedToManageAppointments: \(permissionProvider.authorizedToManageAppointments)")
+        print("authorizedToViewTitleAppointments: \(permissionProvider.authorizedToViewTitleAppointments)")
+        print("authorizedToViewTitleAndDescriptionAppointments: \(permissionProvider.authorizedToViewTitleAndDescriptionAppointments)")
+        
+        self.permissionProvider = permissionProvider
         self.facilityDataStore = facilityDataStore
         self.appointmentsRepository = appointmentsRepository
         self.filterActionProvider = filterActionProvider
@@ -151,8 +158,14 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     init(facilityDataStore: FacilityDataStore,
          appointmentsRepository: AppointmentRepository,
          residentProvider: ResidentDataStore?,
-         filterActionProvider: FilterActionProvider?){
+         filterActionProvider: FilterActionProvider?,
+         permissionProvider: PermissionProvider){
         
+        print("authorizedToManageAppointments: \(permissionProvider.authorizedToManageAppointments)")
+        print("authorizedToViewTitleAppointments: \(permissionProvider.authorizedToViewTitleAppointments)")
+        print("authorizedToViewTitleAndDescriptionAppointments: \(permissionProvider.authorizedToViewTitleAndDescriptionAppointments)")
+        
+        self.permissionProvider = permissionProvider
         self.facilityDataStore = facilityDataStore
         self.appointmentsRepository = appointmentsRepository
         self.filterActionProvider = filterActionProvider
@@ -317,7 +330,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     func creatingSectionCellViewModel(appointments: [Appointment] ) -> [(title: String, rows: [ReuseableCellViewModelType])] {
         
         appointments.map { appointment -> (title: String, rows: [ReuseableCellViewModelType]) in
-            let cellViewModel = AppointmentTVCellViewModel(appointment: appointment)
+            let cellViewModel = AppointmentTVCellViewModel(appointment: appointment, permissionProvider: permissionProvider)
             cellViewModel.outputs.markAppointment.subscribe(onNext: { appointment in
                 self.appointmentsRepository.updateAppointment(appointment)
                 self.inputs.viewWillAppear.onNext(Void())

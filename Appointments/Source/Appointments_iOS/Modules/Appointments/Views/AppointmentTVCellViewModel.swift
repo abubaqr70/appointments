@@ -22,6 +22,9 @@ protocol AppointmentTVCellViewModelOutputs {
     var markPresentEnabled : Observable<Bool> { get }
     var appointment: Observable<Appointment> { get }
     var markAppointment: Observable<Appointment> { get }
+    var authorizedToManageAppointments : Observable<Bool> { get }
+    var authorizedToViewTitleAppointments : Observable<Bool> { get }
+    var authorizedToViewTitleAndDescriptionAppointments : Observable<Bool> { get }
     
 }
 
@@ -50,11 +53,15 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
     var markPresentEnabled: Observable<Bool> { return markPresentEnabledSubject.asObservable() }
     var appointment: Observable<Appointment> { return appointmentsSubject.asObservable() }
     var markAppointment: Observable<Appointment> { return markAppointmentSubject.asObservable() }
+    var authorizedToManageAppointments : Observable<Bool> { return authorizedToManageAppointmentsSubject.asObservable() }
+    var authorizedToViewTitleAppointments : Observable<Bool> { return authorizedToViewTitleAppointmentsSubject.asObservable() }
+    var authorizedToViewTitleAndDescriptionAppointments : Observable<Bool> { return authorizedToViewTitleAndDescriptionAppointmentsSubject.asObservable() }
     
     //Mark: Init
     private let disposeBag = DisposeBag()
     private let nameSubject: BehaviorSubject<String?>
     private let roomSubject: BehaviorSubject<String?>
+    private let permissionProvider: PermissionProvider
     private let appointmentDescriptionSubject: BehaviorSubject<String?>
     private let staffSubject: BehaviorSubject<String?>
     private let profileImageSubject: BehaviorSubject<String?>
@@ -63,10 +70,17 @@ class AppointmentTVCellViewModel: AppointmentTVCellViewModelType, AppointmentTVC
     private let markPresentSubject : BehaviorSubject<Bool>
     private let markPresentEnabledSubject : BehaviorSubject<Bool>
     private let markAppointmentSubject : PublishSubject<Appointment>
+    private let authorizedToManageAppointmentsSubject : BehaviorSubject<Bool>
+    private let authorizedToViewTitleAppointmentsSubject : BehaviorSubject<Bool>
+    private let authorizedToViewTitleAndDescriptionAppointmentsSubject : BehaviorSubject<Bool>
     
-    init(appointment: Appointment) {
+    init(appointment: Appointment,permissionProvider: PermissionProvider) {
         
         //Mark:- Setting User Names
+        self.permissionProvider = permissionProvider
+        authorizedToManageAppointmentsSubject = BehaviorSubject(value: self.permissionProvider.authorizedToManageAppointments)
+        authorizedToViewTitleAppointmentsSubject = BehaviorSubject(value: self.permissionProvider.authorizedToViewTitleAppointments)
+        authorizedToViewTitleAndDescriptionAppointmentsSubject = BehaviorSubject(value: self.permissionProvider.authorizedToViewTitleAndDescriptionAppointments)
         markCheckboxSubject = PublishSubject()
         markAppointmentSubject = PublishSubject()
         markPresentEnabledSubject = BehaviorSubject(value: true)
@@ -94,12 +108,17 @@ extension AppointmentTVCellViewModel {
         markPresentSubject.onNext( appointment.appointmentAttendance?.first?.present == "present" ? true : false )
         
         self.markPresentSubject.map { isPresent -> Bool in
-            if TimeInterval(Float(appointment.startingDate ?? 0.0)) > Date().timeIntervalSince1970 && !isPresent {
+            
+            if self.permissionProvider.authorizedToManageAppointments {
+                if TimeInterval(Float(appointment.startingDate ?? 0.0)) > Date().timeIntervalSince1970 && !isPresent  {
+                    return false
+                } else if isPresent {
+                    return false
+                } else {
+                    return true
+                }
+            } else {
                 return false
-            }else if isPresent {
-                return false
-            }else {
-                return true
             }
         }
         .bind(to: self.markPresentEnabledSubject)
@@ -117,6 +136,8 @@ extension AppointmentTVCellViewModel {
                 self.markAppointmentSubject.onNext(appointment)
             })
             .disposed(by: disposeBag)
+        
+        
         
     }
 }

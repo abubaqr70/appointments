@@ -28,3 +28,16 @@ public class ResidentProvider: ResidentDataStore {
     }
     
 }
+
+public class AppointmentsPermissionProvider: PermissionProvider {
+    
+    public  var authorizedToManageAppointments: Bool {
+        return true
+    }
+    public  var authorizedToViewTitleAppointments: Bool {
+        return true
+    }
+    public  var authorizedToViewTitleAndDescriptionAppointments: Bool {
+        return true
+    }
+}

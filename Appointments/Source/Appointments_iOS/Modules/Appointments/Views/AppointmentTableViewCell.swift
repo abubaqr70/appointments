@@ -261,13 +261,15 @@ class AppointmentTableViewCell: RxUITableViewCell {
             .bind(to: self.roomLabel.rx.text)
             .disposed(by: disposeBag)
         
-        viewModel.outputs.appointmentDescription
-            .map { description -> Bool in
-                guard let description = description else {return true}
-                return description.isEmpty
+        Observable.combineLatest(viewModel.outputs.appointmentDescription, viewModel.outputs.authorizedToViewTitleAppointments, viewModel.outputs.authorizedToViewTitleAndDescriptionAppointments).map{
+            appointmentDescription, viewTitle, viewTitleAndDescription -> Bool in
+            if viewTitle || viewTitleAndDescription {
+                guard let appointmentDescription = appointmentDescription else {return true}
+                return appointmentDescription.isEmpty
+            } else {
+               return true
             }
-            .bind(to: self.appointmentDescriptionLabel.rx.isHidden)
-            .disposed(by: disposeBag)
+        }.bind(to: self.appointmentDescriptionLabel.rx.isHidden).disposed(by: disposeBag)
         
         viewModel.outputs.appointmentDescription
             .bind(to: self.appointmentDescriptionLabel.rx.text)

@@ -46,6 +46,7 @@ public class AppCoordinator: Coordinator<ResultType<Void>> {
     private let filterActionProvider: FilterActionProvider?
     private let residentProvider: ResidentDataStore?
     private let facilityDataStore: FacilityDataStore
+    private let permissionProvider: PermissionProvider
     
     init(root: UIViewController,
          navigationType: NavigationType,
@@ -53,7 +54,8 @@ public class AppCoordinator: Coordinator<ResultType<Void>> {
          addActionProvider: AddActionProvider?,
          filterActionProvider: FilterActionProvider?,
          residentProvider: ResidentDataStore?,
-         facilityDataStore: FacilityDataStore) {
+         facilityDataStore: FacilityDataStore,
+         permissionProvider: PermissionProvider) {
         self.root = root
         self.navigationType = navigationType
         self.factory = factory
@@ -61,12 +63,14 @@ public class AppCoordinator: Coordinator<ResultType<Void>> {
         self.filterActionProvider = filterActionProvider
         self.residentProvider = residentProvider
         self.facilityDataStore = facilityDataStore
+        self.permissionProvider = permissionProvider
     }
     
     public override func start() -> Observable<ResultType<Void>> {
         let viewModel = self.factory.makeAppointmentsViewModel(residentProvider: residentProvider,
                                                                filterActionProvider: filterActionProvider,
-                                                               facilityDataStore: facilityDataStore)
+                                                               facilityDataStore: facilityDataStore,
+                                                               permissionProvider: permissionProvider)
         let viewController = self.factory.makeAppointmentsViewController(viewModel: viewModel)
         self.bindAppointmentViewModel(viewModel: viewModel)
         if navigationType != .push {
@@ -102,7 +106,8 @@ public class AppCoordinator: Coordinator<ResultType<Void>> {
     }
     
     func navigateToDetail(appointment: Appointment) {
-        let viewModel = self.factory.makeAppointmentViewModel(appointment: appointment)
+        let viewModel = self.factory.makeAppointmentViewModel(appointment: appointment,
+                                                              permissionProvider: permissionProvider)
         let viewController = self.factory.makeAppointmentViewController(viewModel: viewModel)
         if navigationType != .push {
             self.rootNavigationController?.pushViewController(viewController, animated: true)
@@ -154,13 +159,15 @@ protocol AppointmentsFactory {
     func makeAppointmentsViewController(viewModel: AppointmentsViewModelType) -> AppointmentsViewController
     func makeAppointmentsViewModel(residentProvider: ResidentDataStore?,
                                    filterActionProvider: FilterActionProvider?,
-                                   facilityDataStore: FacilityDataStore) -> AppointmentsViewModelType
+                                   facilityDataStore: FacilityDataStore,
+                                   permissionProvider: PermissionProvider) -> AppointmentsViewModelType
     func makeAppointmentViewController(viewModel: AppointmentViewModelType) -> AppointmentViewController
-    func makeAppointmentViewModel(appointment: Appointment) -> AppointmentViewModelType
+    func makeAppointmentViewModel(appointment: Appointment,
+                                  permissionProvider: PermissionProvider) -> AppointmentViewModelType
     func makeFilterAppointmentsViewController(viewModel: FilterAppointmentsViewModelType) -> FilterAppointmentsViewController
     func makeFilterAppointmentsViewModel(facilityDataStore: FacilityDataStore) -> FilterAppointmentsViewModelType
 }
 
 extension AppDependencyContainer: AppointmentsFactory {
-    
+
 }

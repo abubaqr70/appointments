@@ -26,6 +26,9 @@ protocol AppointmentViewModelOutputs {
     var profileImage: Observable<String?> { get }
     var markPresentEnabled : Observable<Bool> { get }
     var isPresent : Observable<Bool> { get }
+    var authorizedToManageAppointments : Observable<Bool> { get }
+    var authorizedToViewTitleAppointments : Observable<Bool> { get }
+    var authorizedToViewTitleAndDescriptionAppointments : Observable<Bool> { get }
     
 }
 
@@ -55,6 +58,9 @@ class AppointmentViewModel: AppointmentViewModelType, AppointmentViewModelInputs
     var profileImage: Observable<String?> { return profileImageSubject.asObservable() }
     var isPresent: Observable<Bool> { return isPresentSubject.asObservable()}
     var markPresentEnabled: Observable<Bool> { return markPresentEnabledSubject.asObservable() }
+    var authorizedToManageAppointments : Observable<Bool> { return authorizedToManageAppointmentsSubject.asObservable() }
+    var authorizedToViewTitleAppointments : Observable<Bool> { return authorizedToViewTitleAppointmentsSubject.asObservable() }
+    var authorizedToViewTitleAndDescriptionAppointments : Observable<Bool> { return authorizedToViewTitleAndDescriptionAppointmentsSubject.asObservable() }
     
     //Mark: Private Properties
     
@@ -62,6 +68,7 @@ class AppointmentViewModel: AppointmentViewModelType, AppointmentViewModelInputs
     private let disposeBag = DisposeBag()
     private let nameSubject: BehaviorSubject<String?>
     private let roomSubject: BehaviorSubject<String?>
+    private let permissionProvider: PermissionProvider
     private let appointmentTitleSubject: BehaviorSubject<String?>
     private let appointmentTypeSubject: BehaviorSubject<NSAttributedString?>
     private let appointmentDescriptionSubject: BehaviorSubject<NSAttributedString?>
@@ -76,13 +83,20 @@ class AppointmentViewModel: AppointmentViewModelType, AppointmentViewModelInputs
     private let markPresentEnabledSubject : BehaviorSubject<Bool>
     private let appointmentsRepository: AppointmentRepository
     private let appointmentsType: [AppointmentsType]
+    private let authorizedToManageAppointmentsSubject : BehaviorSubject<Bool>
+    private let authorizedToViewTitleAppointmentsSubject : BehaviorSubject<Bool>
+    private let authorizedToViewTitleAndDescriptionAppointmentsSubject : BehaviorSubject<Bool>
     
-    init(appointment: Appointment,repository: AppointmentRepository){
+    init(appointment: Appointment,repository: AppointmentRepository,permissionProvider: PermissionProvider){
         
         //Mark:- Setting User Names
+        self.permissionProvider = permissionProvider
         self.appointmentsRepository = repository
         self.appointmentsType = self.appointmentsRepository.getLocalAppointmentsType(facilityId: appointment.facilityId ?? 0)
         markPresentSubject = PublishSubject()
+        authorizedToManageAppointmentsSubject = BehaviorSubject(value: self.permissionProvider.authorizedToManageAppointments)
+        authorizedToViewTitleAppointmentsSubject = BehaviorSubject(value: self.permissionProvider.authorizedToViewTitleAppointments)
+        authorizedToViewTitleAndDescriptionAppointmentsSubject = BehaviorSubject(value: self.permissionProvider.authorizedToViewTitleAndDescriptionAppointments)
         isPresentSubject = BehaviorSubject(value: true)
         appointmentsSubject = BehaviorSubject(value: appointment)
         nameSubject = BehaviorSubject(value: appointment.appointmentAttendance?.first?.user?.fullName)
@@ -204,6 +218,7 @@ extension AppointmentViewModel {
             markPresentEnabledSubject.onNext(true)
         }
         
+        markPresentEnabledSubject.onNext(self.permissionProvider.authorizedToManageAppointments)
     }
 }
 

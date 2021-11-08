@@ -353,13 +353,16 @@ extension AppointmentViewController{
             .disposed(by: disposeBag)
         
         //Mark:- Setting Appointment Title Label
-        viewModel.outputs.appointmentTitle
-            .map { title -> Bool in
+        
+        Observable.combineLatest(viewModel.outputs.appointmentTitle, viewModel.outputs.authorizedToViewTitleAppointments, viewModel.outputs.authorizedToViewTitleAndDescriptionAppointments).map{
+            title, viewTitle, viewTitleAndDescription -> Bool in
+            if viewTitle || viewTitleAndDescription {
                 guard let title = title else {return true}
                 return title.isEmpty
+            } else {
+                return true
             }
-            .bind(to: self.appointmentTitleLabel.rx.isHidden)
-            .disposed(by: disposeBag)
+        }.bind(to: self.appointmentTitleLabel.rx.isHidden).disposed(by: disposeBag)
         
         viewModel.outputs.appointmentTitle
             .bind(to: self.appointmentTitleLabel.rx.text)
@@ -427,13 +430,16 @@ extension AppointmentViewController{
             .disposed(by: disposeBag)
         
         //Mark:- Setting Appointments Description Label
-        viewModel.outputs.appointmentDescription
-            .map { description -> Bool in
+        
+        Observable.combineLatest(viewModel.outputs.appointmentDescription, viewModel.outputs.authorizedToViewTitleAndDescriptionAppointments).map{
+            description, viewTitleAndDescription -> Bool in
+            if viewTitleAndDescription {
                 guard let description = description else {return true}
                 return description.string == ""
+            } else {
+                return true
             }
-            .bind(to: self.appointmentDescriptionTextView.rx.isHidden)
-            .disposed(by: disposeBag)
+        }.bind(to: self.appointmentDescriptionTextView.rx.isHidden).disposed(by: disposeBag)
         
         viewModel.outputs.appointmentDescription
             .bind(to: self.appointmentDescriptionTextView.rx.attributedText)

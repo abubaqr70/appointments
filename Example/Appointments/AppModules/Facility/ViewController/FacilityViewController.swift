@@ -77,7 +77,8 @@ class FacilityViewController: BaseViewController {
                                                                        addActionProvider: nil,
                                                                        filterActionProvider: nil,
                                                                        residentProvider: nil,
-                                                                       facilityDataStore: FacilityProvider.init(facility: facility))
+                                                                       facilityDataStore: FacilityProvider.init(facility: facility),
+                                                                       permissionProvider: AppointmentsPermissionProvider())
         appCoordinator
             .start()
             .subscribe()
