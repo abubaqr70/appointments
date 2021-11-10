@@ -345,13 +345,21 @@ extension AppointmentViewController{
             .disposed(by: disposeBag)
         
         //Mark:- Setting Room Label
-        viewModel.outputs.room
-            .map { roomNo -> Bool in
+        Observable.combineLatest(viewModel.outputs.room, viewModel.outputs.authorizedToViewTitleAppointments, viewModel.outputs.authorizedToViewTitleAndDescriptionAppointments, viewModel.outputs.authorizedToManageAppointments).map{
+            roomNo, viewTitle, viewTitleAndDescription, manageAppointments -> Bool in
+            if manageAppointments {
                 guard let roomNo = roomNo else {return true}
                 return roomNo.isEmpty
+            } else {
+                if viewTitle || viewTitleAndDescription {
+                    return true
+                } else {
+                    guard let roomNo = roomNo else {return true}
+                    return roomNo.isEmpty
+                }
             }
-            .bind(to: self.roomLabel.rx.isHidden).disposed(by: disposeBag)
-        
+        }.bind(to: self.roomLabel.rx.isHidden).disposed(by: disposeBag)
+     
         viewModel.outputs.room
             .map {
                 roomNo -> String in

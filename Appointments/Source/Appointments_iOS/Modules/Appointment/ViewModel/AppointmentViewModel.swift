@@ -215,9 +215,8 @@ extension AppointmentViewModel {
             markPresentEnabledSubject.onNext(false)
         }else{
             markPresentEnabledSubject.onNext(true)
+            markPresentEnabledSubject.onNext(self.permissionProvider.authorizedToManageAppointments)
         }
-        
-        markPresentEnabledSubject.onNext(self.permissionProvider.authorizedToManageAppointments)
     }
 }
 
