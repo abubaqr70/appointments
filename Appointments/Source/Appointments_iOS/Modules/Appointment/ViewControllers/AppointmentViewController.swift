@@ -325,12 +325,20 @@ extension AppointmentViewController{
     private func bind(viewModel : AppointmentViewModelType) {
         
         //Mark:- Setting Name Label
-        viewModel.outputs.name
-            .map { name -> Bool in
+        Observable.combineLatest(viewModel.outputs.name, viewModel.outputs.authorizedToViewTitleAppointments, viewModel.outputs.authorizedToViewTitleAndDescriptionAppointments, viewModel.outputs.authorizedToManageAppointments).map{
+            name, viewTitle, viewTitleAndDescription, manageAppointments -> Bool in
+            if manageAppointments {
                 guard let name = name else {return true}
                 return name.isEmpty
+            } else {
+                if viewTitle || viewTitleAndDescription {
+                    return true
+                } else {
+                    guard let name = name else {return true}
+                    return name.isEmpty
+                }
             }
-            .bind(to: self.nameLabel.rx.isHidden).disposed(by: disposeBag)
+        }.bind(to: self.nameLabel.rx.isHidden).disposed(by: disposeBag)
         
         viewModel.outputs.name
             .bind(to: self.nameLabel.rx.text)
@@ -353,40 +361,53 @@ extension AppointmentViewController{
             .disposed(by: disposeBag)
         
         //Mark:- Setting Appointment Title Label
-        
-        Observable.combineLatest(viewModel.outputs.appointmentTitle, viewModel.outputs.authorizedToViewTitleAppointments, viewModel.outputs.authorizedToViewTitleAndDescriptionAppointments).map{
-            title, viewTitle, viewTitleAndDescription -> Bool in
-            if viewTitle || viewTitleAndDescription {
+        viewModel.outputs.appointmentTitle
+            .map{
+                title -> Bool in
                 guard let title = title else {return true}
                 return title.isEmpty
-            } else {
-                return true
             }
-        }.bind(to: self.appointmentTitleLabel.rx.isHidden).disposed(by: disposeBag)
-        
+            .bind(to: self.appointmentTitleLabel.rx.isHidden).disposed(by: disposeBag)
+      
         viewModel.outputs.appointmentTitle
             .bind(to: self.appointmentTitleLabel.rx.text)
             .disposed(by: disposeBag)
         
         //Mark:- Setting Appointment Type Label
-        viewModel.outputs.appointmentType
-            .map { appointmentType -> Bool in
+        Observable.combineLatest(viewModel.outputs.appointmentType, viewModel.outputs.authorizedToViewTitleAppointments, viewModel.outputs.authorizedToViewTitleAndDescriptionAppointments, viewModel.outputs.authorizedToManageAppointments).map{
+            appointmentType, viewTitle, viewTitleAndDescription, manageAppointments -> Bool in
+            if manageAppointments {
                 guard let appointmentType = appointmentType else {return true}
                 return appointmentType.string == "Appointment Type: "
+            } else {
+                if viewTitle || viewTitleAndDescription {
+                    return true
+                } else {
+                    guard let appointmentType = appointmentType else {return true}
+                    return appointmentType.string == "Appointment Type: "
+                }
             }
-            .bind(to: self.appointmentTypeLabel.rx.isHidden).disposed(by: disposeBag)
-        
+        }.bind(to: self.appointmentTypeLabel.rx.isHidden).disposed(by: disposeBag)
+    
         viewModel.outputs.appointmentType
             .bind(to: self.appointmentTypeLabel.rx.attributedText)
             .disposed(by: disposeBag)
         
         //Mark:- Setting Location Label
-        viewModel.outputs.location
-            .map { location -> Bool in
+        Observable.combineLatest(viewModel.outputs.location, viewModel.outputs.authorizedToViewTitleAppointments, viewModel.outputs.authorizedToViewTitleAndDescriptionAppointments, viewModel.outputs.authorizedToManageAppointments).map{
+            location, viewTitle, viewTitleAndDescription, manageAppointments -> Bool in
+            if manageAppointments {
                 guard let location = location else {return true}
                 return location.string == "Location: "
+            } else {
+                if viewTitle || viewTitleAndDescription {
+                    return true
+                } else {
+                    guard let location = location else {return true}
+                    return location.string == "Location: "
+                }
             }
-            .bind(to: self.locationLabel.rx.isHidden).disposed(by: disposeBag)
+        }.bind(to: self.locationLabel.rx.isHidden).disposed(by: disposeBag)
         
         viewModel.outputs.location
             .bind(to: self.locationLabel.rx.attributedText)
@@ -417,27 +438,38 @@ extension AppointmentViewController{
             .disposed(by: disposeBag)
         
         //Mark:- Setting Staff Label
-        viewModel.outputs.staff
-            .map { staff -> Bool in
+        Observable.combineLatest(viewModel.outputs.staff, viewModel.outputs.authorizedToViewTitleAppointments, viewModel.outputs.authorizedToViewTitleAndDescriptionAppointments, viewModel.outputs.authorizedToManageAppointments).map{
+            staff, viewTitle, viewTitleAndDescription, manageAppointments -> Bool in
+            if manageAppointments {
                 guard let staff = staff else {return true}
                 return staff.string == "Staff: " || staff.string == "Staff:  "
+            } else {
+                if viewTitle || viewTitleAndDescription {
+                    return true
+                } else {
+                    guard let staff = staff else {return true}
+                    return staff.string == "Staff: " || staff.string == "Staff:  "
+                }
             }
-            .bind(to: self.staffLabel.rx.isHidden)
-            .disposed(by: disposeBag)
+        }.bind(to: self.staffLabel.rx.isHidden).disposed(by: disposeBag)
         
         viewModel.outputs.staff
             .bind(to: self.staffLabel.rx.attributedText)
             .disposed(by: disposeBag)
         
         //Mark:- Setting Appointments Description Label
-        
-        Observable.combineLatest(viewModel.outputs.appointmentDescription, viewModel.outputs.authorizedToViewTitleAndDescriptionAppointments).map{
-            description, viewTitleAndDescription -> Bool in
-            if viewTitleAndDescription {
+        Observable.combineLatest(viewModel.outputs.appointmentDescription, viewModel.outputs.authorizedToViewTitleAndDescriptionAppointments, viewModel.outputs.authorizedToManageAppointments).map{
+            description, viewTitleAndDescription, manageAppointments -> Bool in
+            if manageAppointments {
                 guard let description = description else {return true}
                 return description.string == ""
             } else {
-                return true
+                if viewTitleAndDescription {
+                    guard let description = description else {return true}
+                    return description.string == ""
+                } else {
+                    return true
+                }
             }
         }.bind(to: self.appointmentDescriptionTextView.rx.isHidden).disposed(by: disposeBag)
         
@@ -446,21 +478,30 @@ extension AppointmentViewController{
             .disposed(by: disposeBag)
         
         //Mark:- Setting Profile Image
-        viewModel.outputs.profileImage
-            .unwrap()
-            .subscribe(onNext: { [weak self] url in
-                guard let self = self else { return }
-                self.userProfileImage.kf.indicatorType = .activity
-                self.userProfileImage.kf.setImage(
-                    with: URL(string: url),
-                    placeholder: UIImage.moduleImage(named: "image_profile_placeholder"),
-                    options: [
-                        .transition(.fade(1)),
-                        .cacheOriginalImage
-                    ])
-            })
-            .disposed(by: disposeBag)
         
+        Observable.combineLatest(viewModel.outputs.profileImage, viewModel.outputs.authorizedToViewTitleAppointments, viewModel.outputs.authorizedToViewTitleAndDescriptionAppointments, viewModel.outputs.authorizedToManageAppointments).subscribe(onNext: {
+            [weak self] url, viewTitle, viewTitleAndDescription, manageAppointments in
+            guard let self = self else { return }
+            var urlImage = url
+            if manageAppointments {
+                urlImage = url
+            } else {
+                if viewTitle || viewTitleAndDescription {
+                   urlImage = ""
+                } else {
+                    urlImage = url
+                }
+            }
+            self.userProfileImage.kf.indicatorType = .activity
+            self.userProfileImage.kf.setImage(
+                with: URL(string: urlImage ?? ""),
+                placeholder: UIImage.moduleImage(named: "image_profile_placeholder"),
+                options: [
+                    .transition(.fade(1)),
+                    .cacheOriginalImage
+                ])
+        }).disposed(by: disposeBag)
+ 
         //Mark:- Mark Present Button Action
         markPresentButton.rx.tap
             .bind(to: viewModel.inputs.markPresent)

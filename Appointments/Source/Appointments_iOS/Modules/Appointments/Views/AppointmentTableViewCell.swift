@@ -234,14 +234,22 @@ class AppointmentTableViewCell: RxUITableViewCell {
     }
     
     private func bind(viewModel : AppointmentTVCellViewModelType) {
-        
-        viewModel.outputs.name
-            .map { name -> Bool in
+     
+        Observable.combineLatest(viewModel.outputs.name, viewModel.outputs.authorizedToViewTitleAppointments, viewModel.outputs.authorizedToViewTitleAndDescriptionAppointments, viewModel.outputs.authorizedToManageAppointments).map{
+            name, viewTitle, viewTitleAndDescription, manageAppointments -> Bool in
+            if manageAppointments {
                 guard let name = name else {return true}
                 return name.isEmpty
+            } else {
+                if viewTitle || viewTitleAndDescription {
+                    return true
+                } else {
+                    guard let name = name else {return true}
+                    return name.isEmpty
+                }
             }
-            .bind(to: self.nameLabel.rx.isHidden).disposed(by: disposeBag)
-        
+        }.bind(to: self.nameLabel.rx.isHidden).disposed(by: disposeBag)
+                
         viewModel.outputs.name
             .bind(to: self.nameLabel.rx.text)
             .disposed(by: disposeBag)
@@ -261,46 +269,59 @@ class AppointmentTableViewCell: RxUITableViewCell {
             .bind(to: self.roomLabel.rx.text)
             .disposed(by: disposeBag)
         
-        Observable.combineLatest(viewModel.outputs.appointmentDescription, viewModel.outputs.authorizedToViewTitleAppointments, viewModel.outputs.authorizedToViewTitleAndDescriptionAppointments).map{
-            appointmentDescription, viewTitle, viewTitleAndDescription -> Bool in
-            if viewTitle || viewTitleAndDescription {
+        viewModel.outputs.appointmentDescription
+            .map{
+                appointmentDescription -> Bool in
                 guard let appointmentDescription = appointmentDescription else {return true}
                 return appointmentDescription.isEmpty
-            } else {
-               return true
             }
-        }.bind(to: self.appointmentDescriptionLabel.rx.isHidden).disposed(by: disposeBag)
+            .bind(to: self.appointmentDescriptionLabel.rx.isHidden).disposed(by: disposeBag)
         
         viewModel.outputs.appointmentDescription
             .bind(to: self.appointmentDescriptionLabel.rx.text)
             .disposed(by: disposeBag)
         
-        viewModel.outputs.staff
-            .map { staff -> Bool in
+        Observable.combineLatest(viewModel.outputs.staff, viewModel.outputs.authorizedToViewTitleAppointments, viewModel.outputs.authorizedToViewTitleAndDescriptionAppointments, viewModel.outputs.authorizedToManageAppointments).map{
+            staff, viewTitle, viewTitleAndDescription, manageAppointments -> Bool in
+            if manageAppointments {
                 guard let staff = staff else {return true}
                 return staff.isEmpty
+            } else {
+                if viewTitle || viewTitleAndDescription {
+                    return true
+                } else {
+                    guard let staff = staff else {return true}
+                    return staff.isEmpty
+                }
             }
-            .bind(to: self.staffLabel.rx.isHidden)
-            .disposed(by: disposeBag)
-        
+        }.bind(to: self.staffLabel.rx.isHidden).disposed(by: disposeBag)
+ 
         viewModel.outputs.staff
             .bind(to: self.staffLabel.rx.text)
             .disposed(by: disposeBag)
         
-        viewModel.outputs.profileImage
-            .unwrap()
-            .subscribe(onNext: { [weak self] url in
-                guard let self = self else { return }
-                self.profileImage.kf.indicatorType = .activity
-                self.profileImage.kf.setImage(
-                    with: URL(string: url),
-                    placeholder: UIImage.moduleImage(named: "image_profile_placeholder"),
-                    options: [
-                        .transition(.fade(1)),
-                        .cacheOriginalImage
-                    ])
-            })
-            .disposed(by: disposeBag)
+        Observable.combineLatest(viewModel.outputs.profileImage, viewModel.outputs.authorizedToViewTitleAppointments, viewModel.outputs.authorizedToViewTitleAndDescriptionAppointments, viewModel.outputs.authorizedToManageAppointments).subscribe(onNext: {
+            [weak self] url, viewTitle, viewTitleAndDescription, manageAppointments in
+            guard let self = self else { return }
+            var urlImage = url
+            if manageAppointments {
+                urlImage = url
+            } else {
+                if viewTitle || viewTitleAndDescription {
+                   urlImage = ""
+                } else {
+                    urlImage = url
+                }
+            }
+            self.profileImage.kf.indicatorType = .activity
+            self.profileImage.kf.setImage(
+                with: URL(string: urlImage ?? ""),
+                placeholder: UIImage.moduleImage(named: "image_profile_placeholder"),
+                options: [
+                    .transition(.fade(1)),
+                    .cacheOriginalImage
+                ])
+        }).disposed(by: disposeBag)
         
         checkboxButton.rx.tap
             .bind(to: viewModel.inputs.markCheckbox)

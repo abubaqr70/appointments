@@ -82,17 +82,16 @@ class AppointmentViewModel: AppointmentViewModelType, AppointmentViewModelInputs
     private let isPresentSubject : BehaviorSubject<Bool>
     private let markPresentEnabledSubject : BehaviorSubject<Bool>
     private let appointmentsRepository: AppointmentRepository
-    private let appointmentsType: [AppointmentsType]
     private let authorizedToManageAppointmentsSubject : BehaviorSubject<Bool>
     private let authorizedToViewTitleAppointmentsSubject : BehaviorSubject<Bool>
     private let authorizedToViewTitleAndDescriptionAppointmentsSubject : BehaviorSubject<Bool>
+    private let appointmentsTypeSubject = BehaviorSubject<[AppointmentsType]>(value: [])
     
     init(appointment: Appointment,repository: AppointmentRepository,permissionProvider: PermissionProvider){
         
         //Mark:- Setting User Names
         self.permissionProvider = permissionProvider
         self.appointmentsRepository = repository
-        self.appointmentsType = self.appointmentsRepository.getLocalAppointmentsType(facilityId: appointment.facilityId ?? 0)
         markPresentSubject = PublishSubject()
         authorizedToManageAppointmentsSubject = BehaviorSubject(value: self.permissionProvider.authorizedToManageAppointments)
         authorizedToViewTitleAppointmentsSubject = BehaviorSubject(value: self.permissionProvider.authorizedToViewTitleAppointments)
@@ -164,10 +163,10 @@ class AppointmentViewModel: AppointmentViewModelType, AppointmentViewModelInputs
             .bind(to: timeSubject)
             .disposed(by: disposeBag)
         
-        appointmentsSubject
-            .map { appointments -> NSMutableAttributedString in
+        Observable.combineLatest(appointmentsSubject, self.appointmentsRepository.getAppointmentsType(for: appointment.facilityId ?? 0))
+            .map { appointments, appointmentsType -> NSMutableAttributedString in
                 
-                let appointmentType : [AppointmentsType] = self.appointmentsType.filter{
+                let appointmentType : [AppointmentsType] = appointmentsType.filter{
                     appointment in
                     appointment.id == appointments.therapyId
                 }
