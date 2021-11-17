@@ -7,7 +7,7 @@ import SVProgressHUD
 
 public class AppointmentsViewController: UIViewController {
     
-    private var sections: [(title: String, rows: [ReuseableCellViewModelType])] = [] {
+    private var sections: [(title: ReuseableCellViewModelType, rows: [ReuseableCellViewModelType])] = [] {
         didSet {
             tableView.reloadData()
         }
@@ -40,6 +40,15 @@ public class AppointmentsViewController: UIViewController {
         return refreshControl
     }()
     
+    fileprivate lazy var progressView: UIProgressView = {
+        let progressView = UIProgressView()
+        progressView.translatesAutoresizingMaskIntoConstraints = false
+        progressView.trackTintColor = UIColor.appGrayLight
+        progressView.progressTintColor = UIColor.appSkyBlue
+        progressView.progressViewStyle = .bar
+        return progressView
+    }()
+    
     fileprivate lazy var nameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -61,7 +70,7 @@ public class AppointmentsViewController: UIViewController {
     fileprivate lazy var profileImage : UIImageView = {
         let view = UIImageView(frame: CGRect.zero)
         view.image = UIImage.moduleImage(named: "image_profile_placeholder")
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = UIColor.appBackgroundGray
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 20
         view.clipsToBounds = true
@@ -108,7 +117,7 @@ public class AppointmentsViewController: UIViewController {
     fileprivate lazy var pageNavigator: UIPageNavigator = {
         let navigator = UIPageNavigator(frame: CGRect.zero)
         navigator.translatesAutoresizingMaskIntoConstraints = false
-        navigator.backgroundColor = .white
+        navigator.backgroundColor = .appBackgroundGray
         return navigator
     }()
     
@@ -117,7 +126,7 @@ public class AppointmentsViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 20))
         tableView.separatorStyle = .none
-        tableView.backgroundColor = UIColor.appGrayLight
+        tableView.backgroundColor = UIColor.appBackgroundGray
         return tableView
     }()
     
@@ -186,13 +195,14 @@ extension AppointmentsViewController{
         self.view.addSubview(residentStackView)
         self.view.addSubview(lastUpdatedLabel)
         self.view.addSubview(pageNavigator)
+        self.view.addSubview(progressView)
         self.view.addSubview(tableView)
         self.tableView.addSubview(refreshControl)
-        view.backgroundColor = .white
+        view.backgroundColor = .appBackgroundGray
     }
     
     private func showActivity(){
-        SVProgressHUD.show(withStatus: "Loading")
+        SVProgressHUD.show(withStatus: "Loading Appointments")
         SVProgressHUD.setDefaultAnimationType(.native)
         SVProgressHUD.setDefaultStyle(.custom)
         SVProgressHUD.setDefaultMaskType(.custom)
@@ -249,7 +259,13 @@ extension AppointmentsViewController{
         ])
         
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: pageNavigator.bottomAnchor, constant: 10),
+            progressView.topAnchor.constraint(equalTo: pageNavigator.bottomAnchor, constant: 10),
+            progressView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 12),
+            progressView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -12)
+        ])
+        
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: progressView.bottomAnchor, constant: 10),
             tableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor)
@@ -267,13 +283,10 @@ extension AppointmentsViewController{
     
     ///MARK:- Navigation Setup
     func setupNavigationBar(){
-        self.navigationController?.navigationBar.barTintColor = .white
+        self.navigationController?.navigationBar.barTintColor = .appBackgroundGray
         self.navigationController?.navigationBar.tintColor = UIColor.appSkyBlue
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
     }
-    
-    
-    
 }
 
 extension AppointmentsViewController{
@@ -440,7 +453,8 @@ extension AppointmentsViewController: UITableViewDelegate,UITableViewDataSource 
     
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let view = HeaderTableViewCell()
-        view.rx.heading.onNext(sections[section].title)
+        let element = sections[section].title
+        view.configure(viewModel: element)
         return view
     }
     

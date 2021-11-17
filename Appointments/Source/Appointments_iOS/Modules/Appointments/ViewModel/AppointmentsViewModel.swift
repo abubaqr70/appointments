@@ -22,7 +22,7 @@ protocol AppointmentsViewModelInputs {
 protocol AppointmentsViewModelOutputs {
     
     //Sections
-    var sections: Observable<[(title: String, rows: [ReuseableCellViewModelType])]> { get }
+    var sections: Observable<[(title: ReuseableCellViewModelType, rows: [ReuseableCellViewModelType])]> { get }
     var selectedAppointment: Observable<Appointment> { get }
     
     // Actions:
@@ -69,7 +69,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     var errorAlert: Observable<String> { return errorAlertSubject.asObservable() }
     var isLoading: Observable<Bool> { return loadingSubject.asObservable() }
     var selectedAppointment: Observable<Appointment> { return selectedAppointmentSubject.asObservable() }
-    var sections: Observable<[(title: String, rows: [ReuseableCellViewModelType])]> { return sectionsSubject.asObservable() }
+    var sections: Observable<[(title: ReuseableCellViewModelType, rows: [ReuseableCellViewModelType])]> { return sectionsSubject.asObservable() }
     var isResident: Observable<Bool> { return isResidentSubject.asObservable() }
     var isRefreshing: Observable<Bool> { return isRefreshingSubject.asObservable() }
     var residentName: Observable<String> { return residentNameSubject.asObservable() }
@@ -104,7 +104,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     private let refreshingSubject = PublishSubject<Void>()
     private let refreshControlSubject = BehaviorSubject<Void>(value: Void())
     private let errorAlertSubject = PublishSubject<String>()
-    private let sectionsSubject = BehaviorSubject<[(title: String, rows: [ReuseableCellViewModelType])]>(value: [])
+    private let sectionsSubject = BehaviorSubject<[(title: ReuseableCellViewModelType, rows: [ReuseableCellViewModelType])]>(value: [])
     private let loadingSubject = BehaviorSubject<Bool>(value: false)
     private let isResidentSubject = BehaviorSubject<Bool>(value: false)
     private let isRefreshingSubject = BehaviorSubject<Bool>(value: false)
@@ -193,9 +193,9 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         let fetchRequest = self.refreshAppointmentsSubject
             .withLatestFrom(self.datePickerSubject)
             .flatMap { [weak self] date -> Observable<Event<([Appointment],Date?)>> in
+                self?.loadingSubject.onNext(true)
                 guard let self = self, let facilityID = self.facilityDataStore.currentFacility?["facility_id"] as? Int else { return .never() }
                 self.isFilterAppliedSubject.onNext(self.filterActionProvider?.isFiltersApplied() ?? false)
-                self.loadingSubject.onNext(true)
                 let residentId = self.residentProvider?.currentResident?["resident_id"] as? Int
                 if residentId != nil {
                     return self.bindAppointmentsForResident(date: date, facilityID: facilityID, residentId: residentId!)
@@ -206,7 +206,6 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             .share()
             .do(onNext: {
                 appointment in
-                self.loadingSubject.onNext(false)
                 self.isRefreshingSubject.onNext(false)
             })
         
@@ -228,6 +227,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             .debug("Errors")
             .map {
                 error in
+                self.loadingSubject.onNext(false)
                 let error = error.asAFError(orFailWith: "The internet connection appears to be offline.")
                 if error.isSessionTaskError {
                     return "The internet connection appears to be offline."
@@ -298,7 +298,8 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         .bind(to: mappedAppointmentsSubject)
         .disposed(by: disposeBag)
         self.mappedAppointmentsSubject.map{ appointments -> [Appointment] in
-            return self.filtersApply(appointments: appointments)
+            //            return self.filtersApply(appointments: appointments)
+            return appointments
         }
         .bind(to: filteredAppointmentsSubject)
         .disposed(by: disposeBag)
@@ -306,6 +307,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         
         Observable.combineLatest(filteredAppointmentsSubject, segmentControlSubject)
             .map{ appointment , segment -> [Appointment] in
+                self.loadingSubject.onNext(false)
                 if segment == 0 {
                     return appointment
                 }else{
@@ -319,7 +321,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     func bindAppointmentsToCellViewModel() {
         
         self.sortedAppointmentsSubject
-            .map { appointments -> [(title: String, rows: [ReuseableCellViewModelType])] in
+            .map { appointments -> [(title: ReuseableCellViewModelType, rows: [ReuseableCellViewModelType])] in
                 return self.creatingSectionCellViewModel(appointments: appointments)
             }
             .bind(to: self.sectionsSubject)
@@ -327,15 +329,15 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     }
     
     
-    func creatingSectionCellViewModel(appointments: [Appointment] ) -> [(title: String, rows: [ReuseableCellViewModelType])] {
+    func creatingSectionCellViewModel(appointments: [Appointment] ) -> [(title: ReuseableCellViewModelType, rows: [ReuseableCellViewModelType])] {
         
-        appointments.map { appointment -> (title: String, rows: [ReuseableCellViewModelType]) in
+        appointments.map { appointment -> (title: ReuseableCellViewModelType, rows: [ReuseableCellViewModelType]) in
             let cellViewModel = AppointmentTVCellViewModel(appointment: appointment, permissionProvider: permissionProvider)
             cellViewModel.outputs.markAppointment.subscribe(onNext: { appointment in
                 self.appointmentsRepository.updateAppointment(appointment)
                 self.inputs.viewWillAppear.onNext(Void())
             }).disposed(by: disposeBag)
-            let headerTitle = "\(appointment.startDate?.timeString ?? "") - \(appointment.endDate?.timeString ?? "")"
+            let headerTitle = HeaderTVCellViewModel(appointment: appointment, permissionProvider: permissionProvider)
             return (headerTitle, [cellViewModel])
         }
         

@@ -7,24 +7,6 @@ import Kingfisher
 
 class AppointmentTableViewCell: RxUITableViewCell {
     
-    fileprivate lazy var nameLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = .black
-        label.font = UIFont.appFont(withStyle: .body, size: 16)
-        label.numberOfLines = 4
-        return label
-    }()
-    
-    fileprivate lazy var roomLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = UIColor.appGrayDark
-        label.font = UIFont.appFont(withStyle: .title3, size: 14)
-        label.numberOfLines = 4
-        return label
-    }()
-    
     fileprivate lazy var appointmentDescriptionLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -43,35 +25,22 @@ class AppointmentTableViewCell: RxUITableViewCell {
         return label
     }()
     
-    fileprivate lazy var profileImage : UIImageView = {
-        let view = UIImageView(frame: CGRect.zero)
-        view.image = UIImage.moduleImage(named: "image_profile_placeholder")
-        view.backgroundColor = UIColor.white
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.layer.cornerRadius = 20
-        view.clipsToBounds = true
-        return view
-    }()
-    
     fileprivate lazy var checkboxButton : UIButton = {
         let checkboxButton = UIButton(frame: CGRect.zero)
         checkboxButton.backgroundColor = UIColor.white
         checkboxButton.translatesAutoresizingMaskIntoConstraints = false
-        checkboxButton.imageEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        checkboxButton.imageEdgeInsets = UIEdgeInsets(top: 6, left: 6, bottom: 6, right: 6)
+        checkboxButton.imageView?.contentMode = .scaleToFill
+        checkboxButton.contentVerticalAlignment = .fill
+        checkboxButton.contentHorizontalAlignment = .fill
         return checkboxButton
     }()
     
     fileprivate lazy var arrowImage : UIImageView = {
         let view = UIImageView(frame: CGRect.zero)
-        view.image = UIImage.moduleImage(named: "icon_date_right")
+        view.image = UIImage.moduleImage(named: "icon_date_right")?.withRenderingMode(.alwaysTemplate)
+        view.tintColor = UIColor.appGrayDark
         view.backgroundColor = UIColor.white
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    fileprivate lazy var lineView : UIView = {
-        let view = UIView(frame: CGRect.zero)
-        view.backgroundColor = UIColor.appGrayLight
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -81,23 +50,6 @@ class AppointmentTableViewCell: RxUITableViewCell {
         view.backgroundColor = UIColor.white
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 5
-        return view
-    }()
-    
-    fileprivate lazy var nameStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [nameLabel, roomLabel])
-        stackView.axis = .vertical
-        stackView.spacing = 5
-        stackView.alignment = .fill
-        stackView.distribution = .fillEqually
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
-    }()
-    
-    fileprivate lazy var imageNameView : UIView = {
-        let view = UIView(frame: CGRect.zero)
-        view.backgroundColor = UIColor.white
-        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
@@ -132,61 +84,28 @@ class AppointmentTableViewCell: RxUITableViewCell {
     private func setupViews() {
         selectionStyle = .none
         contentView.addSubview(cellView)
-        cellView.addSubview(imageNameView)
-        cellView.addSubview(lineView)
         cellView.addSubview(buttonAppointmentsView)
-        imageNameView.addSubview(profileImage)
-        imageNameView.addSubview(nameStackView)
-        imageNameView.addSubview(arrowImage)
         buttonAppointmentsView.addSubview(checkboxButton)
         buttonAppointmentsView.addSubview(appointmentDescriptionLabel)
         buttonAppointmentsView.addSubview(staffLabel)
-        contentView.backgroundColor = UIColor.appGrayLight
+        buttonAppointmentsView.addSubview(arrowImage)
+        contentView.backgroundColor = UIColor.appBackgroundGray
     }
     
     private func setupConstraints() {
         
         NSLayoutConstraint.activate([
-            imageNameView.topAnchor.constraint(equalTo: cellView.topAnchor, constant: 10),
-            imageNameView.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 10),
-            imageNameView.trailingAnchor.constraint(equalTo: cellView.trailingAnchor, constant: -10)
-        ])
-        
-        NSLayoutConstraint.activate([
-            profileImage.leadingAnchor.constraint(equalTo: imageNameView.leadingAnchor),
-            profileImage.centerYAnchor.constraint(equalTo: imageNameView.centerYAnchor),
-            profileImage.topAnchor.constraint(greaterThanOrEqualTo: imageNameView.topAnchor),
-            profileImage.bottomAnchor.constraint(greaterThanOrEqualTo: imageNameView.bottomAnchor, constant: -5),
-            profileImage.widthAnchor.constraint(equalToConstant: 40),
-            profileImage.heightAnchor.constraint(equalToConstant: 40)
-        ])
-        
-        NSLayoutConstraint.activate([
-            nameStackView.topAnchor.constraint(greaterThanOrEqualTo: imageNameView.topAnchor, constant: 5),
-            nameStackView.bottomAnchor.constraint(greaterThanOrEqualTo: imageNameView.bottomAnchor, constant: -5),
-            nameStackView.centerYAnchor.constraint(equalTo: imageNameView.centerYAnchor),
-            nameStackView.leadingAnchor.constraint(equalTo: profileImage.trailingAnchor, constant: 10)
-        ])
-        
-        NSLayoutConstraint.activate([
-            arrowImage.centerYAnchor.constraint(equalTo: imageNameView.centerYAnchor),
-            arrowImage.leadingAnchor.constraint(equalTo: nameStackView.trailingAnchor, constant: 10),
-            arrowImage.trailingAnchor.constraint(equalTo: imageNameView.trailingAnchor, constant: -10),
+            arrowImage.centerYAnchor.constraint(equalTo: buttonAppointmentsView.centerYAnchor),
+            arrowImage.leadingAnchor.constraint(equalTo: staffLabel.trailingAnchor, constant: 10),
+            arrowImage.trailingAnchor.constraint(equalTo: buttonAppointmentsView.trailingAnchor, constant: -10),
             arrowImage.widthAnchor.constraint(equalToConstant: 10),
             arrowImage.heightAnchor.constraint(equalToConstant: 16)
         ])
         
         NSLayoutConstraint.activate([
-            lineView.topAnchor.constraint(equalTo: imageNameView.bottomAnchor,constant: 5),
-            lineView.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 60),
-            lineView.trailingAnchor.constraint(equalTo: cellView.trailingAnchor),
-            lineView.heightAnchor.constraint(equalToConstant: 0.5)
-        ])
-        
-        NSLayoutConstraint.activate([
-            buttonAppointmentsView.topAnchor.constraint(equalTo: lineView.bottomAnchor),
-            buttonAppointmentsView.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 10),
-            buttonAppointmentsView.trailingAnchor.constraint(equalTo: cellView.trailingAnchor,constant: -10),
+            buttonAppointmentsView.topAnchor.constraint(equalTo: cellView.topAnchor),
+            buttonAppointmentsView.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 20),
+            buttonAppointmentsView.trailingAnchor.constraint(equalTo: cellView.trailingAnchor,constant: -15),
             buttonAppointmentsView.bottomAnchor.constraint(equalTo: cellView.bottomAnchor)
         ])
         
@@ -207,16 +126,15 @@ class AppointmentTableViewCell: RxUITableViewCell {
         
         NSLayoutConstraint.activate([
             staffLabel.leadingAnchor.constraint(greaterThanOrEqualTo: appointmentDescriptionLabel.trailingAnchor,constant: 10),
-            staffLabel.trailingAnchor.constraint(equalTo: buttonAppointmentsView.trailingAnchor,constant: -10),
             staffLabel.centerYAnchor.constraint(equalTo: buttonAppointmentsView.centerYAnchor),
             staffLabel.topAnchor.constraint(greaterThanOrEqualTo: buttonAppointmentsView.topAnchor,constant: 10)
         ])
         
         NSLayoutConstraint.activate([
-            cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor,constant: 20),
+            cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor,constant: 0),
             cellView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5),
             cellView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0),
-            cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -20),
+            cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: 0),
         ])
         
         appointmentDescriptionLabel.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
@@ -234,48 +152,8 @@ class AppointmentTableViewCell: RxUITableViewCell {
     }
     
     private func bind(viewModel : AppointmentTVCellViewModelType) {
-     
-        Observable.combineLatest(viewModel.outputs.name, viewModel.outputs.authorizedToViewTitleAppointments, viewModel.outputs.authorizedToViewTitleAndDescriptionAppointments, viewModel.outputs.authorizedToManageAppointments).map{
-            name, viewTitle, viewTitleAndDescription, manageAppointments -> Bool in
-            if manageAppointments {
-                guard let name = name else {return true}
-                return name.isEmpty
-            } else {
-                if viewTitle || viewTitleAndDescription {
-                    return true
-                } else {
-                    guard let name = name else {return true}
-                    return name.isEmpty
-                }
-            }
-        }.bind(to: self.nameLabel.rx.isHidden).disposed(by: disposeBag)
-                
-        viewModel.outputs.name
-            .bind(to: self.nameLabel.rx.text)
-            .disposed(by: disposeBag)
         
-        Observable.combineLatest(viewModel.outputs.room, viewModel.outputs.authorizedToViewTitleAppointments, viewModel.outputs.authorizedToViewTitleAndDescriptionAppointments, viewModel.outputs.authorizedToManageAppointments).map{
-            roomNo, viewTitle, viewTitleAndDescription, manageAppointments -> Bool in
-            if manageAppointments {
-                guard let roomNo = roomNo else {return true}
-                return roomNo.isEmpty
-            } else {
-                if viewTitle || viewTitleAndDescription {
-                    return true
-                } else {
-                    guard let roomNo = roomNo else {return true}
-                    return roomNo.isEmpty
-                }
-            }
-        }.bind(to: self.roomLabel.rx.isHidden).disposed(by: disposeBag)
-
-        viewModel.outputs.room
-            .map {
-                roomNo -> String in
-                return ("Room # \(roomNo ?? "")")
-            }
-            .bind(to: self.roomLabel.rx.text)
-            .disposed(by: disposeBag)
+        
         
         viewModel.outputs.appointmentDescription
             .map{
@@ -303,33 +181,10 @@ class AppointmentTableViewCell: RxUITableViewCell {
                 }
             }
         }.bind(to: self.staffLabel.rx.isHidden).disposed(by: disposeBag)
- 
+        
         viewModel.outputs.staff
             .bind(to: self.staffLabel.rx.text)
             .disposed(by: disposeBag)
-        
-        Observable.combineLatest(viewModel.outputs.profileImage, viewModel.outputs.authorizedToViewTitleAppointments, viewModel.outputs.authorizedToViewTitleAndDescriptionAppointments, viewModel.outputs.authorizedToManageAppointments).subscribe(onNext: {
-            [weak self] url, viewTitle, viewTitleAndDescription, manageAppointments in
-            guard let self = self else { return }
-            var urlImage = url
-            if manageAppointments {
-                urlImage = url
-            } else {
-                if viewTitle || viewTitleAndDescription {
-                   urlImage = ""
-                } else {
-                    urlImage = url
-                }
-            }
-            self.profileImage.kf.indicatorType = .activity
-            self.profileImage.kf.setImage(
-                with: URL(string: urlImage ?? ""),
-                placeholder: UIImage.moduleImage(named: "image_profile_placeholder"),
-                options: [
-                    .transition(.fade(1)),
-                    .cacheOriginalImage
-                ])
-        }).disposed(by: disposeBag)
         
         checkboxButton.rx.tap
             .bind(to: viewModel.inputs.markCheckbox)

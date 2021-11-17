@@ -60,6 +60,7 @@ public class AppointmentViewController: UIViewController {
         textView.sizeToFit()
         textView.isScrollEnabled = false
         textView.isSelectable = true
+        textView.backgroundColor = UIColor.appBackgroundGray
         return textView
     }()
     
@@ -109,7 +110,7 @@ public class AppointmentViewController: UIViewController {
     
     fileprivate lazy var markPresentButton : UIButton = {
         let button = UIButton(frame: CGRect.zero)
-        button.backgroundColor = UIColor.white
+        button.backgroundColor = UIColor.appBackgroundGray
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -159,7 +160,7 @@ public class AppointmentViewController: UIViewController {
     
     fileprivate lazy var profileNamesView : UIView = {
         let view = UIView(frame: CGRect.zero)
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = UIColor.appBackgroundGray
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -208,7 +209,7 @@ extension AppointmentViewController{
         self.contentView.addSubview(locationLabel)
         self.contentView.addSubview(appointmentDescriptionTextView)
         self.contentView.addSubview(markPresentButton)
-        view.backgroundColor = .white
+        view.backgroundColor = .appBackgroundGray
     }
     
     private func setupConstraints() {
@@ -540,7 +541,7 @@ extension AppointmentViewController{
     
     ///MARK:- Navigation Setup
     func setupNavigationBar(){
-        self.navigationController?.navigationBar.barTintColor = .white
+        self.navigationController?.navigationBar.barTintColor = .appBackgroundGray
         self.navigationController?.navigationBar.tintColor = UIColor.appSkyBlue
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
     }
