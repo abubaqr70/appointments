@@ -11,7 +11,7 @@ class FilterAppointmentsTableViewCell: RxUITableViewCell  {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .black
         label.text = "Admin inspire"
-        label.font = UIFont.appFont(withStyle: .body, size: 16)
+        label.font = UIFont.appFont(withStyle: .title1, size: 16)
         label.numberOfLines = 4
         return label
     }()
@@ -90,17 +90,17 @@ class FilterAppointmentsTableViewCell: RxUITableViewCell  {
         
         NSLayoutConstraint.activate([
             lineView.topAnchor.constraint(greaterThanOrEqualTo: nameLabel.bottomAnchor, constant: -20),
-            lineView.leadingAnchor.constraint(equalTo: cellView.leadingAnchor),
+            lineView.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 10),
             lineView.trailingAnchor.constraint(equalTo: cellView.trailingAnchor),
             lineView.heightAnchor.constraint(equalToConstant: 0.8),
             lineView.bottomAnchor.constraint(equalTo: cellView.bottomAnchor),
         ])
         
         NSLayoutConstraint.activate([
-            cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor,constant: 10),
+            cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor,constant: 0),
             cellView.topAnchor.constraint(equalTo: contentView.topAnchor),
             cellView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -10),
+            cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: 0),
         ])
         
     }

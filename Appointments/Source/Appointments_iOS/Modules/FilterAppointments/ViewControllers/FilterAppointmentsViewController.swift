@@ -33,7 +33,7 @@ class FilterAppointmentsViewController: UIViewController {
         tableView.tableHeaderView = UIView(frame: .zero)
         tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 20))
         tableView.separatorStyle = .none
-        tableView.backgroundColor = UIColor.appGrayLight
+        tableView.backgroundColor = UIColor.appBackgroundGray
         return tableView
     }()
     
@@ -75,7 +75,7 @@ extension FilterAppointmentsViewController{
         self.navigationItem.titleView = titleButton
         self.view.addSubview(clearButton)
         self.view.addSubview(tableView)
-        view.backgroundColor = UIColor.appGrayLight
+        view.backgroundColor = UIColor.appBackgroundGray
     }
     
     private func setupConstraints() {
@@ -107,7 +107,7 @@ extension FilterAppointmentsViewController{
     
     ///MARK:- Navigation Setup
     func setupNavigationBar(){
-        self.navigationController?.navigationBar.barTintColor = .white
+        self.navigationController?.navigationBar.barTintColor = .appBackgroundGray
         self.navigationController?.navigationBar.tintColor = UIColor.appSkyBlue
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
     }

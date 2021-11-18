@@ -37,7 +37,7 @@ class FilterHeaderTableViewCell: RxUITableViewCell {
     
     fileprivate lazy var cellView : UIView = {
         let view = UIView(frame: CGRect.zero)
-        view.backgroundColor = UIColor.appGrayLight
+        view.backgroundColor = UIColor.appBackgroundGray
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -69,7 +69,7 @@ class FilterHeaderTableViewCell: RxUITableViewCell {
         cellView.addSubview(nameLabel)
         cellView.addSubview(checkboxButton)
         cellView.addSubview(lineView)
-        contentView.backgroundColor = UIColor.appGrayLight
+        contentView.backgroundColor = UIColor.appBackgroundGray
     }
     
     private func setupConstraints() {
@@ -90,17 +90,17 @@ class FilterHeaderTableViewCell: RxUITableViewCell {
         
         NSLayoutConstraint.activate([
             lineView.topAnchor.constraint(greaterThanOrEqualTo: nameLabel.bottomAnchor, constant: -15),
-            lineView.leadingAnchor.constraint(equalTo: cellView.leadingAnchor),
+            lineView.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 0),
             lineView.trailingAnchor.constraint(equalTo: cellView.trailingAnchor),
             lineView.heightAnchor.constraint(equalToConstant: 0.8),
             lineView.bottomAnchor.constraint(equalTo: cellView.bottomAnchor),
         ])
         
         NSLayoutConstraint.activate([
-            cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor,constant: 10),
+            cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor,constant: 0),
             cellView.topAnchor.constraint(equalTo: contentView.topAnchor),
             cellView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: -10),
+            cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,constant: 0),
         ])
         
         
@@ -131,10 +131,10 @@ extension FilterHeaderTableViewCell {
                 headerTitle in
                 if headerTitle == "All Categories" {
                     self.cellView.backgroundColor = .white
-                    self.nameLabel.font = UIFont.appFont(withStyle: .body, size: 16)
+                    self.nameLabel.font = UIFont.appFont(withStyle: .title1, size: 16)
                 } else {
-                    self.cellView.backgroundColor = UIColor.appGrayLight
-                    self.nameLabel.font = UIFont.appFont(withStyle: .subhead, size: 16)
+                    self.cellView.backgroundColor = UIColor.appBackgroundGray
+                    self.nameLabel.font = UIFont.appFont(withStyle: .body, size: 16)
                 }
                 self.nameLabel.rx.text.onNext(headerTitle)
             })

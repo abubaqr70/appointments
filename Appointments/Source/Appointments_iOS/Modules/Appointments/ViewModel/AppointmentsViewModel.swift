@@ -38,6 +38,7 @@ protocol AppointmentsViewModelOutputs {
     var residentRoom: Observable<String> { get }
     var isFilterApplied: Observable<Bool> { get }
     var isAppointmentsFilterApplied: Observable<Bool> { get }
+    var progress: Observable<Float> { get }
     var facilityDataStoreOutput: FacilityDataStore { get }
 }
 
@@ -78,6 +79,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     var isFilterApplied: Observable<Bool> { return isFilterAppliedSubject.asObservable() }
     var isAppointmentsFilterApplied: Observable<Bool> { return isAppointmentsFilterAppliedSubject.asObservable() }
     var facilityDataStoreOutput: FacilityDataStore { return self.facilityDataStore }
+    var progress: Observable<Float> { return self.progressSubject }
     
     //Mark: Private Properties
     
@@ -98,6 +100,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     private let selectedAppointmentSubject = PublishSubject<Appointment>()
     private let lastUpdatedLabelSubject = BehaviorSubject<String?>(value: "")
     private let dateNavigatorTitleSubject = BehaviorSubject<String?>(value: "")
+    private let progressSubject = BehaviorSubject<Float>(value: 0.0)
     
     private let filterAppointmentsSubject = PublishSubject<Void>()
     private let refreshAppointmentsSubject = PublishSubject<Void>()
@@ -160,10 +163,6 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
          residentProvider: ResidentDataStore?,
          filterActionProvider: FilterActionProvider?,
          permissionProvider: PermissionProvider){
-        
-        print("authorizedToManageAppointments: \(permissionProvider.authorizedToManageAppointments)")
-        print("authorizedToViewTitleAppointments: \(permissionProvider.authorizedToViewTitleAppointments)")
-        print("authorizedToViewTitleAndDescriptionAppointments: \(permissionProvider.authorizedToViewTitleAndDescriptionAppointments)")
         
         self.permissionProvider = permissionProvider
         self.facilityDataStore = facilityDataStore
@@ -298,8 +297,8 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         .bind(to: mappedAppointmentsSubject)
         .disposed(by: disposeBag)
         self.mappedAppointmentsSubject.map{ appointments -> [Appointment] in
-            //            return self.filtersApply(appointments: appointments)
-            return appointments
+            return self.filtersApply(appointments: appointments)
+//                        return appointments
         }
         .bind(to: filteredAppointmentsSubject)
         .disposed(by: disposeBag)
@@ -308,6 +307,15 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         Observable.combineLatest(filteredAppointmentsSubject, segmentControlSubject)
             .map{ appointment , segment -> [Appointment] in
                 self.loadingSubject.onNext(false)
+                
+                let presentAppointments = appointment.filter{
+                    $0.appointmentAttendance?.first?.present == "present"
+                }
+                
+                let progress : Float = Float(appointment.count / presentAppointments.count ) / 100
+
+                self.progressSubject.onNext(progress)
+                
                 if segment == 0 {
                     return appointment
                 }else{

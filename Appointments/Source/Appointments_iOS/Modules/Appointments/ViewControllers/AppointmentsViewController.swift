@@ -322,6 +322,10 @@ extension AppointmentsViewController{
     
     private func bindtextField(viewModel : AppointmentsViewModelType){
         
+        viewModel.outputs.progress
+            .bind(to: progressView.rx.progress)
+            .disposed(by: disposeBag)
+        
         viewModel.outputs.dateNavigatorTitle
             .asObservable()
             .bind(to: pageNavigator.rx.titleTextField)
