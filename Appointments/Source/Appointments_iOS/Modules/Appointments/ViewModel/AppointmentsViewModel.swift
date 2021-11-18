@@ -312,8 +312,18 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
                     $0.appointmentAttendance?.first?.present == "present"
                 }
                 
-                let progress : Float = Float(appointment.count / presentAppointments.count ) / 100
-
+                let progress : Float
+                
+                if appointment.count > 0 {
+                    if presentAppointments.count > 0 {
+                        progress = 1.0 - (Float(appointment.count - presentAppointments.count ) / Float(appointment.count))
+                    } else {
+                        progress = 0.0
+                    }
+                } else {
+                    progress = 0.0
+                }
+                
                 self.progressSubject.onNext(progress)
                 
                 if segment == 0 {
