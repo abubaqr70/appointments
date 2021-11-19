@@ -11,7 +11,7 @@ class AppointmentTableViewCell: RxUITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .black
-        label.font = UIFont.appFont(withStyle: .title3, size: 14)
+        label.font = UIFont.appFont(withStyle: .title2, size: 15)
         label.numberOfLines = 4
         return label
     }()
@@ -20,7 +20,7 @@ class AppointmentTableViewCell: RxUITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = UIColor.appGrayDark
-        label.font = UIFont.appFont(withStyle: .title3, size: 14)
+        label.font = UIFont.appFont(withStyle: .title3, size: 15)
         label.numberOfLines = 4
         return label
     }()

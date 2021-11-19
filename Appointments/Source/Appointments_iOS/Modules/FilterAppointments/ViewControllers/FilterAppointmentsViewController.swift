@@ -27,6 +27,13 @@ class FilterAppointmentsViewController: UIViewController {
         return button
     }()
     
+    fileprivate lazy var clearButtonView : UIView = {
+        let view = UIView(frame: .zero)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .appBackgroundGray
+        return view
+    }()
+    
     fileprivate lazy var tableView : UITableView = {
         let tableView = UITableView(frame: CGRect.zero)
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -73,9 +80,10 @@ extension FilterAppointmentsViewController{
     private func setupViews() {
         setupNavigationBar()
         self.navigationItem.titleView = titleButton
-        self.view.addSubview(clearButton)
+        self.view.addSubview(clearButtonView)
+        self.clearButtonView.addSubview(clearButton)
         self.view.addSubview(tableView)
-        view.backgroundColor = UIColor.appBackgroundGray
+        view.backgroundColor = UIColor.white
     }
     
     private func setupConstraints() {
@@ -83,13 +91,21 @@ extension FilterAppointmentsViewController{
         let safeArea = view.safeAreaLayoutGuide
         
         NSLayoutConstraint.activate([
-            clearButton.topAnchor.constraint(equalTo: safeArea.topAnchor),
-            clearButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
+            clearButtonView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+            clearButtonView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
+            clearButtonView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+            clearButtonView.heightAnchor.constraint(equalToConstant: 40)
+        ])
+        
+        NSLayoutConstraint.activate([
+            clearButton.topAnchor.constraint(equalTo: clearButtonView.topAnchor),
+            clearButton.trailingAnchor.constraint(equalTo: clearButtonView.trailingAnchor, constant: -20),
+            clearButton.bottomAnchor.constraint(equalTo: clearButtonView.bottomAnchor),
             clearButton.heightAnchor.constraint(equalToConstant: 40)
         ])
         
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: clearButton.bottomAnchor),
+            tableView.topAnchor.constraint(equalTo: clearButtonView.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor)
@@ -100,6 +116,9 @@ extension FilterAppointmentsViewController{
     private func registersCells() {
         tableView.register(FilterHeaderTableViewCell.self, forCellReuseIdentifier: FilterHeaderTableViewCell.reuseIdentifier)
         tableView.register(FilterAppointmentsTableViewCell.self, forCellReuseIdentifier: FilterAppointmentsTableViewCell.reuseIdentifier)
+        if #available(iOS 15.0, *) {
+            tableView.sectionHeaderTopPadding = 0
+        }
     }
     
 }
@@ -107,7 +126,7 @@ extension FilterAppointmentsViewController{
     
     ///MARK:- Navigation Setup
     func setupNavigationBar(){
-        self.navigationController?.navigationBar.barTintColor = .appBackgroundGray
+        self.navigationController?.navigationBar.barTintColor = .white
         self.navigationController?.navigationBar.tintColor = UIColor.appSkyBlue
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
     }
@@ -178,4 +197,6 @@ extension FilterAppointmentsViewController: UITableViewDelegate,UITableViewDataS
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
     }
+
+    
 }

@@ -57,7 +57,7 @@ class HeaderTableViewCell: RxUITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .white
-        label.font = UIFont.appFont(withStyle: .title3, size: 12)
+        label.font = UIFont.appFont(withStyle: .title2, size: 13)
         label.numberOfLines = 4
         return label
     }()

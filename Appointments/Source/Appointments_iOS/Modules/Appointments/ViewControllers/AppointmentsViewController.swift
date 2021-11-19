@@ -46,6 +46,7 @@ public class AppointmentsViewController: UIViewController {
         progressView.trackTintColor = UIColor.appGrayLight
         progressView.progressTintColor = UIColor.appSkyBlue
         progressView.progressViewStyle = .bar
+        progressView.backgroundColor = .appBackgroundGray
         return progressView
     }()
     
@@ -99,8 +100,9 @@ public class AppointmentsViewController: UIViewController {
         segmentControl.frame = CGRect.zero
         segmentControl.selectedSegmentIndex = 0
         let normalTextAttributes: [NSAttributedString.Key : AnyObject] = [
-            NSAttributedString.Key.font :  UIFont.appFont(withStyle: .title3, size: 12)]
+            NSAttributedString.Key.font :  UIFont.appFont(withStyle: .title2, size: 13), NSAttributedString.Key.foregroundColor: UIColor.darkGray]
         segmentControl.setTitleTextAttributes(normalTextAttributes, for: .normal)
+        segmentControl.backgroundColor = .white
         return segmentControl
     }()
     
@@ -108,7 +110,8 @@ public class AppointmentsViewController: UIViewController {
         let label = UILabel(frame: .zero)
         label.textColor = .white
         label.textAlignment = .center
-        label.font = UIFont.appFont(withStyle: .title3, size: 12)
+        label.font = UIFont.appFont(withStyle: .title2, size: 11)
+        label.contentMode = .left
         label.backgroundColor = UIColor.appGrayDark
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -119,6 +122,20 @@ public class AppointmentsViewController: UIViewController {
         navigator.translatesAutoresizingMaskIntoConstraints = false
         navigator.backgroundColor = .appBackgroundGray
         return navigator
+    }()
+    
+    fileprivate lazy var pageNavigatorView: UIView = {
+        let view = UIView(frame: CGRect.zero)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .appBackgroundGray
+        return view
+    }()
+    
+    fileprivate lazy var progress: UIView = {
+        let view = UIView(frame: CGRect.zero)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .appBackgroundGray
+        return view
     }()
     
     fileprivate lazy var tableView : UITableView = {
@@ -194,11 +211,13 @@ extension AppointmentsViewController{
         self.profileView.addSubview(profileImage)
         self.view.addSubview(residentStackView)
         self.view.addSubview(lastUpdatedLabel)
-        self.view.addSubview(pageNavigator)
-        self.view.addSubview(progressView)
+        self.view.addSubview(pageNavigatorView)
+        self.pageNavigatorView.addSubview(pageNavigator)
+        self.view.addSubview(progress)
+        self.progress.addSubview(progressView)
         self.view.addSubview(tableView)
         self.tableView.addSubview(refreshControl)
-        view.backgroundColor = .appBackgroundGray
+        view.backgroundColor = .white
     }
     
     private func showActivity(){
@@ -225,7 +244,7 @@ extension AppointmentsViewController{
             nameStackView.leadingAnchor.constraint(equalTo: profileImage.trailingAnchor, constant: 10),
             nameStackView.centerYAnchor.constraint(equalTo: profileView.centerYAnchor),
             nameStackView.trailingAnchor.constraint(equalTo: profileView.trailingAnchor, constant: -10),
-            segmentControl.heightAnchor.constraint(equalToConstant: 30),
+            segmentControl.heightAnchor.constraint(equalToConstant: 32),
             segmentControl.topAnchor.constraint(equalTo: residentStackView.topAnchor, constant: 10)
         ])
         
@@ -245,27 +264,42 @@ extension AppointmentsViewController{
         ])
         
         NSLayoutConstraint.activate([
-            lastUpdatedLabel.topAnchor.constraint(equalTo: segmentControl.bottomAnchor, constant: 10),
+            lastUpdatedLabel.topAnchor.constraint(equalTo: segmentControl.bottomAnchor, constant: 13),
             lastUpdatedLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
             lastUpdatedLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
             lastUpdatedLabel.heightAnchor.constraint(equalToConstant: 20)
         ])
         
         NSLayoutConstraint.activate([
-            pageNavigator.topAnchor.constraint(equalTo: lastUpdatedLabel.bottomAnchor, constant: 10),
-            pageNavigator.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
-            pageNavigator.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
-            pageNavigator.heightAnchor.constraint(equalToConstant: 50)
+            pageNavigatorView.topAnchor.constraint(equalTo: lastUpdatedLabel.bottomAnchor, constant: 0),
+            pageNavigatorView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 0),
+            pageNavigatorView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: 0),
+            pageNavigatorView.heightAnchor.constraint(equalToConstant: 55)
         ])
         
         NSLayoutConstraint.activate([
-            progressView.topAnchor.constraint(equalTo: pageNavigator.bottomAnchor, constant: 10),
-            progressView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 12),
-            progressView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -12)
+            pageNavigator.topAnchor.constraint(equalTo: pageNavigatorView.topAnchor, constant: 5),
+            pageNavigator.leadingAnchor.constraint(equalTo: pageNavigatorView.leadingAnchor, constant: 20),
+            pageNavigator.trailingAnchor.constraint(equalTo: pageNavigatorView.trailingAnchor, constant: -20),
+            pageNavigator.bottomAnchor.constraint(equalTo: pageNavigatorView.bottomAnchor)
         ])
         
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: progressView.bottomAnchor, constant: 10),
+            progress.topAnchor.constraint(equalTo: pageNavigator.bottomAnchor, constant: 0),
+            progress.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 0),
+            progress.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: 0)
+        ])
+        
+        NSLayoutConstraint.activate([
+            progressView.topAnchor.constraint(equalTo: progress.topAnchor, constant: 10),
+            progressView.leadingAnchor.constraint(equalTo: progress.leadingAnchor, constant: 12),
+            progressView.trailingAnchor.constraint(equalTo: progress.trailingAnchor, constant: -12),
+            progressView.bottomAnchor.constraint(equalTo: progress.bottomAnchor, constant: 0)
+        ])
+        
+        
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: progress.bottomAnchor, constant: 0),
             tableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor)
@@ -276,6 +310,9 @@ extension AppointmentsViewController{
     private func registersCells() {
         tableView.register(HeaderTableViewCell.self, forCellReuseIdentifier: HeaderTableViewCell.reuseIdentifier)
         tableView.register(AppointmentTableViewCell.self, forCellReuseIdentifier: AppointmentTableViewCell.reuseIdentifier)
+        if #available(iOS 15.0, *) {
+            tableView.sectionHeaderTopPadding = 0
+        }
     }
     
 }
@@ -283,7 +320,7 @@ extension AppointmentsViewController{
     
     ///MARK:- Navigation Setup
     func setupNavigationBar(){
-        self.navigationController?.navigationBar.barTintColor = .appBackgroundGray
+        self.navigationController?.navigationBar.barTintColor = .white
         self.navigationController?.navigationBar.tintColor = UIColor.appSkyBlue
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
     }
@@ -299,6 +336,7 @@ extension AppointmentsViewController{
         }).disposed(by: disposeBag)
         
         viewModel.outputs.isLoading
+            .throttle(RxTimeInterval.seconds(2), scheduler: MainScheduler.asyncInstance)
             .subscribe(onNext: { [weak self] loading in
                 guard let `self` = self else { return }
                 loading ? self.showActivity() : self.dismissActivity()
@@ -332,7 +370,7 @@ extension AppointmentsViewController{
             .disposed(by: disposeBag)
         
         viewModel.outputs.lastUpdatedLabel
-            .bind(to: lastUpdatedLabel.rx.text)
+            .bind(to: lastUpdatedLabel.rx.attributedText)
             .disposed(by: disposeBag)
         
         viewModel.outputs.isRefreshing

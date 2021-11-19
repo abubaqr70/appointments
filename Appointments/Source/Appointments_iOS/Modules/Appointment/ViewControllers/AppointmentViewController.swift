@@ -25,12 +25,14 @@ public class AppointmentViewController: UIViewController {
     fileprivate lazy var scrollView : UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.backgroundColor = .appBackgroundGray
         return scrollView
     }()
     
     fileprivate lazy var contentView : UIView = {
         let contentView = UIView()
         contentView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.backgroundColor = .appBackgroundGray
         return contentView
     }()
     
@@ -38,7 +40,7 @@ public class AppointmentViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .black
-        label.font = UIFont.appFont(withStyle: .body, size: 16)
+        label.font = UIFont.appFont(withStyle: .title2, size: 16)
         label.numberOfLines = 4
         return label
     }()
@@ -47,7 +49,7 @@ public class AppointmentViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = UIColor.appGrayDark
-        label.font = UIFont.appFont(withStyle: .title3, size: 14)
+        label.font = UIFont.appFont(withStyle: .title2, size: 14)
         label.numberOfLines = 4
         return label
     }()
@@ -68,7 +70,7 @@ public class AppointmentViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .black
-        label.font = UIFont.appFont(withStyle: .subhead, size: 16)
+        label.font = UIFont.appFont(withStyle: .body, size: 16)
         label.numberOfLines = 0
         return label
     }()
@@ -77,7 +79,7 @@ public class AppointmentViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .black
-        label.font = UIFont.appFont(withStyle: .title3, size: 14)
+        label.font = UIFont.appFont(withStyle: .title2, size: 14)
         label.numberOfLines = 4
         return label
     }()
@@ -135,7 +137,7 @@ public class AppointmentViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .white
-        label.font = UIFont.appFont(withStyle: .title3, size: 12)
+        label.font = UIFont.appFont(withStyle: .title2, size: 13)
         label.numberOfLines = 4
         return label
     }()
@@ -165,6 +167,7 @@ public class AppointmentViewController: UIViewController {
         return view
     }()
     
+
     private let disposeBag = DisposeBag()
     private var viewModel: AppointmentViewModelType
     

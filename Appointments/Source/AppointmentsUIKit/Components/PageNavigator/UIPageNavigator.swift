@@ -23,7 +23,7 @@ class UIPageNavigator: UIView {
     fileprivate lazy var titleTextField: UITextField = {
         let textField = UITextField(frame: CGRect.zero)
         textField.textColor = UIColor.darkGray
-        textField.font = UIFont.appFont(withStyle: .title3, size: 14)
+        textField.font = UIFont.appFont(withStyle: .title3, size: 15)
         textField.contentMode = .center
         textField.textAlignment = .center
         textField.borderStyle = .none

@@ -26,7 +26,7 @@ protocol AppointmentsViewModelOutputs {
     var selectedAppointment: Observable<Appointment> { get }
     
     // Actions:
-    var lastUpdatedLabel: Observable<String?> { get }
+    var lastUpdatedLabel: Observable<NSAttributedString?> { get }
     var dateNavigatorTitle: Observable<String?> { get }
     var errorAlert: Observable<String> { get }
     var isLoading: Observable<Bool> { get }
@@ -64,7 +64,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     var refreshControl: AnyObserver<Void> { return refreshControlSubject.asObserver() }
     
     //Mark: Outputs
-    var lastUpdatedLabel: Observable<String?> { return  lastUpdatedLabelSubject.asObservable() }
+    var lastUpdatedLabel: Observable<NSAttributedString?> { return  lastUpdatedLabelSubject.asObservable() }
     var dateNavigatorTitle: Observable<String?> { return  dateNavigatorTitleSubject.asObservable() }
     var filterAppointments: Observable<Void> { return filterAppointmentsSubject.asObservable() }
     var errorAlert: Observable<String> { return errorAlertSubject.asObservable() }
@@ -98,7 +98,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     private let filteredAppointmentsSubject = BehaviorSubject<[Appointment]>(value: [])
     private let appointmentsSubject = BehaviorSubject<[Appointment]>(value: [])
     private let selectedAppointmentSubject = PublishSubject<Appointment>()
-    private let lastUpdatedLabelSubject = BehaviorSubject<String?>(value: "")
+    private let lastUpdatedLabelSubject = BehaviorSubject<NSAttributedString?>(value: NSAttributedString(string: ""))
     private let dateNavigatorTitleSubject = BehaviorSubject<String?>(value: "")
     private let progressSubject = BehaviorSubject<Float>(value: 0.0)
     
@@ -145,7 +145,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         self.datePickerSubject
             .map {
                 let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "EEEE, MMM dd, yyyy"
+                dateFormatter.dateFormat = "EEEE, MMMM dd, yyyy"
                 return dateFormatter.string(from: $0)
             }
             .bind(to: dateNavigatorTitleSubject)
@@ -173,7 +173,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         self.datePickerSubject
             .map {
                 let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "EEEE, MMM dd, yyyy"
+                dateFormatter.dateFormat = "EEEE, MMMM dd, yyyy"
                 return dateFormatter.string(from: $0)
             }
             .bind(to: dateNavigatorTitleSubject)
@@ -192,8 +192,8 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         let fetchRequest = self.refreshAppointmentsSubject
             .withLatestFrom(self.datePickerSubject)
             .flatMap { [weak self] date -> Observable<Event<([Appointment],Date?)>> in
-                self?.loadingSubject.onNext(true)
                 guard let self = self, let facilityID = self.facilityDataStore.currentFacility?["facility_id"] as? Int else { return .never() }
+                self.loadingSubject.onNext(true)
                 self.isFilterAppliedSubject.onNext(self.filterActionProvider?.isFiltersApplied() ?? false)
                 let residentId = self.residentProvider?.currentResident?["resident_id"] as? Int
                 if residentId != nil {
@@ -205,6 +205,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             .share()
             .do(onNext: {
                 appointment in
+                self.loadingSubject.onNext(false)
                 self.isRefreshingSubject.onNext(false)
             })
         
@@ -215,9 +216,15 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
                 let dateFormatterFromDate = DateFormatter()
                 if date != nil {
                     dateFormatterFromDate.dateFormat = "MMMM dd'\(Date.getSuffixDate(date: date!))' 'at' h:mm a"
-                    self.lastUpdatedLabelSubject.onNext("Last Updated: " + dateFormatterFromDate.string(from: date!))
+                    
+                    let attributedString = NSMutableAttributedString(string: "Last Updated: \(dateFormatterFromDate.string(from: date!))", attributes: [
+                        .font: UIFont.appFont(withStyle: .title3, size: 13),
+                    ])
+                    attributedString.addAttribute(.font, value: UIFont.appFont(withStyle: .title2, size: 13), range: NSRange(location: 0, length: 13))
+                 
+                    self.lastUpdatedLabelSubject.onNext(attributedString)
                 } else {
-                    self.lastUpdatedLabelSubject.onNext("")
+                    self.lastUpdatedLabelSubject.onNext(NSAttributedString(string: ""))
                 }
             })
             .disposed(by: disposeBag)
@@ -226,7 +233,6 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             .debug("Errors")
             .map {
                 error in
-                self.loadingSubject.onNext(false)
                 let error = error.asAFError(orFailWith: "The internet connection appears to be offline.")
                 if error.isSessionTaskError {
                     return "The internet connection appears to be offline."
@@ -298,7 +304,6 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         .disposed(by: disposeBag)
         self.mappedAppointmentsSubject.map{ appointments -> [Appointment] in
             return self.filtersApply(appointments: appointments)
-//                        return appointments
         }
         .bind(to: filteredAppointmentsSubject)
         .disposed(by: disposeBag)
@@ -306,7 +311,6 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         
         Observable.combineLatest(filteredAppointmentsSubject, segmentControlSubject)
             .map{ appointment , segment -> [Appointment] in
-                self.loadingSubject.onNext(false)
                 
                 let presentAppointments = appointment.filter{
                     $0.appointmentAttendance?.first?.present == "present"
