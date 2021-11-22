@@ -20,7 +20,7 @@ class FilterAppointmentsTableViewCell: RxUITableViewCell  {
         let checkboxButton = UIButton(frame: CGRect.zero)
         checkboxButton.backgroundColor = UIColor.white
         checkboxButton.translatesAutoresizingMaskIntoConstraints = false
-        checkboxButton.imageEdgeInsets = UIEdgeInsets(top: 6, left: 6, bottom: 6, right: 6)
+        checkboxButton.imageEdgeInsets = UIEdgeInsets(top: 3, left: 3, bottom: 3, right: 3)
         checkboxButton.imageView?.contentMode = .scaleToFill
         checkboxButton.contentVerticalAlignment = .fill
         checkboxButton.contentHorizontalAlignment = .fill
