@@ -30,6 +30,7 @@ class AppointmentTableViewCell: RxUITableViewCell {
         checkboxButton.backgroundColor = UIColor.white
         checkboxButton.translatesAutoresizingMaskIntoConstraints = false
         checkboxButton.imageEdgeInsets = UIEdgeInsets(top: 3, left: 3, bottom: 3, right: 3)
+        checkboxButton.alpha = 1
         checkboxButton.imageView?.contentMode = .scaleToFill
         checkboxButton.contentVerticalAlignment = .fill
         checkboxButton.contentHorizontalAlignment = .fill
@@ -118,7 +119,7 @@ class AppointmentTableViewCell: RxUITableViewCell {
         ])
         
         NSLayoutConstraint.activate([
-            appointmentDescriptionLabel.leadingAnchor.constraint(equalTo: checkboxButton.trailingAnchor),
+            appointmentDescriptionLabel.leadingAnchor.constraint(equalTo: checkboxButton.trailingAnchor,constant: 5),
             appointmentDescriptionLabel.centerYAnchor.constraint(equalTo: buttonAppointmentsView.centerYAnchor),
             appointmentDescriptionLabel.topAnchor.constraint(greaterThanOrEqualTo: buttonAppointmentsView.topAnchor, constant: 5),
             appointmentDescriptionLabel.bottomAnchor.constraint(greaterThanOrEqualTo: buttonAppointmentsView.bottomAnchor, constant: -5)
@@ -195,8 +196,10 @@ class AppointmentTableViewCell: RxUITableViewCell {
                 guard let self = self else { return }
                 if selected {
                     self.checkboxButton.setImage(UIImage.moduleImage(named: "icon_checkbox_selected"), for: .normal)
+                    self.checkboxButton.setImage(UIImage.moduleImage(named: "icon_checkbox_selected"), for: .disabled)
                 }else{
                     self.checkboxButton.setImage(UIImage.moduleImage(named: "icon_checkbox_unselected"), for: .normal)
+                    self.checkboxButton.setImage(UIImage.moduleImage(named: "icon_checkbox_unselected"), for: .disabled)
                 }
             })
             .disposed(by: disposeBag)

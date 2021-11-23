@@ -185,7 +185,7 @@ public class AppointmentsViewController: UIViewController {
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.viewModel.inputs.viewWillAppear.onNext(Void())
+        self.viewModel.inputs.viewWillAppear.onNext(true)
     }
     
     @objc func filterButtonAction(){
@@ -222,6 +222,7 @@ extension AppointmentsViewController{
     
     private func showActivity(){
         SVProgressHUD.show(withStatus: "Loading Appointments")
+        SVProgressHUD.setFont(UIFont.appFont(withStyle: .title3, size: 16))
         SVProgressHUD.setDefaultAnimationType(.native)
         SVProgressHUD.setDefaultStyle(.custom)
         SVProgressHUD.setDefaultMaskType(.custom)
@@ -299,7 +300,7 @@ extension AppointmentsViewController{
         
         
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: progress.bottomAnchor, constant: 0),
+            tableView.topAnchor.constraint(equalTo: progress.bottomAnchor, constant: 5),
             tableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor)
@@ -336,7 +337,7 @@ extension AppointmentsViewController{
         }).disposed(by: disposeBag)
         
         viewModel.outputs.isLoading
-            .throttle(RxTimeInterval.seconds(2), scheduler: MainScheduler.asyncInstance)
+            .throttle(RxTimeInterval.seconds(1), scheduler: MainScheduler.asyncInstance)
             .subscribe(onNext: { [weak self] loading in
                 guard let `self` = self else { return }
                 loading ? self.showActivity() : self.dismissActivity()
