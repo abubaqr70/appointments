@@ -22,7 +22,7 @@ class FilterHeaderTableViewCell: RxUITableViewCell {
         checkboxButton.imageView?.contentMode = .scaleToFill
         checkboxButton.contentVerticalAlignment = .fill
         checkboxButton.contentHorizontalAlignment = .fill
-        checkboxButton.imageEdgeInsets = UIEdgeInsets(top: 6, left: 6, bottom: 6, right: 6)
+        checkboxButton.imageEdgeInsets = UIEdgeInsets(top: 3, left: 3, bottom: 3, right: 3)
         checkboxButton.setImage(UIImage.moduleImage(named: "icon_checkbox_unselected"), for: .normal)
         checkboxButton.backgroundColor = .clear
         return checkboxButton
