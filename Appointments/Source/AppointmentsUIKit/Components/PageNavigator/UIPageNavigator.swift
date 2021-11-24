@@ -110,7 +110,7 @@ class UIPageNavigator: UIView {
     @objc func datePickerDone() {
         titleTextField.resignFirstResponder()
         let dateFormatr = DateFormatter()
-        dateFormatr.dateFormat = "EEEE, MMM dd, yyyy"
+        dateFormatr.dateFormat = "EEEE, dd MMM yyyy"
         
         date_picker.rx.date.map{ return dateFormatr.string(from: $0)}
             .bind(to: titleTextField.rx.text)

@@ -222,7 +222,7 @@ extension AppointmentsViewController{
     
     private func showActivity(){
         SVProgressHUD.show(withStatus: "Loading Appointments")
-        SVProgressHUD.setFont(UIFont.appFont(withStyle: .subhead, size: 16))
+        SVProgressHUD.setFont(UIFont.boldSystemFont(ofSize: 16))
         SVProgressHUD.setDefaultAnimationType(.native)
         SVProgressHUD.setDefaultStyle(.custom)
         SVProgressHUD.setDefaultMaskType(.custom)

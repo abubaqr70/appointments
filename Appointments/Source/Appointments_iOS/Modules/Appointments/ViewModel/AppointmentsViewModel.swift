@@ -365,7 +365,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             let cellViewModel = AppointmentTVCellViewModel(appointment: appointment, permissionProvider: permissionProvider)
             cellViewModel.outputs.markAppointment.subscribe(onNext: { appointment in
                 self.appointmentsRepository.updateAppointment(appointment)
-                self.inputs.viewWillAppear.onNext(false)
+//                self.inputs.viewWillAppear.onNext(false)
             }).disposed(by: disposeBag)
             let headerTitle = HeaderTVCellViewModel(appointment: appointment, permissionProvider: permissionProvider)
             return (headerTitle, [cellViewModel])
