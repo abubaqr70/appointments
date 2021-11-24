@@ -75,7 +75,7 @@ class FilterAppointmentsTableViewCell: RxUITableViewCell  {
     private func setupConstraints() {
         
         NSLayoutConstraint.activate([
-            checkboxButton.leadingAnchor.constraint(equalTo: cellView.leadingAnchor,constant: 10),
+            checkboxButton.trailingAnchor.constraint(equalTo: cellView.trailingAnchor,constant: -10),
             checkboxButton.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor),
             checkboxButton.widthAnchor.constraint(equalToConstant: 40),
             checkboxButton.heightAnchor.constraint(equalToConstant: 40)
@@ -83,14 +83,14 @@ class FilterAppointmentsTableViewCell: RxUITableViewCell  {
         
         NSLayoutConstraint.activate([
             nameLabel.centerYAnchor.constraint(equalTo: cellView.centerYAnchor),
-            nameLabel.leadingAnchor.constraint(equalTo: checkboxButton.trailingAnchor, constant: 10),
-            nameLabel.trailingAnchor.constraint(equalTo: cellView.trailingAnchor, constant: -10),
+            nameLabel.trailingAnchor.constraint(equalTo: checkboxButton.leadingAnchor, constant: 10),
+            nameLabel.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 20),
             nameLabel.topAnchor.constraint(greaterThanOrEqualTo: cellView.topAnchor,constant: 20),
         ])
         
         NSLayoutConstraint.activate([
             lineView.topAnchor.constraint(greaterThanOrEqualTo: nameLabel.bottomAnchor, constant: -20),
-            lineView.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 10),
+            lineView.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 17),
             lineView.trailingAnchor.constraint(equalTo: cellView.trailingAnchor),
             lineView.heightAnchor.constraint(equalToConstant: 0.8),
             lineView.bottomAnchor.constraint(equalTo: cellView.bottomAnchor),

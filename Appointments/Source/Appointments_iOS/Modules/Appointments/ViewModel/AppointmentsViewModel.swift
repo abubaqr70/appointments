@@ -295,6 +295,8 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'"
             
+            mappedAppointments = mappedAppointments.sorted(by: {$0.appointmentAttendance?.first?.user?.fullName?.compare($1.appointmentAttendance?.first?.user?.fullName ?? "") == ComparisonResult.orderedAscending})
+            
             if let residentId = self.residentProvider?.currentResident?["resident_id"] as? Int {
                 let mappedAppointments = mappedAppointments.sorted(by: {dateFormatter.date(from: $0.startDate?.date ?? "")?.compare(dateFormatter.date(from: $1.startDate?.date ?? "") ?? Date()) == ComparisonResult.orderedAscending})
                 return mappedAppointments.filter{
