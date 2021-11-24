@@ -145,7 +145,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         self.datePickerSubject
             .map {
                 let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "EEEE, MMMM dd, yyyy"
+                dateFormatter.dateFormat = "EEEE, dd MMMM yyyy"
                 return dateFormatter.string(from: $0)
             }
             .bind(to: dateNavigatorTitleSubject)
@@ -173,7 +173,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         self.datePickerSubject
             .map {
                 let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "EEEE, MMMM dd, yyyy"
+                dateFormatter.dateFormat = "EEEE, dd MMMM yyyy"
                 return dateFormatter.string(from: $0)
             }
             .bind(to: dateNavigatorTitleSubject)
