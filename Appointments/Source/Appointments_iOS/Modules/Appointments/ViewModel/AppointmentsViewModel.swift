@@ -62,6 +62,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     var selectAppointment: AnyObserver<Appointment> { return selectAppointmentSubject.asObserver() }
     var viewWillAppear: AnyObserver<Bool> { return refreshAppointmentsSubject.asObserver() }
     var refreshControl: AnyObserver<Void> { return refreshControlSubject.asObserver() }
+   
     
     //Mark: Outputs
     var lastUpdatedLabel: Observable<NSAttributedString?> { return  lastUpdatedLabelSubject.asObservable() }
@@ -124,6 +125,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     let appointmentsRepository: AppointmentRepository
     let filterActionProvider: FilterActionProvider?
     let permissionProvider: PermissionProvider
+    var showLoader : Bool = true
     
     
     init(facilityDataStore: FacilityDataStore,
@@ -193,15 +195,26 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             .flatMap { [weak self] refresh, date -> Observable<Event<([Appointment],Date?)>> in
                 guard let self = self, let facilityID = self.facilityDataStore.currentFacility?["facility_id"] as? Int else { return .never() }
                 if refresh {
-                    self.loadingSubject.onNext(true)
+                    if self.showLoader {
+                        self.loadingSubject.onNext(true)
+                    }
+                    self.isFilterAppliedSubject.onNext(self.filterActionProvider?.isFiltersApplied() ?? false)
+                    let residentId = self.residentProvider?.currentResident?["resident_id"] as? Int
+                    if residentId != nil {
+                        return self.bindAppointmentsForResident(date: date, facilityID: facilityID, residentId: residentId!, local: false)
+                    }else {
+                        return self.bindAppointmentsForTab(date: date, facilityID: facilityID, local: false)
+                    }
+                } else {
+                    self.isFilterAppliedSubject.onNext(self.filterActionProvider?.isFiltersApplied() ?? false)
+                    let residentId = self.residentProvider?.currentResident?["resident_id"] as? Int
+                    if residentId != nil {
+                        return self.bindAppointmentsForResident(date: date, facilityID: facilityID, residentId: residentId!, local: true)
+                    }else {
+                        return self.bindAppointmentsForTab(date: date, facilityID: facilityID, local: true)
+                    }
                 }
-                self.isFilterAppliedSubject.onNext(self.filterActionProvider?.isFiltersApplied() ?? false)
-                let residentId = self.residentProvider?.currentResident?["resident_id"] as? Int
-                if residentId != nil {
-                    return self.bindAppointmentsForResident(date: date, facilityID: facilityID, residentId: residentId!)
-                }else {
-                    return self.bindAppointmentsForTab(date: date, facilityID: facilityID)
-                }
+                
             }
             .share()
             .do(onNext: {
@@ -234,8 +247,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             .debug("Errors")
             .map {
                 error in
-                let error = error.asAFError(orFailWith: "The internet connection appears to be offline.")
-                if error.isSessionTaskError {
+                if error.asAFError?.isSessionTaskError ?? false {
                     return "The internet connection appears to be offline."
                 } else {
                     return error.localizedDescription
@@ -246,41 +258,58 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         
         self.refreshingSubject.subscribe(onNext: {
             _ in
-            self.refreshAppointmentsSubject.onNext(false)
+            self.refreshAppointmentsSubject.onNext(true)
+            self.showLoader = true
         }).disposed(by: disposeBag)
         
         self.datePickerSubject.subscribe(onNext: {
             _ in
             self.refreshAppointmentsSubject.onNext(true)
+            self.showLoader = true
         }).disposed(by: disposeBag)
         
         self.refreshControlSubject
             .subscribe(onNext: {
                 refresh in
                 self.isRefreshingSubject.onNext(true)
+                self.showLoader = false
                 self.refreshingSubject.onNext(Void())
             })
             .disposed(by: disposeBag)
         
     }
     
-    func bindAppointmentsForTab(date: Date, facilityID: Int) -> Observable<Event<([Appointment],Date?)>>{
+    func bindAppointmentsForTab(date: Date, facilityID: Int, local: Bool) -> Observable<Event<([Appointment],Date?)>>{
         self.isResidentSubject.onNext(false)
-        return self.appointmentsRepository.getAppointments(for: facilityID,
-                                                           date: date)
-            .materialize()
+        if local {
+            return self.appointmentsRepository.getLocalAppointments(for: facilityID,
+                                                               date: date)
+                .materialize()
+        } else {
+            return self.appointmentsRepository.getAppointments(for: facilityID,
+                                                               date: date)
+                .materialize()
+        }
+       
     }
     
-    func bindAppointmentsForResident(date: Date, facilityID: Int, residentId: Int) -> Observable<Event<([Appointment],Date?)>>{
+    func bindAppointmentsForResident(date: Date, facilityID: Int, residentId: Int, local: Bool) -> Observable<Event<([Appointment],Date?)>>{
         self.isResidentSubject.onNext(true)
         let residentName =  "\(self.residentProvider?.currentResident?["first_name"] as? String ?? "") \(self.residentProvider?.currentResident?["last_name"] as? String ?? "")"
         self.residentNameSubject.onNext(residentName)
         self.residentImageSubject.onNext(self.residentProvider?.currentResident?["profileImageRoute"] as? String ?? "")
         self.residentRoomSubject.onNext(self.residentProvider?.currentResident?["room_no"] as? String ?? "")
-        return self.appointmentsRepository.getAppointmentsForResident(for: facilityID,
-                                                                      residentID: residentId,
-                                                                      date: date)
-            .materialize()
+        if local {
+            return self.appointmentsRepository.getLocalAppointmentsForResident(for: facilityID,
+                                                                          residentID: residentId,
+                                                                          date: date)
+                .materialize()
+        } else {
+            return self.appointmentsRepository.getAppointmentsForResident(for: facilityID,
+                                                                          residentID: residentId,
+                                                                          date: date)
+                .materialize()
+        }
     }
     
     func bindAppointmentsSorted(){
@@ -365,7 +394,8 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             let cellViewModel = AppointmentTVCellViewModel(appointment: appointment, permissionProvider: permissionProvider)
             cellViewModel.outputs.markAppointment.subscribe(onNext: { appointment in
                 self.appointmentsRepository.updateAppointment(appointment)
-//                self.inputs.viewWillAppear.onNext(false)
+                self.inputs.viewWillAppear.onNext(false)
+                self.showLoader = false
             }).disposed(by: disposeBag)
             let headerTitle = HeaderTVCellViewModel(appointment: appointment, permissionProvider: permissionProvider)
             return (headerTitle, [cellViewModel])

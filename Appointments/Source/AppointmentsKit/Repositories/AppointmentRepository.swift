@@ -73,6 +73,19 @@ class AppointmentRepository {
         }
     }
     
+    func getLocalAppointments(for facilityID: Int,
+                         date: Date) ->  Observable<([Appointment],Date?)> {
+        
+        return Observable.create { [weak self] observer in
+            
+            guard let self = self else { return Disposables.create() }
+            
+            observer.onNext((self.appointmentDataStore.fetchAppointments(facilityId: facilityID, startDate: Date.startOfDay(date: date)),self.lastUpdatedDataStore.fetchLastUpdated()))
+           
+            return Disposables.create()
+        }
+    }
+    
     //Mark:- Fetch Appointments with facilityID, residentId and date
     func getAppointmentsForResident(for facilityID: Int,
                                     residentID: Int,
@@ -121,6 +134,20 @@ class AppointmentRepository {
                 
             }
             
+            return Disposables.create()
+        }
+    }
+    
+    func getLocalAppointmentsForResident(for facilityID: Int,
+                                    residentID: Int,
+                                    date: Date) -> Observable<([Appointment],Date?)> {
+        
+        return Observable.create { [weak self] observer in
+            
+            guard let self = self else { return Disposables.create() }
+            
+            observer.onNext((self.appointmentDataStore.fetchAppointmentsForResident(facilityId: facilityID, residentID: residentID, startDate: Date.startOfDay(date: date)),self.lastUpdatedDataStore.fetchLastUpdated()))
+         
             return Disposables.create()
         }
     }
