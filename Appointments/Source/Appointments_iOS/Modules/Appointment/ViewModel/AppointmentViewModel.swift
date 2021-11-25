@@ -29,6 +29,7 @@ protocol AppointmentViewModelOutputs {
     var authorizedToManageAppointments : Observable<Bool> { get }
     var authorizedToViewTitleAppointments : Observable<Bool> { get }
     var authorizedToViewTitleAndDescriptionAppointments : Observable<Bool> { get }
+    var isLoading: Observable<Bool> { get }
     
 }
 
@@ -61,6 +62,7 @@ class AppointmentViewModel: AppointmentViewModelType, AppointmentViewModelInputs
     var authorizedToManageAppointments : Observable<Bool> { return authorizedToManageAppointmentsSubject.asObservable() }
     var authorizedToViewTitleAppointments : Observable<Bool> { return authorizedToViewTitleAppointmentsSubject.asObservable() }
     var authorizedToViewTitleAndDescriptionAppointments : Observable<Bool> { return authorizedToViewTitleAndDescriptionAppointmentsSubject.asObservable() }
+    var isLoading: Observable<Bool> { return loadingSubject.asObservable() }
     
     //Mark: Private Properties
     
@@ -86,6 +88,7 @@ class AppointmentViewModel: AppointmentViewModelType, AppointmentViewModelInputs
     private let authorizedToViewTitleAppointmentsSubject : BehaviorSubject<Bool>
     private let authorizedToViewTitleAndDescriptionAppointmentsSubject : BehaviorSubject<Bool>
     private let appointmentsTypeSubject = BehaviorSubject<[AppointmentsType]>(value: [])
+    private let loadingSubject = BehaviorSubject<Bool>(value: false)
     
     init(appointment: Appointment,repository: AppointmentRepository,permissionProvider: PermissionProvider){
         
@@ -208,6 +211,28 @@ extension AppointmentViewModel {
                 present in
                 self.isPresentSubject.onNext(present)
                 self.appointmentsRepository.updateAppointment(appointment)
+                let reachability = ReachabilityService()
+                switch reachability.reachabilityType {
+                    
+                    //Mark:- Internet Connected
+                case .connected:
+                    self.loadingSubject.onNext(true)
+                    self.appointmentsRepository.localFacilitySyncData(facilityId: appointment.facilityId ?? 0)
+                    {
+                        (result: Result<Void,Error>) in
+                        switch result {
+                        case .failure (let error) :
+                            self.loadingSubject.onNext(false)
+                            print(error.localizedDescription)
+                        case .success (_):
+                            print("success")
+                            self.loadingSubject.onNext(false)
+                        }
+                    }
+                case.disconnected:
+                    break
+                }
+                
             })
             .disposed(by: disposeBag)
         

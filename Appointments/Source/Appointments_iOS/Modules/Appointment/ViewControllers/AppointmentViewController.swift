@@ -3,6 +3,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import SVProgressHUD
 
 public class AppointmentViewController: UIViewController {
     
@@ -167,6 +168,20 @@ public class AppointmentViewController: UIViewController {
         return view
     }()
     
+    private func showActivity(){
+        SVProgressHUD.show(withStatus: "Updating Appointments")
+        SVProgressHUD.setFont(UIFont.boldSystemFont(ofSize: 16))
+        SVProgressHUD.setDefaultAnimationType(.native)
+        SVProgressHUD.setDefaultStyle(.custom)
+        SVProgressHUD.setDefaultMaskType(.custom)
+        SVProgressHUD.setForegroundColor(UIColor.white)                                         //Ring Color
+        SVProgressHUD.setBackgroundColor(UIColor.black.withAlphaComponent(0.8))                 //HUD Color
+        SVProgressHUD.setBackgroundLayerColor(UIColor.clear)                                    //Background Color
+    }
+    
+    private func dismissActivity(){
+        SVProgressHUD.dismiss()
+    }
 
     private let disposeBag = DisposeBag()
     private var viewModel: AppointmentViewModelType
@@ -536,6 +551,15 @@ extension AppointmentViewController{
                 self.markPresentButton.rx.isEnabled.onNext(selected)
             })
             .disposed(by: disposeBag)
+        
+        viewModel.outputs.isLoading
+            .throttle(RxTimeInterval.milliseconds(500), scheduler: MainScheduler.asyncInstance)
+            .subscribe(onNext: { [weak self] loading in
+                guard let `self` = self else { return }
+                loading ? self.showActivity() : self.dismissActivity()
+            })
+            .disposed(by: disposeBag)
+        
         
     }
     

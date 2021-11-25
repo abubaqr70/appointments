@@ -15,6 +15,7 @@ protocol AppointmentsViewModelInputs {
     var filterObserver: AnyObserver<Void> { get }
     var selectAppointment: AnyObserver<Appointment> { get }
     var viewWillAppear: AnyObserver<Bool> { get }
+    var viewDidLoad: AnyObserver<Bool> { get }
     var refreshControl: AnyObserver<Void> { get }
     
 }
@@ -61,6 +62,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     var filterObserver: AnyObserver<Void> { return filterSubject.asObserver() }
     var selectAppointment: AnyObserver<Appointment> { return selectAppointmentSubject.asObserver() }
     var viewWillAppear: AnyObserver<Bool> { return refreshAppointmentsSubject.asObserver() }
+    var viewDidLoad: AnyObserver<Bool> { return viewDidLoadSubject.asObserver() }
     var refreshControl: AnyObserver<Void> { return refreshControlSubject.asObserver() }
    
     
@@ -104,12 +106,13 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     private let progressSubject = BehaviorSubject<Float>(value: 0.0)
     
     private let filterAppointmentsSubject = PublishSubject<Void>()
+    private let viewDidLoadSubject = PublishSubject<Bool>()
     private let refreshAppointmentsSubject = BehaviorSubject<Bool>(value: true)
     private let refreshingSubject = PublishSubject<Void>()
     private let refreshControlSubject = BehaviorSubject<Void>(value: Void())
     private let errorAlertSubject = PublishSubject<String>()
     private let sectionsSubject = BehaviorSubject<[(title: ReuseableCellViewModelType, rows: [ReuseableCellViewModelType])]>(value: [])
-    private let loadingSubject = BehaviorSubject<Bool>(value: false)
+    private let loadingSubject = BehaviorSubject<Bool>(value: true)
     private let isResidentSubject = BehaviorSubject<Bool>(value: false)
     private let isRefreshingSubject = BehaviorSubject<Bool>(value: false)
     private let residentImageSubject = BehaviorSubject<String>(value: "")
@@ -125,9 +128,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
     let appointmentsRepository: AppointmentRepository
     let filterActionProvider: FilterActionProvider?
     let permissionProvider: PermissionProvider
-    var showLoader : Bool = true
-    
-    
+  
     init(facilityDataStore: FacilityDataStore,
          appointmentsRepository: AppointmentRepository,
          filterActionProvider: FilterActionProvider?,
@@ -153,9 +154,9 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             .bind(to: dateNavigatorTitleSubject)
             .disposed(by: disposeBag)
         
-        self.bindFetchAppointmentRequest()
-        self.bindAppointmentsToCellViewModel()
+        self.viewDidLoadRequest()
         self.bindAppointmentsSorted()
+        self.bindAppointmentsToCellViewModel()
         self.bindActions()
         
     }
@@ -181,11 +182,20 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             .bind(to: dateNavigatorTitleSubject)
             .disposed(by: disposeBag)
         
-        self.bindFetchAppointmentRequest()
-        self.bindAppointmentsToCellViewModel()
+        self.viewDidLoadRequest()
         self.bindAppointmentsSorted()
+        self.bindAppointmentsToCellViewModel()
         self.bindActions()
         
+    }
+    
+    func viewDidLoadRequest(){
+        self.viewDidLoadSubject.subscribe(onNext: {
+            load in
+            if load {
+                self.bindFetchAppointmentRequest()
+            }
+        }).disposed(by: disposeBag)
     }
     
     func bindFetchAppointmentRequest() {
@@ -195,9 +205,7 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             .flatMap { [weak self] refresh, date -> Observable<Event<([Appointment],Date?)>> in
                 guard let self = self, let facilityID = self.facilityDataStore.currentFacility?["facility_id"] as? Int else { return .never() }
                 if refresh {
-                    if self.showLoader {
-                        self.loadingSubject.onNext(true)
-                    }
+                    self.loadingSubject.onNext(true)
                     self.isFilterAppliedSubject.onNext(self.filterActionProvider?.isFiltersApplied() ?? false)
                     let residentId = self.residentProvider?.currentResident?["resident_id"] as? Int
                     if residentId != nil {
@@ -259,20 +267,17 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
         self.refreshingSubject.subscribe(onNext: {
             _ in
             self.refreshAppointmentsSubject.onNext(true)
-            self.showLoader = true
         }).disposed(by: disposeBag)
         
         self.datePickerSubject.subscribe(onNext: {
             _ in
             self.refreshAppointmentsSubject.onNext(true)
-            self.showLoader = true
         }).disposed(by: disposeBag)
         
         self.refreshControlSubject
             .subscribe(onNext: {
                 refresh in
                 self.isRefreshingSubject.onNext(true)
-                self.showLoader = false
                 self.refreshingSubject.onNext(Void())
             })
             .disposed(by: disposeBag)
@@ -395,7 +400,6 @@ class AppointmentsViewModel: AppointmentsViewModelType, AppointmentsViewModelInp
             cellViewModel.outputs.markAppointment.subscribe(onNext: { appointment in
                 self.appointmentsRepository.updateAppointment(appointment)
                 self.inputs.viewWillAppear.onNext(false)
-                self.showLoader = false
             }).disposed(by: disposeBag)
             let headerTitle = HeaderTVCellViewModel(appointment: appointment, permissionProvider: permissionProvider)
             return (headerTitle, [cellViewModel])

@@ -179,6 +179,7 @@ public class AppointmentsViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         setup(viewModel: self.viewModel)
+        self.viewModel.inputs.viewDidLoad.onNext(true)
         tableView.rx.setDelegate(self).disposed(by: disposeBag)
         tableView.rx.setDataSource(self).disposed(by: disposeBag)
     }
@@ -186,6 +187,10 @@ public class AppointmentsViewController: UIViewController {
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.viewModel.inputs.viewWillAppear.onNext(true)
+    }
+    
+    public override func viewDidAppear(_ animated: Bool) {
+//        self.viewModel.inputs.viewWillAppear.onNext(true)
     }
     
     @objc func filterButtonAction(){
@@ -337,7 +342,7 @@ extension AppointmentsViewController{
         }).disposed(by: disposeBag)
         
         viewModel.outputs.isLoading
-            .throttle(RxTimeInterval.seconds(1), scheduler: MainScheduler.asyncInstance)
+            .throttle(RxTimeInterval.seconds(2), scheduler: MainScheduler.asyncInstance)
             .subscribe(onNext: { [weak self] loading in
                 guard let `self` = self else { return }
                 loading ? self.showActivity() : self.dismissActivity()
@@ -433,6 +438,7 @@ extension AppointmentsViewController{
                     ])
             })
             .disposed(by: self.disposeBag)
+        self.navigationItem.rightBarButtonItems = []
     }
     
     private func ifNotResident(viewModel : AppointmentsViewModelType){
