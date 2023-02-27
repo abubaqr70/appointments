@@ -23,7 +23,7 @@ pod 'Appointments'
 
 ## Author
 
-Muhammad Hussaan Saeed, hussaan.saeed@caremerge.com
+Mohamad Abubaqr, mohammad.abubaqr@goicon.com
 
 ## License
 
